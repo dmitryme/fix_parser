@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(fixparser)
+project(fix_parser)
 
 add_definitions(-std=gnu99 -g)
 
