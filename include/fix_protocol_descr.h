@@ -1,4 +1,4 @@
-/// @file   protocol.h
+/// @file   fix_protocol_descr.h
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/24/2012 06:36:13 PM
 
@@ -9,7 +9,7 @@
 #define MSG_CNT   100
 #define FIELD_FLAG_REQUIRED 0x01
 
-typedef enum FIXProtocolVer_
+typedef enum FIXProtocolVerEnum_
 {
    FIX42,
    FIX44,
@@ -18,9 +18,9 @@ typedef enum FIXProtocolVer_
    FIX50SP2,
    FIXT11,
    FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT
-} FIXProtocolVer;
+} FIXProtocolVerEnum;
 
-typedef enum FIXFieldType_
+typedef enum FIXFieldTypeEnum_
 {
    FIXFieldType_Unknown              = -1,
    FIXFieldType_Int                  = 1,
@@ -52,48 +52,48 @@ typedef enum FIXFieldType_
    FIXFieldType_TZTimestamp          = 27,
    FIXFieldType_XMLData              = 28,
    FIXFieldType_Language             = 29
-} FIXFieldType;
+} FIXFieldTypeEnum;
 
-typedef struct FieldType_
+typedef struct FIXFieldType_
 {
    uint32_t num;
-   FIXFieldType type;
+   FIXFieldTypeEnum type;
    char* name;
-   struct FieldType_* next;
-} FieldType;
+   struct FIXFieldType_* next;
+} FIXFieldType;
 
-typedef struct FieldDescr_
+typedef struct FIXFieldDescr_
 {
-   FieldType* field_type;
+   FIXFieldType* field_type;
    uint8_t flags;
    uint32_t group_count;
-   struct FieldDescr_* group;
-   struct FieldDescr_** group_index;
-   struct FieldDescr_* next;
-} FieldDescr;
+   struct FIXFieldDescr_*  group;
+   struct FIXFieldDescr_** group_index;
+   struct FIXFieldDescr_*  next;
+} FIXFieldDescr;
 
-typedef struct MessageDescr_
+typedef struct FIXMessageDescr_
 {
    char* type;
    char* name;
    uint32_t field_count;
-   FieldDescr* fields;
-   FieldDescr** field_index;
-   struct MessageDescr_* next;
-} MessageDescr;
+   FIXFieldDescr* fields;
+   FIXFieldDescr** field_index;
+   struct FIXMessageDescr_* next;
+} FIXMessageDescr;
 
-typedef struct Protocol_
+typedef struct FIXProtocol_
 {
-   FIXProtocolVer version;
-   FieldType* field_types[FIELD_TYPE_CNT];
-   MessageDescr* messages[MSG_CNT];
-} Protocol;
+   FIXProtocolVerEnum version;
+   FIXFieldType* field_types[FIELD_TYPE_CNT];
+   FIXMessageDescr* messages[MSG_CNT];
+} FIXProtocolDescr;
 
-Protocol* protocol_init(char const* file);
-Protocol* get_protocol(FIXProtocolVer version);
-void free_protocols();
+FIXProtocolDescr* fix_protocol_descr_init(char const* file);
+FIXProtocolDescr* get_fix_protocol_descr(FIXProtocolVerEnum version);
+void free_protocol_descr();
 
-FieldType* get_field_type_by_name(Protocol const* prot, char const* name);
-MessageDescr* get_message_by_type(Protocol const* prot, char const* type);
-FieldDescr* get_field_descr_by_num(MessageDescr const* msg, uint32_t num);
-FieldDescr* get_group_field_descr_by_num(FieldDescr const* field, uint32_t num);
+FIXFieldType* get_fix_field_type(FIXProtocolDescr const* prot, char const* name);
+FIXMessageDescr* get_fix_message_descr(FIXProtocolDescr const* prot, char const* type);
+FIXFieldDescr* get_fix_field_descr(FIXMessageDescr const* msg, uint32_t num);
+FIXFieldDescr* get_fix_group_field_descr(FIXFieldDescr const* field, uint32_t num);
