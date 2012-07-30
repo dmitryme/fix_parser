@@ -1,18 +1,14 @@
-#include "protocol.h"
-#include "error.h"
+#include "fix_parser.h"
+#include "fix_error.h"
 
 #include <stdio.h>
 
 int main()
 {
-   Protocol* p = protocol_init("fix44.xml");
-   if (!p)
+   int res = fix_protocol_init("fix44.xml");
+   if (res == FIX_FAILED)
    {
-      printf("%s.\n", get_fix_last_error()->text);
-   }
-   else
-   {
-      printf("PROTOCOL %d\n", p->version);
+      printf("ERROR: %s\n", get_fix_last_error()->text);
    }
    return 0;
 }
