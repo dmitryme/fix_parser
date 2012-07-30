@@ -1,4 +1,4 @@
-/// @file   tag.h
+/// @file   fix_tag.h
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/25/2012 03:35:40 PM
 
@@ -6,18 +6,18 @@
 
 #define TABLE_SIZE 64
 
-enum TagType
+enum FIXTagType
 {
-   TagValue = 1,
-   TagGroup = 2
+   FIXTagValue = 1,
+   FIXTagGroup = 2
 };
 
-typedef struct TagTable_ TagTable;
+typedef struct FIXTagTable_ FIXTagTable;
 
-typedef struct Tag_
+typedef struct FIXTag_
 {
    uint32_t num;
-   enum TagType type;
+   enum FIXTagType type;
    union
    {
       struct
@@ -28,19 +28,19 @@ typedef struct Tag_
       struct
       {
          uint32_t size;
-         TagTable** grpTbl;
+         FIXTagTable** grpTbl;
       } groups;
    };
-   struct Tag_* next;
-} Tag;
+   struct FIXTag_* next;
+} FIXTag;
 
-TagTable* new_table();
-void free_table(TagTable* tbl);
+FIXTagTable* new_table();
+void free_table(FIXTagTable* tbl);
 
-Tag* set_tag(TagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len);
-Tag* get_tag(TagTable* tbl, uint32_t tagNum);
-int rm_tag(TagTable* tbl, uint32_t tagNum);
+FIXTag* set_fix_tag(FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len);
+FIXTag* get_fix_tag(FIXTagTable* tbl, uint32_t tagNum);
+int rm_fix_tag(FIXTagTable* tbl, uint32_t tagNum);
 
-TagTable* add_group(TagTable* tbl, uint32_t tagNum);
-TagTable* get_grp(TagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
-int rm_grp(TagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
+FIXTagTable* add_fix_group(FIXTagTable* tbl, uint32_t tagNum);
+FIXTagTable* get_fix_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
+int rm_fix_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
