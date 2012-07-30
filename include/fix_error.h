@@ -1,4 +1,4 @@
-/// @file   error.h
+/// @file   fix_error.h
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/24/2012 06:16:10 PM
 
@@ -14,6 +14,7 @@
 #define FIX_ERROR_WRONG_PROTOCOL_VER    8
 #define FIX_ERROR_DUPLICATE_FIELD_DESCR 9
 #define FIX_ERROR_UNKNOWN_MSG          10
+#define FIX_ERROR_LIBXML               11
 
 typedef struct FIXError_
 {
