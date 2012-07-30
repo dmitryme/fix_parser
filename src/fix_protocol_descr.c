@@ -1,18 +1,56 @@
-/// @file   protocol.c
+/// @file   fix_protocol_descr.c
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/27/2012 06:14:53 PM
 
-#include "protocol.h"
-#include "error.h"
-#include "utils.h"
+#include "fix_protocol_descr.h"
+#include "fix_error.h"
+#include "fix_utils.h"
 
 #include <libxml/parser.h>
+#include <libxml/xmlschemas.h>
 #include <string.h>
 #include <stdint.h>
 
+extern void set_fix_va_error(int, char const*, va_list ap);
 extern void set_fix_error(int, char const*, ...);
 
-Protocol* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT - 1];
+extern char const* fix_xsd;
+
+void xmlErrorHandler(void* ctx, char const* msg, ...)
+{
+   va_list ap;
+   va_start(ap, msg);
+   set_fix_va_error(FIX_ERROR_LIBXML, msg, ap);
+   va_end(ap);
+}
+
+int initLibXml()
+{
+   xmlSetGenericErrorFunc(0, xmlErrorHandler);
+   return 0;
+}
+
+int xml_validate(xmlDoc* doc)
+{
+   xmlSchemaParserCtxtPtr pctx = xmlSchemaNewMemParserCtxt(fix_xsd, strlen(fix_xsd));
+   xmlSchemaPtr schema = xmlSchemaParse(pctx);
+   if (!schema)
+   {
+      return FIX_FAILED;
+   }
+   xmlSchemaValidCtxtPtr validCtx = xmlSchemaNewValidCtxt(schema);
+   xmlSchemaSetValidErrors(validCtx, &xmlErrorHandler, &xmlErrorHandler, validCtx);
+
+   int res = xmlSchemaValidateDoc(validCtx, doc);
+
+   xmlSchemaFreeValidCtxt(validCtx);
+   xmlSchemaFree(schema);
+   xmlSchemaFreeParserCtxt(pctx);
+
+   return res ? FIX_FAILED : FIX_SUCCESS;
+}
+
+FIXProtocolDescr* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT - 1];
 
 char const* get_attr(xmlNode const* node, char const* attrName)
 {
@@ -46,7 +84,7 @@ xmlNode* get_first(xmlNode const* node, char const* name)
    return NULL;
 }
 
-FIXProtocolVer get_version(xmlNode const* root)
+FIXProtocolVerEnum get_version(xmlNode const* root)
 {
    char const* ver = get_attr(root, "version");
    if (!strcmp(ver, "FIX42")) return FIX42;
@@ -58,7 +96,7 @@ FIXProtocolVer get_version(xmlNode const* root)
    return FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT;
 }
 
-FIXFieldType string2FIXFieldType(char const* type)
+FIXFieldTypeEnum string2FIXFIXFieldType(char const* type)
 {
    if (!strcmp(type, "Int"))           { return FIXFieldType_Int; }
    if (!strcmp(type, "Length"))        { return FIXFieldType_Length; }
@@ -92,7 +130,7 @@ FIXFieldType string2FIXFieldType(char const* type)
    return FIXFieldType_Unknown;
 }
 
-void free_field_descr(FieldDescr* fd)
+void free_field_descr(FIXFieldDescr* fd)
 {
    for(uint32_t i = 0; i < fd->group_count; ++i)
    {
@@ -102,13 +140,13 @@ void free_field_descr(FieldDescr* fd)
    free(fd->group_index);
 }
 
-void free_field_type(FieldType* ft)
+void free_field_type(FIXFieldType* ft)
 {
    free(ft->name);
    free(ft);
 }
 
-void free_message(MessageDescr* msg)
+void free_message(FIXMessageDescr* msg)
 {
    free(msg->name);
    free(msg->type);
@@ -121,7 +159,7 @@ void free_message(MessageDescr* msg)
    free(msg);
 }
 
-void free_protocol(Protocol* prot)
+void free_protocol(FIXProtocolDescr* prot)
 {
    if (!prot)
    {
@@ -129,44 +167,44 @@ void free_protocol(Protocol* prot)
    }
    for(int i = 0; i < FIELD_TYPE_CNT; ++i)
    {
-      FieldType* ft = prot->field_types[i];
+      FIXFieldType* ft = prot->field_types[i];
       while(ft)
       {
-         FieldType* next_ft = ft->next;
+         FIXFieldType* next_ft = ft->next;
          free_field_type(ft);
          ft = next_ft;
       }
    }
    for(int i = 0; i < MSG_CNT; ++i)
    {
-      MessageDescr* msg = prot->messages[i];
+      FIXMessageDescr* msg = prot->messages[i];
       while(msg)
       {
-         MessageDescr* next_msg = msg->next;
+         FIXMessageDescr* next_msg = msg->next;
          free_message(msg);
          msg = next_msg;
       }
    }
 }
 
-int load_field_types(Protocol* prot, xmlNode const* root)
+int load_field_types(FIXProtocolDescr* prot, xmlNode const* root)
 {
    xmlNode const* field = get_first(get_first(root, "fields"), "field");
    while(field)
    {
       if (field->type == XML_ELEMENT_NODE && !strcmp(field->name, "field"))
       {
-         if (get_field_type_by_name(prot, field->name))
+         if (get_fix_field_type(prot, field->name))
          {
             set_fix_error(FIX_ERROR_DUPLICATE_FIELD_DESCR, "Field type '%s' already exists", field->name);
             return FIX_FAILED;
          }
-         FieldType* fld = (FieldType*)malloc(sizeof(FieldType));
+         FIXFieldType* fld = (FIXFieldType*)malloc(sizeof(FIXFieldType));
          fld->num = atoi(get_attr(field, "number"));
          char const* name = get_attr(field, "name");
          fld->name = (char*)malloc(strlen(name) + 1);
          strcpy(fld->name, name);
-         fld->type = string2FIXFieldType(get_attr(field, "type"));
+         fld->type = string2FIXFIXFieldType(get_attr(field, "type"));
          int idx = hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = prot->field_types[idx];
          prot->field_types[idx] = fld;
@@ -176,7 +214,7 @@ int load_field_types(Protocol* prot, xmlNode const* root)
    return FIX_SUCCESS;
 }
 
-int load_fields(FieldDescr** fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* root, Protocol const* prot)
+int load_fields(FIXFieldDescr** fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* root, FIXProtocolDescr const* prot)
 {
    xmlNode const* field = msg_node->children;
    while(field)
@@ -185,10 +223,10 @@ int load_fields(FieldDescr** fields, uint32_t* count, xmlNode const* msg_node, x
       {
          char const* name = get_attr(field, "name");
          char const* required = get_attr(field, "required");
-         *fields = realloc(*fields, ++(*count) * sizeof(FieldDescr));
-         FieldDescr* fld = &(*fields)[*count - 1];
-         memset(fld, 0, sizeof(FieldDescr));
-         fld->field_type = get_field_type_by_name(prot, name);
+         *fields = realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
+         FIXFieldDescr* fld = &(*fields)[*count - 1];
+         memset(fld, 0, sizeof(FIXFieldDescr));
+         fld->field_type = get_fix_field_type(prot, name);
          if (!fld->field_type)
          {
             return FIX_FAILED;
@@ -222,10 +260,10 @@ int load_fields(FieldDescr** fields, uint32_t* count, xmlNode const* msg_node, x
       {
          char const* name = get_attr(field, "name");
          char const* required = get_attr(field, "required");
-         *fields = realloc(*fields, ++(*count) * sizeof(FieldDescr));
-         FieldDescr* fld = &(*fields)[*count - 1];
-         memset(fld, 0, sizeof(FieldDescr));
-         fld->field_type = get_field_type_by_name(prot, name);
+         *fields = realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
+         FIXFieldDescr* fld = &(*fields)[*count - 1];
+         memset(fld, 0, sizeof(FIXFieldDescr));
+         fld->field_type = get_fix_field_type(prot, name);
          if (!fld->field_type)
          {
           return 0;
@@ -234,7 +272,7 @@ int load_fields(FieldDescr** fields, uint32_t* count, xmlNode const* msg_node, x
          {
           fld->flags |= FIELD_FLAG_REQUIRED;
          }
-         fld->group_index = calloc(FIELD_DESCR_CNT, sizeof(FieldDescr*));
+         fld->group_index = calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
          if (FIX_FAILED == load_fields(&fld->group, &fld->group_count, field, root, prot))
          {
           return 0;
@@ -245,11 +283,11 @@ int load_fields(FieldDescr** fields, uint32_t* count, xmlNode const* msg_node, x
    return FIX_SUCCESS;
 }
 
-void build_index(FieldDescr* fields, uint32_t field_count, FieldDescr** index)
+void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** index)
 {
    for(uint32_t i = 0; i < field_count; ++i)
    {
-      FieldDescr* fld = &fields[i];
+      FIXFieldDescr* fld = &fields[i];
       int idx = fld->field_type->num % FIELD_DESCR_CNT;
       fld->next = index[idx];
       index[idx] = fld;
@@ -260,9 +298,9 @@ void build_index(FieldDescr* fields, uint32_t field_count, FieldDescr** index)
    }
 }
 
-MessageDescr* load_message(xmlNode const* msg_node, xmlNode const* root, Protocol const* prot)
+FIXMessageDescr* load_message(xmlNode const* msg_node, xmlNode const* root, FIXProtocolDescr const* prot)
 {
-   MessageDescr* msg = (MessageDescr*)calloc(1, sizeof(MessageDescr));
+   FIXMessageDescr* msg = (FIXMessageDescr*)calloc(1, sizeof(FIXMessageDescr));
    char const* name = get_attr(msg_node, "name");
    msg->name = malloc(strlen(name) + 1);
    strcpy(msg->name, name);
@@ -273,17 +311,23 @@ MessageDescr* load_message(xmlNode const* msg_node, xmlNode const* root, Protoco
    {
       return NULL;
    }
-   msg->field_index = calloc(FIELD_DESCR_CNT, sizeof(FieldDescr*));
+   msg->field_index = calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
    build_index(msg->fields, msg->field_count, msg->field_index);
    return msg;
 }
 
-Protocol* protocol_init(char const* file)
+FIXProtocolDescr* fix_protocol_descr_init(char const* file)
 {
+   initLibXml();
    xmlDoc* doc = xmlParseFile(file);
    if (!doc)
    {
       set_fix_error(FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      return NULL;
+   }
+   if (xml_validate(doc) == FIX_FAILED)
+   {
+      xmlFreeDoc(doc);
       return NULL;
    }
    xmlNode* root = xmlDocGetRootElement(doc);
@@ -292,7 +336,7 @@ Protocol* protocol_init(char const* file)
       set_fix_error(FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
       return NULL;
    }
-   Protocol* prot = calloc(1, sizeof(Protocol));
+   FIXProtocolDescr* prot = calloc(1, sizeof(FIXProtocolDescr));
    prot->version = get_version(root);
    if (load_field_types(prot, root) == FIX_FAILED)
    {
@@ -304,7 +348,7 @@ Protocol* protocol_init(char const* file)
    {
       if (msg_node->type == XML_ELEMENT_NODE && !strcmp(msg_node->name, "message"))
       {
-         MessageDescr* msg = load_message(msg_node, root, prot);
+         FIXMessageDescr* msg = load_message(msg_node, root, prot);
          if (!msg)
          {
             free(prot);
@@ -316,16 +360,16 @@ Protocol* protocol_init(char const* file)
       }
       msg_node = msg_node->next;
    }
-   xmlFreeDoc(doc);
    if (protocols[prot->version])
    {
       free_protocol(protocols[prot->version]);
    }
    protocols[prot->version] = prot;
+   xmlFreeDoc(doc);
    return prot;
 }
 
-Protocol* get_protocol(FIXProtocolVer ver)
+FIXProtocolDescr* get_fix_protocol_descr(FIXProtocolVerEnum ver)
 {
    if (ver < 0 || ver >= FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT)
    {
@@ -343,10 +387,10 @@ void free_protocols()
    }
 }
 
-FieldType* get_field_type_by_name(Protocol const* prot, char const* name)
+FIXFieldType* get_fix_field_type(FIXProtocolDescr const* prot, char const* name)
 {
    int idx = hash_string(name) % FIELD_TYPE_CNT;
-   FieldType* fld = prot->field_types[idx];
+   FIXFieldType* fld = prot->field_types[idx];
    while(fld)
    {
       if (!strcmp(fld->name, name))
@@ -355,14 +399,14 @@ FieldType* get_field_type_by_name(Protocol const* prot, char const* name)
       }
       fld = fld->next;
    }
-   set_fix_error(FIX_ERROR_UNKNOWN_FIELD, "FieldType '%s' is unknown", name);
+   set_fix_error(FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
    return NULL;
 }
 
-MessageDescr* get_message_by_type(Protocol const* prot, char const* type)
+FIXMessageDescr* get_fix_message_descr(FIXProtocolDescr const* prot, char const* type)
 {
    int idx = hash_string(type) % MSG_CNT;
-   MessageDescr* msg = prot->messages[idx];
+   FIXMessageDescr* msg = prot->messages[idx];
    while(msg)
    {
       if (!strcmp(msg->type, type))
@@ -370,14 +414,14 @@ MessageDescr* get_message_by_type(Protocol const* prot, char const* type)
          return msg;
       }
    }
-   set_fix_error(FIX_ERROR_UNKNOWN_MSG, "MessageDescr with type '%s' not found", type);
+   set_fix_error(FIX_ERROR_UNKNOWN_MSG, "FIXMessageDescr with type '%s' not found", type);
    return NULL;
 }
 
-FieldDescr* get_field_descr_by_num(MessageDescr const* msg, uint32_t num)
+FIXFieldDescr* get_fix_field_descr(FIXMessageDescr const* msg, uint32_t num)
 {
    int idx = num % FIELD_DESCR_CNT;
-   FieldDescr* fld = msg->field_index[idx];
+   FIXFieldDescr* fld = msg->field_index[idx];
    while(fld)
    {
       if (fld->field_type->num == num)
@@ -389,10 +433,10 @@ FieldDescr* get_field_descr_by_num(MessageDescr const* msg, uint32_t num)
    return NULL;
 }
 
-FieldDescr* get_group_field_descr_by_num(FieldDescr const* field, uint32_t num)
+FIXFieldDescr* get_fix_group_field_descr(FIXFieldDescr const* field, uint32_t num)
 {
    int idx = num % FIELD_DESCR_CNT;
-   FieldDescr* fld = field->group_index[idx];
+   FIXFieldDescr* fld = field->group_index[idx];
    while(fld)
    {
       if (fld->field_type->num == num)
