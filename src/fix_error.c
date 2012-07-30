@@ -1,8 +1,8 @@
-/// @file   error.c
+/// @file   fix_error.c
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/24/2012 06:16:10 PM
 
-#include "error.h"
+#include "fix_error.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -12,7 +12,7 @@
 
 FIXError* err = 0;
 
-void free_error(FIXError* err)
+void free_fix_error(FIXError* err)
 {
    if (err && err->code)
    {
@@ -21,7 +21,7 @@ void free_error(FIXError* err)
    }
 }
 
-void init_error()
+void init_fix_error()
 {
    if (!err)
    {
@@ -31,23 +31,22 @@ void init_error()
 
 FIXError* get_fix_last_error()
 {
-   init_error();
+   init_fix_error();
    return err;
 }
 
 void reset_fix_error()
 {
-   free_error(err);
+   free_fix_error(err);
 }
 
-void set_fix_error(int code, char const* text, ...)
+void set_fix_va_error(int code, char const* text, va_list ap)
 {
-   init_error();
-   free_error(err);
+   init_fix_error();
+   free_fix_error(err);
    err->code = code;
 
    int size = 100;     /* Guess we need no more than 100 bytes. */
-   va_list ap;
 
    if ((err->text = malloc(size)) == NULL)
    {
@@ -56,10 +55,10 @@ void set_fix_error(int code, char const* text, ...)
 
    while (1)
    {
-      va_start(ap, text);
-      int n = vsnprintf(err->text, size, text, ap);
-      va_end(ap);
-
+      va_list ap1;
+      va_copy(ap1, ap);
+      int n = vsnprintf(err->text, size, text, ap1);
+      va_end(ap1);
       if (n > -1 && n < size)
       {
          return;
@@ -78,4 +77,12 @@ void set_fix_error(int code, char const* text, ...)
          assert(!"Unable to realloc for error.");
       }
   }
+}
+
+void set_fix_error(int code, char const* text, ...)
+{
+   va_list ap;
+   va_start(ap, text);
+   set_fix_va_error(code, text, ap);
+   va_end(ap);
 }
