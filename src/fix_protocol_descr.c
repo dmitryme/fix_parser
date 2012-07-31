@@ -84,9 +84,8 @@ xmlNode* get_first(xmlNode const* node, char const* name)
    return NULL;
 }
 
-FIXProtocolVerEnum get_version(xmlNode const* root)
+FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver)
 {
-   char const* ver = get_attr(root, "version");
    if (!strcmp(ver, "FIX42")) return FIX42;
    if (!strcmp(ver, "FIX44")) return FIX44;
    if (!strcmp(ver, "FIX50")) return FIX50;
@@ -94,6 +93,12 @@ FIXProtocolVerEnum get_version(xmlNode const* root)
    if (!strcmp(ver, "FIX50SP2")) return FIX50SP2;
    if (!strcmp(ver, "FIXT11")) return FIXT11;
    return FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT;
+}
+
+FIXProtocolVerEnum get_version(xmlNode const* root)
+{
+   char const* ver = get_attr(root, "version");
+   return str2FIXProtocolVerEnum(ver);
 }
 
 FIXFieldTypeEnum string2FIXFIXFieldType(char const* type)
