@@ -2,6 +2,9 @@
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/24/2012 06:16:10 PM
 
+#ifndef FIX_PARSER_FIX_ERROR_H
+#define FIX_PARSER_FIX_ERROR_H
+
 #define FIX_FAILED                     -1
 #define FIX_SUCCESS                     0
 #define FIX_ERROR_TAG_HAS_WRONG_TYPE    1
@@ -15,6 +18,8 @@
 #define FIX_ERROR_DUPLICATE_FIELD_DESCR 9
 #define FIX_ERROR_UNKNOWN_MSG          10
 #define FIX_ERROR_LIBXML               11
+#define FIX_ERROR_INVALID_ARGUMENT     12
+#define FIX_ERROR_MALLOC               13
 
 typedef struct FIXError_
 {
@@ -24,3 +29,5 @@ typedef struct FIXError_
 
 FIXError* get_fix_last_error();
 void reset_fix_error();
+
+#endif // FIX_PARSER_FIX_ERROR_H
