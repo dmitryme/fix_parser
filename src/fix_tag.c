@@ -15,7 +15,7 @@ struct FIXTagTable_
    FIXTag* fix_tags[TABLE_SIZE];
 };
 
-FIXTagTable* new_table()
+FIXTagTable* new_fix_table()
 {
    return (FIXTagTable*)calloc(1, sizeof(struct FIXTagTable_));
 }
@@ -23,16 +23,16 @@ FIXTagTable* new_table()
 FIXTag* free_fix_tag(FIXTag* fix_tag)
 {
    FIXTag* next = fix_tag->next;
-   if (fix_tag->type == FIXTagValue)
+   if (fix_tag->type == FIXTagType_Value)
    {
       free(fix_tag->value.data);
       free(fix_tag);
    }
-   else if (fix_tag->type == FIXTagGroup)
+   else if (fix_tag->type == FIXTagType_Group)
    {
       for(int i = 0; i < fix_tag->groups.size; ++i)
       {
-         free_table(fix_tag->groups.grpTbl[i]);
+         free_fix_table(fix_tag->groups.grpTbl[i]);
       }
       free(fix_tag->groups.grpTbl);
       free(fix_tag);
@@ -40,7 +40,7 @@ FIXTag* free_fix_tag(FIXTag* fix_tag)
    return next;
 }
 
-void free_table(FIXTagTable* tbl)
+void free_fix_table(FIXTagTable* tbl)
 {
    for(int i = 0; i < TABLE_SIZE; ++i)
    {
@@ -53,25 +53,25 @@ void free_table(FIXTagTable* tbl)
    free(tbl);
 }
 
-FIXTag* set_fix_tag(FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
+FIXTag* set_fix_table_tag(FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
-   FIXTag* fix_tag = get_fix_tag(tbl, tagNum);
+   FIXTag* fix_tag = get_fix_table_tag(tbl, tagNum);
    if (!fix_tag && get_fix_last_error()->code != FIX_ERROR_TAG_NOT_FOUND)
    {
-      return NULL;
+     return NULL;
    }
    if (!fix_tag)
    {
-      int idx = tagNum % TABLE_SIZE;
-      fix_tag = malloc(sizeof(FIXTag));
-      fix_tag->type = FIXTagValue;
-      fix_tag->next = tbl->fix_tags[idx];
-      fix_tag->num = tagNum;
-      tbl->fix_tags[idx] = fix_tag;
+     int idx = tagNum % TABLE_SIZE;
+     fix_tag = calloc(1, sizeof(FIXTag));
+     fix_tag->type = FIXTagType_Value;
+     fix_tag->next = tbl->fix_tags[idx];
+     fix_tag->num = tagNum;
+     tbl->fix_tags[idx] = fix_tag;
    }
    if (fix_tag->value.data)
    {
-      free(fix_tag->value.data);
+     free(fix_tag->value.data);
    }
    fix_tag->value.data = (unsigned char*)malloc(len);
    fix_tag->value.len = len;
@@ -79,7 +79,7 @@ FIXTag* set_fix_tag(FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data
    return fix_tag;
 }
 
-FIXTag* get_fix_tag(FIXTagTable* tbl, uint32_t tagNum)
+FIXTag* get_fix_table_tag(FIXTagTable* tbl, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
    FIXTag* it = tbl->fix_tags[idx];
@@ -87,7 +87,7 @@ FIXTag* get_fix_tag(FIXTagTable* tbl, uint32_t tagNum)
    {
       if (it->num == tagNum)
       {
-         if (it->type != FIXTagValue)
+         if (it->type != FIXTagType_Value)
          {
             set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
             return NULL;
@@ -103,7 +103,7 @@ FIXTag* get_fix_tag(FIXTagTable* tbl, uint32_t tagNum)
    return NULL;
 }
 
-int rm_fix_tag(FIXTagTable* tbl, uint32_t tagNum)
+int del_fix_table_tag(FIXTagTable* tbl, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
    FIXTag* fix_tag = tbl->fix_tags[idx];
@@ -137,10 +137,10 @@ int rm_fix_tag(FIXTagTable* tbl, uint32_t tagNum)
    return FIX_FAILED;
 }
 
-FIXTagTable* add_fix_group(FIXTagTable* tbl, uint32_t tagNum)
+FIXTagTable* add_fix_table_group(FIXTagTable* tbl, uint32_t tagNum)
 {
-   FIXTag* fix_tag = get_fix_tag(tbl, tagNum);
-   if (fix_tag && fix_tag->type != FIXTagGroup)
+   FIXTag* fix_tag = get_fix_table_tag(tbl, tagNum);
+   if (fix_tag && fix_tag->type != FIXTagType_Group)
    {
       set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return NULL;
@@ -149,18 +149,18 @@ FIXTagTable* add_fix_group(FIXTagTable* tbl, uint32_t tagNum)
    {
       uint32_t const idx = tagNum % TABLE_SIZE;
       fix_tag = calloc(1, sizeof(FIXTag));
-      fix_tag->type = FIXTagGroup;
+      fix_tag->type = FIXTagType_Group;
       fix_tag->num = tagNum;
       fix_tag->next = tbl->fix_tags[idx];
       tbl->fix_tags[idx] = fix_tag;
    }
    fix_tag->groups.size++;
    fix_tag->groups.grpTbl = realloc(fix_tag->groups.grpTbl, fix_tag->groups.size * sizeof(FIXTagTable*));
-   fix_tag->groups.grpTbl[fix_tag->groups.size - 1] = new_table();
+   fix_tag->groups.grpTbl[fix_tag->groups.size - 1] = new_fix_table();
    return fix_tag->groups.grpTbl[fix_tag->groups.size - 1];
 }
 
-FIXTagTable* get_fix_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
+FIXTagTable* get_fix_table_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
 {
    int const idx = tagNum % TABLE_SIZE;
    FIXTag* it = tbl->fix_tags[idx];
@@ -168,7 +168,7 @@ FIXTagTable* get_fix_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
    {
       if (it->num == tagNum)
       {
-         if (it->type != FIXTagGroup)
+         if (it->type != FIXTagType_Group)
          {
             set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
             return NULL;
@@ -189,19 +189,19 @@ FIXTagTable* get_fix_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
    return NULL;
 }
 
-int rm_fix_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
+int del_fix_table_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
 {
-   FIXTag* fix_tag = get_fix_tag(tbl, tagNum);
+   FIXTag* fix_tag = get_fix_table_tag(tbl, tagNum);
    if (!fix_tag)
    {
       return FIX_FAILED;
    }
-   if (fix_tag->type != FIXTagGroup)
+   if (fix_tag->type != FIXTagType_Group)
    {
       set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return FIX_FAILED;
    }
-   free_table(fix_tag->groups.grpTbl[grpIdx]);
+   free_fix_table(fix_tag->groups.grpTbl[grpIdx]);
    fix_tag->groups.size =-1;
    if (fix_tag->groups.size == grpIdx)
    {
