@@ -2,6 +2,9 @@
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/26/2012 04:14:35 PM
 
+#ifndef FIX_PARSER_FIX_UTILS_H
+#define FIX_PARSER_FIX_UTILS_H
+
 uint32_t hash_string(char const* s)
 {
     uint32_t hash = 0;
@@ -19,3 +22,5 @@ uint32_t hash_string(char const* s)
 
     return hash;
 }
+
+#endif // FIX_PARSER_FIX_UTILS_H
