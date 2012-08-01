@@ -21,13 +21,8 @@
 #define FIX_ERROR_INVALID_ARGUMENT     12
 #define FIX_ERROR_MALLOC               13
 
-typedef struct FIXError_
-{
-   int code;
-   char* text;
-} FIXError;
-
-FIXError* get_fix_last_error();
+int get_fix_error_code();
+char const* get_fix_error_text();
 void reset_fix_error();
 
 #endif // FIX_PARSER_FIX_ERROR_H
