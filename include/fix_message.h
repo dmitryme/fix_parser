@@ -11,14 +11,6 @@
 
 #define FIX_MESSAGE_FLAGS_VALIDATE 0x01
 
-typedef struct FIXTagTable_  FIXTagTable;
-typedef struct FIXMessageDescr_ FIXMessageDescr;
-typedef struct FIXProtocolDescr_ FIXProtocolDescr;
-typedef struct FIXTag_ FIXTag;
-typedef struct FIXMPool_ FIXMPool;
-
-typedef struct FIXMessage_ FIXMessage;
-
 FIXMessage* new_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t memSize, uint32_t flags);
 void free_fix_message(FIXMessage* msg);
 
