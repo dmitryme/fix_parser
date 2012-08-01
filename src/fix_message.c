@@ -6,6 +6,8 @@
 #include "fix_protocol_descr.h"
 #include "fix_tag.h"
 #include "fix_error.h"
+#include "fix_mpool.h"
+#include "fix_utils.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -14,12 +16,21 @@
 
 extern void set_fix_error(int, char const*, ...);
 
-FIXMessage* create_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t flags)
+typedef struct FIXMessage_
 {
+   FIXMPool* pool;
+   FIXMessageDescr* descr;
+   FIXTagTable* tags;
+   uint32_t flags;
+} FIXMessage;
+
+FIXMessage* new_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t memSize, uint32_t flags)
+{
+   reset_fix_error();
    FIXProtocolDescr* prot = get_fix_protocol_descr(ver);
    if (!prot)
    {
-      return NULL;
+     return NULL;
    }
    if (!msgType)
    {
@@ -27,23 +38,28 @@ FIXMessage* create_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint
       return NULL;
    }
    FIXMessage* msg = malloc(sizeof(FIXMessage));
-   msg->tags = new_fix_table(fix_mpool_init(1024));
+   msg->pool = new_fix_mpool(memSize);
+   msg->tags = new_fix_table(msg->pool);
    msg->descr = get_fix_message_descr(prot, msgType);
    msg->flags = flags;
    if (!msg->descr)
    {
-      return NULL;
+     free_fix_message(msg);
+     return NULL;
    }
    return msg;
 }
 
 void free_fix_message(FIXMessage* msg)
 {
-
+   free_fix_mpool(msg->pool);
+   free_fix_table(msg->tags);
+   free(msg);
 }
 
 FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
@@ -61,13 +77,14 @@ FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned cha
 
 FIXTag* set_tag_fmt(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char const* fmt, ...)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
       return NULL;
    }
 
-   int n, size = 100;
+   int n, size = 64;
    char *p, *np;
    va_list ap;
 
@@ -124,6 +141,7 @@ FIXTag* set_tag_fmt(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char con
 
 FIXTag* get_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
@@ -141,6 +159,7 @@ FIXTag* get_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 
 int del_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
@@ -158,6 +177,7 @@ int del_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 
 FIXTagTable* add_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
@@ -175,6 +195,7 @@ FIXTagTable* add_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 
 FIXTagTable* get_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpIdx)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
@@ -192,6 +213,7 @@ FIXTagTable* get_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint3
 
 int del_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpIdx)
 {
+   reset_fix_error();
    if (!msg)
    {
       set_fix_error(FIX_ERROR_INVALID_ARGUMENT, "Msg parameter is empty");
@@ -209,31 +231,87 @@ int del_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpId
 
 FIXTag* set_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char const* val)
 {
+   reset_fix_error();
+   FIXFieldDescr* fdescr = get_fix_field_descr(msg->descr, tagNum);
+   if (!fdescr)
+   {
+     return NULL;
+   }
+   if (!IS_STRING_TYPE(fdescr->field_type->type))
+   {
+     set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value.", tagNum);
+     return NULL;
+   }
    return set_tag(msg, grp, tagNum, val, strlen(val));
 }
 
 FIXTag* set_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long val)
 {
-   return set_tag_fmt(msg, grp, tagNum, "%ld", val);
+   reset_fix_error();
+   FIXFieldDescr* fdescr = get_fix_field_descr(msg->descr, tagNum);
+   if (!fdescr)
+   {
+     return NULL;
+   }
+   if (!IS_INT_TYPE(fdescr->field_type->type))
+   {
+     set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value.", tagNum);
+     return NULL;
+   }
+   return set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
 }
 
 FIXTag* set_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned long val)
 {
-   return set_tag_fmt(msg, grp, tagNum, "%lu", val);
+   reset_fix_error();
+   FIXFieldDescr* fdescr = get_fix_field_descr(msg->descr, tagNum);
+   if (!fdescr)
+   {
+     return NULL;
+   }
+   if (!IS_INT_TYPE(fdescr->field_type->type))
+   {
+     set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value.", tagNum);
+     return NULL;
+   }
+   return set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
 }
 
 FIXTag* set_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char val)
 {
-   return set_tag_fmt(msg, grp, tagNum, &val, 1);
+   reset_fix_error();
+   FIXFieldDescr* fdescr = get_fix_field_descr(msg->descr, tagNum);
+   if (!fdescr)
+   {
+     return NULL;
+   }
+   if (!IS_CHAR_TYPE(fdescr->field_type->type))
+   {
+     set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value.", tagNum);
+     return NULL;
+   }
+   return set_tag(msg, grp, tagNum, &val, 1);
 }
 
 FIXTag* set_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float val)
 {
-   return set_tag_fmt(msg, grp, tagNum, "%f", val);
+   reset_fix_error();
+   FIXFieldDescr* fdescr = get_fix_field_descr(msg->descr, tagNum);
+   if (!fdescr)
+   {
+     return NULL;
+   }
+   if (!IS_FLOAT_TYPE(fdescr->field_type->type))
+   {
+     set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value.", tagNum);
+     return NULL;
+   }
+   return set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
 }
 
 int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val)
 {
+   reset_fix_error();
    FIXTag* tag = NULL;
    if (grp)
    {
@@ -245,6 +323,7 @@ int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val)
    }
    if (!tag)
    {
+      set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
       return FIX_FAILED;
    }
    if (tag->type != FIXTagType_Value)
@@ -252,26 +331,106 @@ int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val)
       set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   /**val = strtol(tag->value.data, tag->value.data + tag->value.len, 10);*/
+   *val = *(long*)&tag->data;
    return FIX_SUCCESS;
 }
 int get_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned long* val)
 {
-   *val = 0;
+   reset_fix_error();
+   FIXTag* tag = NULL;
+   if (grp)
+   {
+      tag = get_fix_table_tag(grp, tagNum);
+   }
+   else
+   {
+      tag = get_fix_table_tag(msg->tags, tagNum);
+   }
+   if (!tag)
+   {
+      set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
+      return FIX_FAILED;
+   }
+   if (tag->type != FIXTagType_Value)
+   {
+      set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
+      return FIX_FAILED;
+   }
+   *val = *(unsigned long*)&tag->data;
    return FIX_SUCCESS;
 }
 int get_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float* val)
 {
-   *val = 0.0;
+   reset_fix_error();
+   FIXTag* tag = NULL;
+   if (grp)
+   {
+      tag = get_fix_table_tag(grp, tagNum);
+   }
+   else
+   {
+      tag = get_fix_table_tag(msg->tags, tagNum);
+   }
+   if (!tag)
+   {
+      set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
+      return FIX_FAILED;
+   }
+   if (tag->type != FIXTagType_Value)
+   {
+      set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
+      return FIX_FAILED;
+   }
+   *val = *(float*)&tag->data;
    return FIX_SUCCESS;
 }
 int get_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val)
 {
-   *val = 'A';
+   reset_fix_error();
+   FIXTag* tag = NULL;
+   if (grp)
+   {
+      tag = get_fix_table_tag(grp, tagNum);
+   }
+   else
+   {
+      tag = get_fix_table_tag(msg->tags, tagNum);
+   }
+   if (!tag)
+   {
+      set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
+      return FIX_FAILED;
+   }
+   if (tag->type != FIXTagType_Value)
+   {
+      set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
+      return FIX_FAILED;
+   }
+   *val = *(char*)&tag->data;
    return FIX_SUCCESS;
 }
-int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val)
+int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val, uint32_t len)
 {
-   *val = 0;
-   return FIX_SUCCESS;
+   reset_fix_error();
+   FIXTag* tag = NULL;
+   if (grp)
+   {
+      tag = get_fix_table_tag(grp, tagNum);
+   }
+   else
+   {
+      tag = get_fix_table_tag(msg->tags, tagNum);
+   }
+   if (!tag)
+   {
+      set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
+      return FIX_FAILED;
+   }
+   if (tag->type != FIXTagType_Value)
+   {
+      set_fix_error(FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
+      return FIX_FAILED;
+   }
+   strncpy(val, (char const*)&tag->data, len);
+   return tag->size;
 }
