@@ -53,7 +53,6 @@ FIXProtocolDescr* fix_protocol_descr_init(char const* file);
 FIXProtocolDescr* get_fix_protocol_descr(FIXProtocolVerEnum ver);
 void free_protocol_descr();
 
-FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
 FIXFieldType* get_fix_field_type(FIXProtocolDescr const* prot, char const* name);
 FIXMessageDescr* get_fix_message_descr(FIXProtocolDescr const* prot, char const* type);
 FIXFieldDescr* get_fix_field_descr(FIXMessageDescr const* msg, uint32_t num);
