@@ -56,4 +56,25 @@ typedef enum FIXFieldTypeEnum_
    FIXFieldType_Language             = 29
 } FIXFieldTypeEnum;
 
+#define IS_STRING_TYPE(type) \
+   (type == FIXFieldType_String || type == FIXFieldType_MultipleValueString || type == FIXFieldType_Country || \
+    type == FIXFieldType_Currency || type == FIXFieldType_Exchange || type == FIXFieldType_MonthYear || \
+    type == FIXFieldType_UTCTimestamp || type == FIXFieldType_UTCTimeOnly || type == FIXFieldType_UTCTimeOnly || \
+    type == FIXFieldType_UTCDateOnly || type == FIXFieldType_LocalMktDate || type == FIXFieldType_TZTimeOnly || \
+    type == FIXFieldType_TZTimestamp)
+
+#define IS_INT_TYPE(type) \
+   (type == FIXFieldType_Int || type == FIXFieldType_Length || type == FIXFieldType_NumInGroup || type == FIXFieldType_SeqNum || \
+    type == FIXFieldType_TagNum || type == FIXFieldType_DayOfMonth)
+
+#define IS_FLOAT_TYPE(type) \
+   (type == FIXFieldType_Float || type == FIXFieldType_Qty || type == FIXFieldType_Price || type == FIXFieldType_PriceOffset || \
+    type == FIXFieldType_Amt || type == FIXFieldType_Percentage)
+
+#define IS_CHAR_TYPE(type) \
+   (type == FIXFieldType_Char || type == FIXFieldType_Boolean)
+
+FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
+FIXFieldTypeEnum str2FIXFIXFieldType(char const* type);
+
 #endif // FIX_PARSER_FIX_TYPES_H
