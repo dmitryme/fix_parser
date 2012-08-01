@@ -17,12 +17,12 @@ typedef struct Page_
    char data[1];
 } Page;
 
-typedef struct FIXMPool_
+struct FIXMPool_
 {
    uint32_t page_size;
    Page* pages;
    Page* curr_page;
-} FIXMPool;
+};
 
 Page* alloc_page(uint32_t size)
 {
