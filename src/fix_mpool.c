@@ -3,8 +3,26 @@
 /// @date   Created on: 07/31/2012 04:31:55 PM
 
 #include "fix_mpool.h"
+#include "fix_utils.h"
 
 #include <stdlib.h>
+
+#define DEF_FIX_MPOOL_SIZE 512
+
+typedef struct Page_
+{
+   uint32_t size;
+   uint32_t offset;
+   struct Page_* next;
+   char data[1];
+} Page;
+
+typedef struct FIXMPool_
+{
+   uint32_t page_size;
+   Page* pages;
+   Page* curr_page;
+} FIXMPool;
 
 Page* alloc_page(uint32_t size)
 {
@@ -15,16 +33,16 @@ Page* alloc_page(uint32_t size)
    return p;
 }
 
-FIXMPool* fix_mpool_init(uint32_t initSize)
+FIXMPool* new_fix_mpool(uint32_t initSize)
 {
    FIXMPool* pool = malloc(sizeof(FIXMPool));
-   pool->pages = alloc_page(initSize);
+   pool->pages = alloc_page(!initSize ? DEF_FIX_MPOOL_SIZE : initSize);
    pool->curr_page = pool->pages;
    pool->page_size = initSize;
    return pool;
 }
 
-void fix_mpool_free(FIXMPool* pool)
+void free_fix_mpool(FIXMPool* pool)
 {
    Page* page = pool->pages;
    while(page)
@@ -65,4 +83,4 @@ void* fix_mpool_realloc(FIXMPool* pool, void* ptr, uint32_t size)
    {
       return fix_mpool_alloc(pool, size);
    }
-}+
+}
