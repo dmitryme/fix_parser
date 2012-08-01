@@ -16,13 +16,13 @@
 
 extern void set_fix_error(int, char const*, ...);
 
-typedef struct FIXMessage_
+struct FIXMessage_
 {
    FIXMPool* pool;
    FIXMessageDescr* descr;
    FIXTagTable* tags;
    uint32_t flags;
-} FIXMessage;
+};
 
 FIXMessage* new_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t memSize, uint32_t flags)
 {
