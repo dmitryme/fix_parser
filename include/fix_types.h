@@ -5,6 +5,10 @@
 #ifndef FIX_PARSER_FIX_TYPES_H
 #define FIX_PARSER_FIX_TYPES_H
 
+typedef struct FIXTagTable_  FIXTagTable;
+typedef struct FIXTag_ FIXTag;
+typedef struct FIXMessage_ FIXMessage;
+
 typedef enum FIXTagType_
 {
    FIXTagType_Value = 1,
