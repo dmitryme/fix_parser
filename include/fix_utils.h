@@ -5,7 +5,10 @@
 #ifndef FIX_PARSER_FIX_UTILS_H
 #define FIX_PARSER_FIX_UTILS_H
 
-uint32_t hash_string(char const* s)
+#define LIKE(x)    __builtin_expect(!!(x), 1)
+#define UNLIKE(x)  __builtin_expect(!!(x), 0)
+
+static uint32_t hash_string(char const* s)
 {
     uint32_t hash = 0;
 
