@@ -11,9 +11,7 @@
 
 #define TABLE_SIZE 64
 
-typedef struct FIXTagTable_ FIXTagTable;
-
-typedef struct FIXTag_
+struct FIXTag_
 {
    uint32_t num;
    FIXTagType type;
@@ -24,7 +22,7 @@ typedef struct FIXTag_
       FIXTagTable** grpTbl;
       unsigned char data[1];
    };
-} __attribute__((packed)) FIXTag;
+} __attribute__((packed));
 
 FIXTagTable* new_fix_table();
 void free_fix_table(FIXTagTable* tbl);
