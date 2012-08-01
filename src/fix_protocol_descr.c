@@ -5,6 +5,7 @@
 #include "fix_protocol_descr.h"
 #include "fix_error.h"
 #include "fix_utils.h"
+#include "fix_types.h"
 
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
@@ -84,55 +85,10 @@ xmlNode* get_first(xmlNode const* node, char const* name)
    return NULL;
 }
 
-FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver)
-{
-   if (!strcmp(ver, "FIX42")) return FIX42;
-   if (!strcmp(ver, "FIX44")) return FIX44;
-   if (!strcmp(ver, "FIX50")) return FIX50;
-   if (!strcmp(ver, "FIX50SP1")) return FIX50SP1;
-   if (!strcmp(ver, "FIX50SP2")) return FIX50SP2;
-   if (!strcmp(ver, "FIXT11")) return FIXT11;
-   return FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT;
-}
-
 FIXProtocolVerEnum get_version(xmlNode const* root)
 {
    char const* ver = get_attr(root, "version");
    return str2FIXProtocolVerEnum(ver);
-}
-
-FIXFieldTypeEnum string2FIXFIXFieldType(char const* type)
-{
-   if (!strcmp(type, "Int"))           { return FIXFieldType_Int; }
-   if (!strcmp(type, "Length"))        { return FIXFieldType_Length; }
-   if (!strcmp(type, "NumInGroup"))    { return FIXFieldType_NumInGroup; }
-   if (!strcmp(type, "SeqNum"))        { return FIXFieldType_SeqNum; }
-   if (!strcmp(type, "TagNum"))        { return FIXFieldType_TagNum; }
-   if (!strcmp(type, "DayOfMonth"))    { return FIXFieldType_DayOfMonth; }
-   if (!strcmp(type, "Float"))         { return FIXFieldType_Float; }
-   if (!strcmp(type, "Qty"))           { return FIXFieldType_Qty; }
-   if (!strcmp(type, "Price"))         { return FIXFieldType_Price; }
-   if (!strcmp(type, "PriceOffset"))   { return FIXFieldType_PriceOffset; }
-   if (!strcmp(type, "Amt"))           { return FIXFieldType_Amt; }
-   if (!strcmp(type, "Percentage"))    { return FIXFieldType_Percentage; }
-   if (!strcmp(type, "Char"))          { return FIXFieldType_Char; }
-   if (!strcmp(type, "Boolean"))       { return FIXFieldType_Boolean; }
-   if (!strcmp(type, "String"))        { return FIXFieldType_String; }
-   if (!strcmp(type, "MultipleValueString")) { return FIXFieldType_MultipleValueString; }
-   if (!strcmp(type, "Country"))       { return FIXFieldType_Country; }
-   if (!strcmp(type, "Currency"))      { return FIXFieldType_Currency; }
-   if (!strcmp(type, "Exchange"))      { return FIXFieldType_Exchange; }
-   if (!strcmp(type, "MonthYear"))     { return FIXFieldType_MonthYear; }
-   if (!strcmp(type, "UTCTimestamp"))  { return FIXFieldType_UTCTimestamp; }
-   if (!strcmp(type, "UTCTimeOnly"))   { return FIXFieldType_UTCTimeOnly; }
-   if (!strcmp(type, "UTCDateOnly"))   { return FIXFieldType_UTCDateOnly; }
-   if (!strcmp(type, "LocalMktDate"))  { return FIXFieldType_LocalMktDate; }
-   if (!strcmp(type, "Data"))          { return FIXFieldType_Data; }
-   if (!strcmp(type, "TZTimeOnly"))    { return FIXFieldType_TZTimeOnly; }
-   if (!strcmp(type, "TZTimestamp"))   { return FIXFieldType_TZTimestamp; }
-   if (!strcmp(type, "XMLData"))       { return FIXFieldType_XMLData; }
-   if (!strcmp(type, "Language"))      { return FIXFieldType_Language; }
-   return FIXFieldType_Unknown;
 }
 
 void free_field_descr(FIXFieldDescr* fd)
@@ -209,7 +165,7 @@ int load_field_types(FIXProtocolDescr* prot, xmlNode const* root)
          char const* name = get_attr(field, "name");
          fld->name = (char*)malloc(strlen(name) + 1);
          strcpy(fld->name, name);
-         fld->type = string2FIXFIXFieldType(get_attr(field, "type"));
+         fld->type = str2FIXFIXFieldType(get_attr(field, "type"));
          int idx = hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = prot->field_types[idx];
          prot->field_types[idx] = fld;
@@ -418,6 +374,7 @@ FIXMessageDescr* get_fix_message_descr(FIXProtocolDescr const* prot, char const*
       {
          return msg;
       }
+      msg = msg->next;
    }
    set_fix_error(FIX_ERROR_UNKNOWN_MSG, "FIXMessageDescr with type '%s' not found", type);
    return NULL;
@@ -433,6 +390,7 @@ FIXFieldDescr* get_fix_field_descr(FIXMessageDescr const* msg, uint32_t num)
       {
          return fld;
       }
+      fld = fld->next;
    }
    set_fix_error(FIX_ERROR_UNKNOWN_FIELD, "Field with num %d not found in message '%s'", num, msg->name);
    return NULL;
@@ -448,6 +406,7 @@ FIXFieldDescr* get_fix_group_field_descr(FIXFieldDescr const* field, uint32_t nu
       {
          return fld;
       }
+      fld = fld->next;
    }
    set_fix_error(FIX_ERROR_UNKNOWN_FIELD, "Field with num %d not found in group '%s'", num, field->field_type->name);
    return NULL;
