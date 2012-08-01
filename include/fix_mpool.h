@@ -15,15 +15,16 @@ typedef struct Page_
    char data[1];
 } Page;
 
-typedef struct FIXMpool_
+typedef struct FIXMPool_
 {
    uint32_t page_size;
    Page* pages;
    Page* curr_page;
 } FIXMPool;
 
-FIXMPool* fix_mpool_init(uint32_t initSize);
+FIXMPool* new_fix_mpool(uint32_t initSize);
 void* fix_mpool_alloc(FIXMPool* pool, uint32_t size);
-void fix_mpool_free(FIXMPool* pool);
+void* fix_mpool_realloc(FIXMPool* pool, void* ptr, uint32_t size);
+void free_fix_mpool(FIXMPool* pool);
 
 #endif // FIX_PARSER_FIX_MPOOL_H
