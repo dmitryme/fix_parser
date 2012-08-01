@@ -7,20 +7,7 @@
 
 #include <stdint.h>
 
-typedef struct Page_
-{
-   uint32_t size;
-   uint32_t offset;
-   struct Page_* next;
-   char data[1];
-} Page;
-
-typedef struct FIXMPool_
-{
-   uint32_t page_size;
-   Page* pages;
-   Page* curr_page;
-} FIXMPool;
+typedef struct FIXMPool_ FIXMPool;
 
 FIXMPool* new_fix_mpool(uint32_t initSize);
 void* fix_mpool_alloc(FIXMPool* pool, uint32_t size);
