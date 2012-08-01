@@ -10,73 +10,37 @@
 #include <string.h>
 #include <stdio.h>
 
-FIXError* err = 0;
+#define ERROR_TXT_SIZE 1024
 
-void free_fix_error(FIXError* err)
+typedef struct FIXError_
 {
-   if (err && err->code)
-   {
-      free(err->text);
-      err->code = 0;
-   }
+   int code;
+   char text[ERROR_TXT_SIZE];
+} FIXError;
+
+FIXError error;
+
+int get_fix_error_code()
+{
+   return error.code;
 }
 
-void init_fix_error()
+char const* get_fix_error_text()
 {
-   if (!err)
-   {
-      err = calloc(1, sizeof(FIXError));
-   }
-}
-
-FIXError* get_fix_last_error()
-{
-   init_fix_error();
-   return err;
+   return error.text;
 }
 
 void reset_fix_error()
 {
-   free_fix_error(err);
+   error.code = 0;
+   error.text[0] = 0;
 }
 
 void set_fix_va_error(int code, char const* text, va_list ap)
 {
-   init_fix_error();
-   free_fix_error(err);
-   err->code = code;
-
-   int size = 100;     /* Guess we need no more than 100 bytes. */
-
-   if ((err->text = malloc(size)) == NULL)
-   {
-      assert(!"Unable to allocate for error");
-   }
-
-   while (1)
-   {
-      va_list ap1;
-      va_copy(ap1, ap);
-      int n = vsnprintf(err->text, size, text, ap1);
-      va_end(ap1);
-      if (n > -1 && n < size)
-      {
-         return;
-      }
-      else if (n >= size)
-      {
-         size *= 2;
-      }
-      else if (n == -1)
-      {
-         assert(!"set_fix_error failed");
-      }
-
-      if ((err->text = realloc (err->text, size)) == NULL)
-      {
-         assert(!"Unable to realloc for error.");
-      }
-  }
+   error.code = code;
+   int n = vsnprintf(error.text, ERROR_TXT_SIZE, text, ap);
+   error.text[n - 1] = 0;
 }
 
 void set_fix_error(int code, char const* text, ...)
