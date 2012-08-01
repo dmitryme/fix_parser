@@ -17,21 +17,14 @@ typedef struct FIXTag_
 {
    uint32_t num;
    FIXTagType type;
+   uint32_t size;
+   struct FIXTag_* next;
    union
    {
-      struct
-      {
-         unsigned char* data;
-         uint32_t len;
-      } value;
-      struct
-      {
-         uint32_t size;
-         FIXTagTable** grpTbl;
-      } groups;
+      FIXTagTable** grpTbl;
+      unsigned char data[1];
    };
-   struct FIXTag_* next;
-} FIXTag;
+} __attribute__((packed)) FIXTag;
 
 FIXTagTable* new_fix_table();
 void free_fix_table(FIXTagTable* tbl);
