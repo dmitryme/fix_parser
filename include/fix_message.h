@@ -15,15 +15,17 @@ typedef struct FIXTagTable_  FIXTagTable;
 typedef struct FIXMessageDescr_ FIXMessageDescr;
 typedef struct FIXProtocolDescr_ FIXProtocolDescr;
 typedef struct FIXTag_ FIXTag;
+typedef struct FIXMPool_ FIXMPool;
 
 typedef struct FIXMessage_
 {
+   FIXMPool* pool;
    FIXMessageDescr* descr;
    FIXTagTable* tags;
    uint32_t flags;
 } FIXMessage;
 
-FIXMessage* create_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t flags);
+FIXMessage* new_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t memSize, uint32_t flags);
 void free_fix_message(FIXMessage* msg);
 
 FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
@@ -45,6 +47,6 @@ int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val);
 int get_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned long* val);
 int get_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float* val);
 int get_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val);
-int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val);
+int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val, uint32_t len);
 
 #endif // FIX_PARSER_FIX_MESSAGE_H
