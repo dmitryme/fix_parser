@@ -17,13 +17,7 @@ typedef struct FIXProtocolDescr_ FIXProtocolDescr;
 typedef struct FIXTag_ FIXTag;
 typedef struct FIXMPool_ FIXMPool;
 
-typedef struct FIXMessage_
-{
-   FIXMPool* pool;
-   FIXMessageDescr* descr;
-   FIXTagTable* tags;
-   uint32_t flags;
-} FIXMessage;
+typedef struct FIXMessage_ FIXMessage;
 
 FIXMessage* new_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t memSize, uint32_t flags);
 void free_fix_message(FIXMessage* msg);
