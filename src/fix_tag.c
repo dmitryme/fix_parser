@@ -62,6 +62,10 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, un
    if (!fix_tag)
    {
       fix_tag = fix_message_alloc(msg, sizeof(FIXTag) - 1 + len);
+      if (!fix_tag)
+      {
+         return NULL;
+      }
       fix_tag->type = FIXTagType_Value;
       fix_tag->next = tbl->fix_tags[idx];
       fix_tag->num = tagNum;
@@ -70,6 +74,10 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, un
    else
    {
       FIXTag* new_fix_tag = fix_message_realloc(msg, fix_tag, sizeof(FIXTag) + len - 1);
+      if (!new_fix_tag)
+      {
+         return NULL;
+      }
       new_fix_tag->type = FIXTagType_Value;
       new_fix_tag->next = fix_tag->next;
       new_fix_tag->num = fix_tag->num;

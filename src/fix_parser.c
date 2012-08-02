@@ -25,11 +25,12 @@ struct FIXParser_
    FIXPage* page;
    FIXPage* free_page;
    uint32_t num_pages;
+   uint32_t max_pages;
    uint32_t page_size;
 };
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t flags)
+FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t maxPages, uint32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
@@ -43,6 +44,7 @@ FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t flags)
       parser->free_page = page;
    }
    parser->num_pages = numPages;
+   parser->max_pages = maxPages;
    return parser;
 }
 
@@ -60,34 +62,6 @@ void free_fix_parser(FIXParser* parser)
       }
       free(parser);
    }
-}
-
-//------------------------------------------------------------------------------------------------------------------------//
-FIXPage* fix_parser_get_page(FIXParser* parser)
-{
-   FIXPage* page = NULL;
-   if (parser->free_page == NULL) // no mode free pages
-   {
-      page = calloc(1, sizeof(FIXPage) + parser->page_size - 1);
-      page->size = parser->page_size;
-      parser->free_page = page;
-      ++parser->num_pages;
-   }
-   else
-   {
-      page = parser->free_page;
-      parser->free_page = page->next;
-      page->next = NULL; // detach from pool
-   }
-   return page;
-}
-
-//------------------------------------------------------------------------------------------------------------------------//
-void fix_parser_free_page(FIXParser* parser, FIXPage* page)
-{
-   page->offset = 0;
-   page->next = parser->free_page;
-   parser->free_page = page;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
@@ -142,6 +116,41 @@ void reset_fix_error(FIXParser* parser)
 {
    parser->err_code = 0;
    parser->err_text[0] = 0;
+}
+
+
+//------------------------------------------------------------------------------------------------------------------------//
+FIXPage* fix_parser_get_page(FIXParser* parser)
+{
+   if (parser->max_pages > 0 && parser->max_pages == parser->num_pages)
+   {
+      set_fix_error(parser,
+            FIX_ERROR_NO_MORE_PAGES, "No more pages available. MaxPages = %d, NumPages = %d", parser->max_pages, parser->num_pages);
+      return NULL;
+   }
+   FIXPage* page = NULL;
+   if (parser->free_page == NULL) // no mode free pages
+   {
+      page = calloc(1, sizeof(FIXPage) + parser->page_size - 1);
+      page->size = parser->page_size;
+      parser->free_page = page;
+      ++parser->num_pages;
+   }
+   else
+   {
+      page = parser->free_page;
+      parser->free_page = page->next;
+      page->next = NULL; // detach from pool
+   }
+   return page;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void fix_parser_free_page(FIXParser* parser, FIXPage* page)
+{
+   page->offset = 0;
+   page->next = parser->free_page;
+   parser->free_page = page;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//

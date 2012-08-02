@@ -5,7 +5,7 @@
 
 int main()
 {
-   FIXParser* parser = new_fix_parser(512, 1000, FIX_PARSER_FLAGS_VALIDATE);
+   FIXParser* parser = new_fix_parser(512, 1000, 0, FIX_PARSER_FLAGS_VALIDATE);
    int res = fix_protocol_init(parser, "fix44.xml");
    if (res == FIX_FAILED)
    {
@@ -17,7 +17,7 @@ int main()
 
    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
-   for(int i = 0; i < 1000000; ++i)
+   for(int i = 0; i < 10000; ++i)
    {
       FIXMessage* msg = new_fix_message(parser, FIX44, "8");
       if (!msg)
