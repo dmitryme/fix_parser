@@ -6,7 +6,6 @@
 #include "fix_parser.h"
 #include "fix_protocol_descr.h"
 #include "fix_tag.h"
-#include "fix_mpool.h"
 #include "fix_types.h"
 #include "fix_page.h"
 
