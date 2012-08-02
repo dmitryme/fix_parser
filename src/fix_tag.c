@@ -1,52 +1,225 @@
-/// @file   fix_types.c
+/// @file   fix_fix_tag.c
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 08/01/2012 01:53:57 PM
+/// @date   Created on: 07/25/2012 03:35:31 PM
 
-#include "fix_types.h"
+#include "fix_tag.h"
+#include "fix_mpool.h"
+#include "fix_parser.h"
 
-#include "string.h"
+#include <stdlib.h>
+#include <string.h>
 
-FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver)
+extern void set_fix_error(FIXParser*, int, char const*, ...);
+
+struct FIXTagTable_
 {
-   if (!strcmp(ver, "FIX42")) return FIX42;
-   if (!strcmp(ver, "FIX44")) return FIX44;
-   if (!strcmp(ver, "FIX50")) return FIX50;
-   if (!strcmp(ver, "FIX50SP1")) return FIX50SP1;
-   if (!strcmp(ver, "FIX50SP2")) return FIX50SP2;
-   if (!strcmp(ver, "FIXT11")) return FIXT11;
-   return FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT;
+   FIXTag* fix_tags[TABLE_SIZE];
+} __attribute__((packed));
+
+FIXTagTable* new_fix_table()
+{
+   return calloc(1, sizeof(struct FIXTagTable_));
 }
 
-FIXFieldTypeEnum str2FIXFIXFieldType(char const* type)
+FIXTag* free_fix_tag(FIXTag* fix_tag)
 {
-   if (!strcmp(type, "Int"))           { return FIXFieldType_Int; }
-   if (!strcmp(type, "Length"))        { return FIXFieldType_Length; }
-   if (!strcmp(type, "NumInGroup"))    { return FIXFieldType_NumInGroup; }
-   if (!strcmp(type, "SeqNum"))        { return FIXFieldType_SeqNum; }
-   if (!strcmp(type, "TagNum"))        { return FIXFieldType_TagNum; }
-   if (!strcmp(type, "DayOfMonth"))    { return FIXFieldType_DayOfMonth; }
-   if (!strcmp(type, "Float"))         { return FIXFieldType_Float; }
-   if (!strcmp(type, "Qty"))           { return FIXFieldType_Qty; }
-   if (!strcmp(type, "Price"))         { return FIXFieldType_Price; }
-   if (!strcmp(type, "PriceOffset"))   { return FIXFieldType_PriceOffset; }
-   if (!strcmp(type, "Amt"))           { return FIXFieldType_Amt; }
-   if (!strcmp(type, "Percentage"))    { return FIXFieldType_Percentage; }
-   if (!strcmp(type, "Char"))          { return FIXFieldType_Char; }
-   if (!strcmp(type, "Boolean"))       { return FIXFieldType_Boolean; }
-   if (!strcmp(type, "String"))        { return FIXFieldType_String; }
-   if (!strcmp(type, "MultipleValueString")) { return FIXFieldType_MultipleValueString; }
-   if (!strcmp(type, "Country"))       { return FIXFieldType_Country; }
-   if (!strcmp(type, "Currency"))      { return FIXFieldType_Currency; }
-   if (!strcmp(type, "Exchange"))      { return FIXFieldType_Exchange; }
-   if (!strcmp(type, "MonthYear"))     { return FIXFieldType_MonthYear; }
-   if (!strcmp(type, "UTCTimestamp"))  { return FIXFieldType_UTCTimestamp; }
-   if (!strcmp(type, "UTCTimeOnly"))   { return FIXFieldType_UTCTimeOnly; }
-   if (!strcmp(type, "UTCDateOnly"))   { return FIXFieldType_UTCDateOnly; }
-   if (!strcmp(type, "LocalMktDate"))  { return FIXFieldType_LocalMktDate; }
-   if (!strcmp(type, "Data"))          { return FIXFieldType_Data; }
-   if (!strcmp(type, "TZTimeOnly"))    { return FIXFieldType_TZTimeOnly; }
-   if (!strcmp(type, "TZTimestamp"))   { return FIXFieldType_TZTimestamp; }
-   if (!strcmp(type, "XMLData"))       { return FIXFieldType_XMLData; }
-   if (!strcmp(type, "Language"))      { return FIXFieldType_Language; }
-   return FIXFieldType_Unknown;
+   FIXTag* next = fix_tag->next;
+   if (fix_tag->type == FIXTagType_Group)
+   {
+      for(int i = 0; i < fix_tag->size; ++i)
+      {
+         free_fix_table(fix_tag->grpTbl[i]);
+      }
+      free(fix_tag->grpTbl);
+      free(fix_tag);
+   }
+   return next;
+}
+
+void free_fix_table(FIXTagTable* tbl)
+{
+   for(int i = 0; i < TABLE_SIZE; ++i)
+   {
+      FIXTag* fix_tag = tbl->fix_tags[i];
+      while(fix_tag)
+      {
+         fix_tag = free_fix_tag(fix_tag);
+      }
+   }
+   free(tbl);
+}
+
+FIXTag* set_fix_table_tag(FIXParser* parser, FIXMPool* pool, FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
+{
+   FIXTag* fix_tag = get_fix_table_tag(parser, tbl, tagNum);
+   if (!fix_tag && get_fix_error_code(parser))
+   {
+      return NULL;
+   }
+   int idx = tagNum % TABLE_SIZE;
+   if (!fix_tag)
+   {
+      fix_tag = fix_mpool_alloc(pool, sizeof(FIXTag) - 1 + len);
+      fix_tag->type = FIXTagType_Value;
+      fix_tag->next = tbl->fix_tags[idx];
+      fix_tag->num = tagNum;
+      tbl->fix_tags[idx] = fix_tag;
+   }
+   else
+   {
+      FIXTag* new_fix_tag = fix_mpool_realloc(pool, fix_tag, sizeof(FIXTag) + len - 1);
+      new_fix_tag->type = FIXTagType_Value;
+      new_fix_tag->next = fix_tag->next;
+      new_fix_tag->num = fix_tag->num;
+      FIXTag** it = &tbl->fix_tags[idx];
+      while(*it != fix_tag)
+      {
+         if (*it == fix_tag)
+         {
+            *it = new_fix_tag;
+         }
+         else
+         {
+            it = &(*it)->next;
+         }
+      }
+      fix_tag = new_fix_tag;
+   }
+   fix_tag->size = len;
+   memcpy(&fix_tag->data, data, len);
+   return fix_tag;
+}
+
+FIXTag* get_fix_table_tag(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum)
+{
+   uint32_t const idx = tagNum % TABLE_SIZE;
+   FIXTag* it = tbl->fix_tags[idx];
+   while(it)
+   {
+      if (it->num == tagNum)
+      {
+         if (it->type != FIXTagType_Value)
+         {
+           set_fix_error(parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+           return NULL;
+         }
+         return it;
+      }
+      else
+      {
+         it = it->next;
+      }
+   }
+   return NULL;
+}
+
+int del_fix_table_tag(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum)
+{
+   uint32_t const idx = tagNum % TABLE_SIZE;
+   FIXTag* fix_tag = tbl->fix_tags[idx];
+   FIXTag* prev = fix_tag;
+   while(fix_tag)
+   {
+      if (fix_tag->num == tagNum)
+      {
+         if (prev == fix_tag)
+         {
+            free_fix_tag(fix_tag);
+            tbl->fix_tags[idx] = NULL;
+         }
+         else
+         {
+            prev->next = free_fix_tag(fix_tag);
+         }
+         return FIX_SUCCESS;
+      }
+      if (prev == fix_tag)
+      {
+         fix_tag = fix_tag->next;
+      }
+      else
+      {
+         prev = fix_tag;
+         fix_tag = fix_tag->next;
+      }
+   }
+   set_fix_error(parser, FIX_ERROR_TAG_NOT_FOUND, "FIXTag not found");
+   return FIX_FAILED;
+}
+
+FIXTagTable* add_fix_table_group(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum)
+{
+   FIXTag* fix_tag = get_fix_table_tag(parser, tbl, tagNum);
+   if (fix_tag && fix_tag->type != FIXTagType_Group)
+   {
+      set_fix_error(parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+      return NULL;
+   }
+   if (!fix_tag)
+   {
+      uint32_t const idx = tagNum % TABLE_SIZE;
+      fix_tag = calloc(1, sizeof(FIXTag));
+      fix_tag->type = FIXTagType_Group;
+      fix_tag->num = tagNum;
+      fix_tag->next = tbl->fix_tags[idx];
+      tbl->fix_tags[idx] = fix_tag;
+   }
+   fix_tag->size++;
+   fix_tag->grpTbl = realloc(fix_tag->grpTbl, fix_tag->size * sizeof(FIXTagTable*));
+   fix_tag->grpTbl[fix_tag->size - 1] = new_fix_table();
+   return fix_tag->grpTbl[fix_tag->size - 1];
+}
+
+FIXTagTable* get_fix_table_group(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
+{
+   int const idx = tagNum % TABLE_SIZE;
+   FIXTag* it = tbl->fix_tags[idx];
+   while(it)
+   {
+      if (it->num == tagNum)
+      {
+         if (it->type != FIXTagType_Group)
+         {
+            set_fix_error(parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+            return NULL;
+         }
+         if (grpIdx >= it->size)
+         {
+            set_fix_error(parser, FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
+            return NULL;
+         }
+         return it->grpTbl[grpIdx];
+      }
+      else
+      {
+         it = it->next;
+      }
+   }
+   return NULL;
+}
+
+int del_fix_table_group(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
+{
+   FIXTag* fix_tag = get_fix_table_tag(parser, tbl, tagNum);
+   if (!fix_tag)
+   {
+      return FIX_FAILED;
+   }
+   if (fix_tag->type != FIXTagType_Group)
+   {
+      set_fix_error(parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+      return FIX_FAILED;
+   }
+   free_fix_table(fix_tag->grpTbl[grpIdx]);
+   fix_tag->size =-1;
+   if (fix_tag->size == grpIdx)
+   {
+      fix_tag->grpTbl[fix_tag->size] = NULL;
+   }
+   else
+   {
+      memcpy(&fix_tag->grpTbl[grpIdx], fix_tag->grpTbl[grpIdx + 1], fix_tag->size - grpIdx);
+      fix_tag->grpTbl[fix_tag->size] = NULL;
+   }
+   return FIX_SUCCESS;
 }
