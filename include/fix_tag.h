@@ -6,7 +6,6 @@
 #define FIX_PARSER_FIX_TAG_H
 
 #include "fix_types.h"
-#include "fix_mpool.h"
 
 #include <stdint.h>
 
