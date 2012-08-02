@@ -5,10 +5,11 @@
 
 int main()
 {
-   int res = fix_protocol_init("fix44.xml");
+   FIXParser* parser = new_fix_parser(FIX_PARSER_FLAGS_VALIDATE);
+   int res = fix_protocol_init(parser, "fix44.xml");
    if (res == FIX_FAILED)
    {
-      printf("ERROR: %s\n", get_fix_error_text());
+      printf("ERROR: %s\n", get_fix_error_text(parser));
       return 1;
    }
 
@@ -16,12 +17,12 @@ int main()
 
    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
-   for(int i = 0; i < 100000; ++i)
+   for(int i = 0; i < 10000; ++i)
    {
-      FIXMessage* msg = new_fix_message(FIX44, "8", 0, 0);
+      FIXMessage* msg = new_fix_message(parser, FIX44, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_error_text());
+         printf("ERROR: %s\n", get_fix_error_text(parser));
          return 1;
       }
 
