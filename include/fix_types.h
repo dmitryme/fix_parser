@@ -5,9 +5,27 @@
 #ifndef FIX_PARSER_FIX_TYPES_H
 #define FIX_PARSER_FIX_TYPES_H
 
+#define FIX_FAILED                       -1
+#define FIX_SUCCESS                       0
+#define FIX_ERROR_TAG_HAS_WRONG_TYPE      1
+#define FIX_ERROR_TAG_NOT_FOUND           2
+#define FIX_ERROR_GROUP_WRONG_INDEX       3
+#define FIX_ERROR_XML_ATTR_NOT_FOUND      4
+#define FIX_ERROR_XML_ATTR_WRONG_VALUE    5
+#define FIX_ERROR_PROTOCOL_XML_LOAD_FAILED 6
+#define FIX_ERROR_UNKNOWN_FIELD           7
+#define FIX_ERROR_WRONG_PROTOCOL_VER      8
+#define FIX_ERROR_DUPLICATE_FIELD_DESCR   9
+#define FIX_ERROR_UNKNOWN_MSG            10
+#define FIX_ERROR_LIBXML                 11
+#define FIX_ERROR_INVALID_ARGUMENT       12
+#define FIX_ERROR_MALLOC                 13
+#define FIX_ERROR_UNKNOWN_PROTOCOL_DESCR 14
+
 typedef struct FIXTagTable_  FIXTagTable;
 typedef struct FIXTag_ FIXTag;
 typedef struct FIXMessage_ FIXMessage;
+typedef struct FIXParser_ FIXParser;
 
 typedef enum FIXTagType_
 {

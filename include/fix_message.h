@@ -9,13 +9,9 @@
 
 #include <stdint.h>
 
-#define FIX_MESSAGE_FLAGS_VALIDATE 0x01
-
-FIXMessage* new_fix_message(FIXProtocolVerEnum ver, char const* msgType, uint32_t memSize, uint32_t flags);
+FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char const* msgType);
 void free_fix_message(FIXMessage* msg);
 
-FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
-FIXTag* set_tag_fmt(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char const* fmt, ...);
 FIXTag* get_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum);
 int del_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum);
 

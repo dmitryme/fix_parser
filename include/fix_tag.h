@@ -6,6 +6,7 @@
 #define FIX_PARSER_FIX_TAG_H
 
 #include "fix_types.h"
+#include "fix_mpool.h"
 
 #include <stdint.h>
 
@@ -27,12 +28,12 @@ struct FIXTag_
 FIXTagTable* new_fix_table();
 void free_fix_table(FIXTagTable* tbl);
 
-FIXTag* set_fix_table_tag(FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len);
-FIXTag* get_fix_table_tag(FIXTagTable* tbl, uint32_t tagNum);
-int del_fix_table_tag(FIXTagTable* tbl, uint32_t tagNum);
+FIXTag* set_fix_table_tag(FIXParser* parser, FIXMPool* pool, FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len);
+FIXTag* get_fix_table_tag(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum);
+int del_fix_table_tag(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum);
 
-FIXTagTable* add_fix_table_group(FIXTagTable* tbl, uint32_t tagNum);
-FIXTagTable* get_fix_table_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
-int del_fix_table_group(FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
+FIXTagTable* add_fix_table_group(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum);
+FIXTagTable* get_fix_table_group(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
+int del_fix_table_group(FIXParser* parser, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
 
 #endif // FIX_PARSER_FIX_TAG_H

@@ -4,33 +4,142 @@
 
 #include "fix_parser.h"
 #include "fix_protocol_descr.h"
-#include "fix_error.h"
 #include "fix_message.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #define SOH 0x01
+#define ERROR_TXT_SIZE 1024
 
-extern void set_fix_error(int, char const*, ...);
-
-int fix_protocol_init(char const* protFile)
+struct FIXParser_
 {
-   FIXProtocolDescr* p = fix_protocol_descr_init(protFile);
+   FIXProtocolDescr* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT - 1];
+   int err_code;
+   char err_text[ERROR_TXT_SIZE];
+   uint32_t flags;
+};
+
+//------------------------------------------------------------------------------------------------------------------------//
+FIXParser* new_fix_parser(uint32_t flags)
+{
+   FIXParser* parser = calloc(1, sizeof(FIXParser));
+   parser->flags = flags;
+   return parser;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void free_fix_parser(FIXParser* parser)
+{
+   if (parser)
+   {
+      for(int i = 0; i < FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT; ++i)
+      {
+         if (parser->protocols[i])
+         {
+            free_fix_protocol_descr(parser->protocols[i]);
+         }
+      }
+      free(parser);
+   }
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+int get_fix_error_code(FIXParser* parser)
+{
+   if (parser)
+   {
+      return parser->err_code;
+   }
+   return FIX_FAILED;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+char const* get_fix_error_text(FIXParser* parser)
+{
+   if (parser)
+   {
+      return parser->err_text;
+   }
+   return NULL;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+int get_fix_parser_flags(FIXParser* parser)
+{
+   if (parser)
+   {
+      return parser->flags;
+   }
+   return FIX_FAILED;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void set_fix_va_error(FIXParser* parser, int code, char const* text, va_list ap)
+{
+   parser->err_code = code;
+   int n = vsnprintf(parser->err_text, ERROR_TXT_SIZE, text, ap);
+   parser->err_text[n - 1] = 0;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void set_fix_error(FIXParser* parser, int code, char const* text, ...)
+{
+   va_list ap;
+   va_start(ap, text);
+   set_fix_va_error(parser, code, text, ap);
+   va_end(ap);
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void reset_fix_error(FIXParser* parser)
+{
+   parser->err_code = 0;
+   parser->err_text[0] = 0;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+int fix_protocol_init(FIXParser* parser, char const* protFile)
+{
+   if(!parser)
+   {
+      return FIX_FAILED;
+   }
+   FIXProtocolDescr* p = fix_protocol_descr_init(parser, protFile);
    if (!p)
    {
       return FIX_FAILED;
    }
+   if (parser->protocols[p->version])
+   {
+      free_fix_protocol_descr(parser->protocols[p->version]);
+   }
+   parser->protocols[p->version] = p;
+   return FIX_SUCCESS;
 }
 
-typedef enum ParserStateEnum_
+//------------------------------------------------------------------------------------------------------------------------//
+FIXProtocolDescr* get_fix_protocol_descr(FIXParser* parser, FIXProtocolVerEnum ver)
 {
-   ParserState_Tag,
-   ParserState_Value
-} ParserStateEnum;
+   if (ver < 0 || ver >= FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT)
+   {
+      set_fix_error(parser, FIX_ERROR_WRONG_PROTOCOL_VER, "Wrong FIX protocol version %d", ver);
+      return NULL;
+   }
+   return parser->protocols[ver];
+}
 
-int parse_fix(FIXMessage** msg, uint32_t flags, char const* data, uint32_t len)
+//------------------------------------------------------------------------------------------------------------------------//
+/*typedef enum ParserStateEnum_*/
+/*{*/
+/*   ParserState_Tag,*/
+/*   ParserState_Value*/
+/*} ParserStateEnum;*/
+
+int parse_fix(FIXParser* parser, FIXMessage** msg, char const* data, uint32_t len)
 {
    /*if (!data)*/
    /*{*/

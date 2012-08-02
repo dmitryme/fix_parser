@@ -33,12 +33,12 @@ Page* alloc_page(uint32_t size)
    return p;
 }
 
-FIXMPool* new_fix_mpool(uint32_t initSize)
+FIXMPool* new_fix_mpool()
 {
    FIXMPool* pool = malloc(sizeof(FIXMPool));
-   pool->pages = alloc_page(!initSize ? DEF_FIX_MPOOL_SIZE : initSize);
+   pool->pages = alloc_page(DEF_FIX_MPOOL_SIZE);
    pool->curr_page = pool->pages;
-   pool->page_size = initSize;
+   pool->page_size = DEF_FIX_MPOOL_SIZE;
    return pool;
 }
 
