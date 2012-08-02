@@ -8,6 +8,7 @@
 #include "fix_tag.h"
 #include "fix_mpool.h"
 #include "fix_types.h"
+#include "fix_page.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -17,13 +18,16 @@
 extern void set_fix_error(FIXParser*, int, char const*, ...);
 extern void reset_fix_error(FIXParser*);
 extern FIXProtocolDescr* get_fix_protocol_descr(FIXParser* parser, FIXProtocolVerEnum ver);
+extern FIXPage* fix_parser_get_page(FIXParser* parser);
+extern void fix_parser_free_page(FIXParser* parser, FIXPage* page);
 
 struct FIXMessage_
 {
    FIXParser* parser;
-   FIXMPool* pool;
    FIXMessageDescr* descr;
    FIXTagTable* tags;
+   FIXPage* pages;
+   FIXPage* curr_page;
 };
 
 FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char const* msgType)
@@ -49,29 +53,70 @@ FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char cons
       return NULL;
    }
    FIXMessage* msg = malloc(sizeof(FIXMessage));
-   msg->pool = new_fix_mpool();
    msg->tags = new_fix_table();
    msg->descr = msg_descr;
    msg->parser = parser;
    return msg;
 }
 
+FIXParser* fix_message_get_parser(FIXMessage* msg)
+{
+   return msg->parser;
+}
+
 void free_fix_message(FIXMessage* msg)
 {
-   free_fix_mpool(msg->pool);
+   FIXPage* page = msg->pages;
+   while(page)
+   {
+      FIXPage* next = page->next;
+      fix_parser_free_page(msg->parser, page);
+      page = next;
+   }
    free_fix_table(msg->tags);
    free(msg);
+}
+
+void* fix_message_alloc(FIXMessage* msg, uint32_t size)
+{
+   FIXPage* curr_page = msg->curr_page;
+   if (sizeof(uint32_t) + curr_page->size - curr_page->offset >= size)
+   {
+      uint32_t old_offset = curr_page->offset;
+      *(uint32_t*)(&curr_page->data + curr_page->offset) = size;
+      curr_page->offset += (size + sizeof(uint32_t));
+      return &curr_page->data + old_offset + sizeof(uint32_t);
+   }
+   else
+   {
+      FIXPage* new_page = fix_parser_get_page(msg->parser);
+      curr_page->next = new_page;
+      msg->curr_page = new_page;
+      return fix_message_alloc(msg, size);
+   }
+}
+
+void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size)
+{
+   if (*(uint32_t*)(ptr - sizeof(uint32_t)) >= size)
+   {
+      return ptr;
+   }
+   else
+   {
+      return fix_message_alloc(msg, size);
+   }
 }
 
 FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    if (grp)
    {
-      return set_fix_table_tag(msg->parser, msg->pool, grp, tagNum, data, len);
+      return set_fix_table_tag(msg, grp, tagNum, data, len);
    }
    else
    {
-      return set_fix_table_tag(msg->parser, msg->pool, msg->tags, tagNum, data, len);
+      return set_fix_table_tag(msg, msg->tags, tagNum, data, len);
    }
 }
 
@@ -104,11 +149,11 @@ FIXTag* set_tag_fmt(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char con
          FIXTag* tag = NULL;
          if (grp)
          {
-            tag = set_fix_table_tag(msg->parser, msg->pool, grp, tagNum, (unsigned char*)p, n);
+            tag = set_fix_table_tag(msg, grp, tagNum, (unsigned char*)p, n);
          }
          else
          {
-            tag = set_fix_table_tag(msg->parser, msg->pool, msg->tags, tagNum, (unsigned char*)p, n);
+            tag = set_fix_table_tag(msg, msg->tags, tagNum, (unsigned char*)p, n);
          }
          free(p);
          return tag;
@@ -141,11 +186,11 @@ FIXTag* get_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
    reset_fix_error(msg->parser);
    if (grp)
    {
-      return get_fix_table_tag(msg->parser, grp, tagNum);
+      return get_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      return get_fix_table_tag(msg->parser, msg->tags, tagNum);
+      return get_fix_table_tag(msg, msg->tags, tagNum);
    }
 }
 
@@ -158,11 +203,11 @@ int del_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
    reset_fix_error(msg->parser);
    if (grp)
    {
-      return del_fix_table_tag(msg->parser, grp, tagNum);
+      return del_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      return del_fix_table_tag(msg->parser, msg->tags, tagNum);
+      return del_fix_table_tag(msg, msg->tags, tagNum);
    }
 }
 
@@ -183,11 +228,11 @@ FIXTagTable* add_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
    }
    if (grp)
    {
-      return add_fix_table_group(msg->parser, grp, tagNum);
+      return add_fix_table_group(msg, grp, tagNum);
    }
    else
    {
-      return add_fix_table_group(msg->parser, msg->tags, tagNum);
+      return add_fix_table_group(msg, msg->tags, tagNum);
    }
 }
 
@@ -200,11 +245,11 @@ FIXTagTable* get_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint3
    reset_fix_error(msg->parser);
    if (grp)
    {
-      return get_fix_table_group(msg->parser, grp, tagNum, grpIdx);
+      return get_fix_table_group(msg, grp, tagNum, grpIdx);
    }
    else
    {
-      return get_fix_table_group(msg->parser, msg->tags, tagNum, grpIdx);
+      return get_fix_table_group(msg, msg->tags, tagNum, grpIdx);
    }
 }
 
@@ -217,11 +262,11 @@ int del_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpId
    reset_fix_error(msg->parser);
    if (grp)
    {
-      return del_fix_table_group(msg->parser, grp, tagNum, grpIdx);
+      return del_fix_table_group(msg, grp, tagNum, grpIdx);
    }
    else
    {
-      return del_fix_table_group(msg->parser, msg->tags, tagNum, grpIdx);
+      return del_fix_table_group(msg, msg->tags, tagNum, grpIdx);
    }
 }
 
@@ -350,11 +395,11 @@ int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val)
    FIXTag* tag = NULL;
    if (grp)
    {
-      tag = get_fix_table_tag(msg->parser, grp, tagNum);
+      tag = get_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      tag = get_fix_table_tag(msg->parser, msg->tags, tagNum);
+      tag = get_fix_table_tag(msg, msg->tags, tagNum);
    }
    if (!tag)
    {
@@ -379,11 +424,11 @@ int get_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned l
    FIXTag* tag = NULL;
    if (grp)
    {
-      tag = get_fix_table_tag(msg->parser, grp, tagNum);
+      tag = get_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      tag = get_fix_table_tag(msg->parser, msg->tags, tagNum);
+      tag = get_fix_table_tag(msg, msg->tags, tagNum);
    }
    if (!tag)
    {
@@ -408,11 +453,11 @@ int get_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float* val
    FIXTag* tag = NULL;
    if (grp)
    {
-      tag = get_fix_table_tag(msg->parser, grp, tagNum);
+      tag = get_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      tag = get_fix_table_tag(msg->parser, msg->tags, tagNum);
+      tag = get_fix_table_tag(msg, msg->tags, tagNum);
    }
    if (!tag)
    {
@@ -437,11 +482,11 @@ int get_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val)
    FIXTag* tag = NULL;
    if (grp)
    {
-      tag = get_fix_table_tag(msg->parser, grp, tagNum);
+      tag = get_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      tag = get_fix_table_tag(msg->parser, msg->tags, tagNum);
+      tag = get_fix_table_tag(msg, msg->tags, tagNum);
    }
    if (!tag)
    {
@@ -466,11 +511,11 @@ int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val
    FIXTag* tag = NULL;
    if (grp)
    {
-      tag = get_fix_table_tag(msg->parser, grp, tagNum);
+      tag = get_fix_table_tag(msg, grp, tagNum);
    }
    else
    {
-      tag = get_fix_table_tag(msg->parser, msg->tags, tagNum);
+      tag = get_fix_table_tag(msg, msg->tags, tagNum);
    }
    if (!tag)
    {
