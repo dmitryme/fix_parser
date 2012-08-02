@@ -1,5 +1,4 @@
 #include "fix_parser.h"
-#include "fix_error.h"
 
 #include <stdio.h>
 #include <time.h>
