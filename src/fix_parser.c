@@ -5,6 +5,7 @@
 #include "fix_parser.h"
 #include "fix_protocol_descr.h"
 #include "fix_message.h"
+#include "fix_page.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -21,13 +22,27 @@ struct FIXParser_
    int err_code;
    char err_text[ERROR_TXT_SIZE];
    uint32_t flags;
+   FIXPage* page;
+   FIXPage* free_page;
+   uint32_t num_pages;
+   uint32_t page_size;
 };
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXParser* new_fix_parser(uint32_t flags)
+FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
+   parser->page_size = pageSize;
+   for(uint32_t i = 0; i < numPages; ++i)
+   {
+      FIXPage* page = calloc(1, sizeof(FIXPage) + pageSize - 1);
+      page->size = pageSize;
+      page->next = parser->page;
+      parser->page = page;
+      parser->free_page = page;
+   }
+   parser->num_pages = numPages;
    return parser;
 }
 
@@ -45,6 +60,34 @@ void free_fix_parser(FIXParser* parser)
       }
       free(parser);
    }
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+FIXPage* fix_parser_get_page(FIXParser* parser)
+{
+   FIXPage* page = NULL;
+   if (parser->free_page == NULL) // no mode free pages
+   {
+      page = calloc(1, sizeof(FIXPage) + parser->page_size - 1);
+      page->size = parser->page_size;
+      parser->free_page = page;
+      ++parser->num_pages;
+   }
+   else
+   {
+      page = parser->free_page;
+      parser->free_page = page->next;
+      page->next = NULL; // detach from pool
+   }
+   return page;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void fix_parser_free_page(FIXParser* parser, FIXPage* page)
+{
+   page->offset = 0;
+   page->next = parser->free_page;
+   parser->free_page = page;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
