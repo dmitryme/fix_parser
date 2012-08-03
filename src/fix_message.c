@@ -533,3 +533,8 @@ int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val
    strncpy(val, (char const*)&tag->data, len);
    return tag->size;
 }
+
+int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t buffLen)
+{
+   return FIX_SUCCESS;
+}
