@@ -5,7 +5,7 @@
 
 int main()
 {
-   FIXParser* parser = new_fix_parser(512, 1000, FIX_PARSER_FLAGS_VALIDATE);
+   FIXParser* parser = new_fix_parser(512, 1000, 0, FIX_PARSER_FLAGS_VALIDATE);
    int res = fix_protocol_init(parser, "fix44.xml");
    if (res == FIX_FAILED)
    {
