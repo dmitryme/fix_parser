@@ -458,6 +458,10 @@ void* fix_message_alloc(FIXMessage* msg, uint32_t size)
    else
    {
       FIXPage* new_page = fix_parser_get_page(msg->parser);
+      if (!new_page)
+      {
+         return NULL;
+      }
       curr_page->next = new_page;
       msg->curr_page = new_page;
       return fix_message_alloc(msg, size);
