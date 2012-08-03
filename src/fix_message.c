@@ -45,6 +45,12 @@ FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char cons
    msg->tags = new_fix_table();
    msg->descr = msg_descr;
    msg->parser = parser;
+   msg->pages = msg->curr_page = fix_parser_get_page(parser);
+   if (!msg->pages)
+   {
+      free_fix_message(msg);
+      return NULL;
+   }
    return msg;
 }
 
