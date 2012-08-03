@@ -31,4 +31,6 @@ int get_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float* val
 int get_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val);
 int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val, uint32_t len);
 
+int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t buffLen);
+
 #endif // FIX_PARSER_FIX_MESSAGE_H
