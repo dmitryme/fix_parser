@@ -5,16 +5,13 @@
 #include "fix_protocol_descr.h"
 #include "fix_utils.h"
 #include "fix_types.h"
+#include "fix_parser_priv.h"
+#include "fix_descr_xsd.h"
 
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
 #include <string.h>
 #include <stdint.h>
-
-extern void set_fix_va_error(FIXParser*, int, char const*, va_list ap);
-extern void set_fix_error(FIXParser*, int, char const*, ...);
-
-extern char const* fix_xsd;
 
 void xmlErrorHandler(void* ctx, char const* msg, ...)
 {
