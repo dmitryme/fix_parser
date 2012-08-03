@@ -4,14 +4,11 @@
 
 #include "fix_tag.h"
 #include "fix_parser.h"
+#include "fix_parser_priv.h"
+#include "fix_message_priv.h"
 
 #include <stdlib.h>
 #include <string.h>
-
-extern void set_fix_error(FIXParser*, int, char const*, ...);
-extern FIXParser* fix_message_get_parser(FIXMessage* msg);
-extern void* fix_message_alloc(FIXMessage* msg, uint32_t size);
-extern void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size);
 
 struct FIXTagTable_
 {
@@ -54,7 +51,7 @@ void free_fix_table(FIXTagTable* tbl)
 FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
-   if (!fix_tag && get_fix_error_code(fix_message_get_parser(msg)));
+   if (!fix_tag && get_fix_error_code(msg->parser));
    {
       return NULL;
    }
@@ -62,10 +59,6 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, un
    if (!fix_tag)
    {
       fix_tag = fix_message_alloc(msg, sizeof(FIXTag) - 1 + len);
-      if (!fix_tag)
-      {
-         return NULL;
-      }
       fix_tag->type = FIXTagType_Value;
       fix_tag->next = tbl->fix_tags[idx];
       fix_tag->num = tagNum;
@@ -74,10 +67,6 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, un
    else
    {
       FIXTag* new_fix_tag = fix_message_realloc(msg, fix_tag, sizeof(FIXTag) + len - 1);
-      if (!new_fix_tag)
-      {
-         return NULL;
-      }
       new_fix_tag->type = FIXTagType_Value;
       new_fix_tag->next = fix_tag->next;
       new_fix_tag->num = fix_tag->num;
@@ -110,7 +99,7 @@ FIXTag* get_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
       {
          if (it->type != FIXTagType_Value)
          {
-           set_fix_error(fix_message_get_parser(msg), FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+           set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
            return NULL;
          }
          return it;
@@ -153,7 +142,7 @@ int del_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
          fix_tag = fix_tag->next;
       }
    }
-   set_fix_error(fix_message_get_parser(msg), FIX_ERROR_TAG_NOT_FOUND, "FIXTag not found");
+   set_fix_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "FIXTag not found");
    return FIX_FAILED;
 }
 
@@ -162,7 +151,7 @@ FIXTagTable* add_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tag
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
    if (fix_tag && fix_tag->type != FIXTagType_Group)
    {
-      set_fix_error(fix_message_get_parser(msg), FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+      set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return NULL;
    }
    if (!fix_tag)
@@ -190,12 +179,12 @@ FIXTagTable* get_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tag
       {
          if (it->type != FIXTagType_Group)
          {
-            set_fix_error(fix_message_get_parser(msg), FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+            set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
             return NULL;
          }
          if (grpIdx >= it->size)
          {
-            set_fix_error(fix_message_get_parser(msg), FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
+            set_fix_error(msg->parser, FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
             return NULL;
          }
          return it->grpTbl[grpIdx];
@@ -217,7 +206,7 @@ int del_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint
    }
    if (fix_tag->type != FIXTagType_Group)
    {
-      set_fix_error(fix_message_get_parser(msg), FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+      set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return FIX_FAILED;
    }
    free_fix_table(fix_tag->grpTbl[grpIdx]);
