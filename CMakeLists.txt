@@ -12,3 +12,5 @@ aux_source_directory(src LIB_SOURCES)
 add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
 
 add_subdirectory(perf_test)
+add_subdirectory(test)
+
