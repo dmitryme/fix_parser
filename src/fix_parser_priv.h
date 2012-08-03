@@ -24,6 +24,7 @@ struct FIXParser_
    FIXPage* page;
    FIXPage* free_page;
    uint32_t num_pages;
+   uint32_t max_pages;
    uint32_t page_size;
 };
 
