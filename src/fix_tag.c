@@ -51,7 +51,7 @@ void free_fix_table(FIXTagTable* tbl)
 FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
-   if (!fix_tag && get_fix_error_code(msg->parser));
+   if (!fix_tag && get_fix_error_code(msg->parser))
    {
       return NULL;
    }
