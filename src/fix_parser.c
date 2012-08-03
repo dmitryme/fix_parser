@@ -3,6 +3,7 @@
 /// @date   Created on: 07/30/2012 10:26:54 AM
 
 #include "fix_parser.h"
+#include "fix_parser_priv.h"
 #include "fix_protocol_descr.h"
 #include "fix_message.h"
 #include "fix_page.h"
@@ -13,24 +14,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#define SOH 0x01
-#define ERROR_TXT_SIZE 1024
-
-struct FIXParser_
-{
-   FIXProtocolDescr* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT - 1];
-   int err_code;
-   char err_text[ERROR_TXT_SIZE];
-   uint32_t flags;
-   FIXPage* page;
-   FIXPage* free_page;
-   uint32_t num_pages;
-   uint32_t max_pages;
-   uint32_t page_size;
-};
-
 //------------------------------------------------------------------------------------------------------------------------//
-FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t maxPages, uint32_t flags)
+// PUBLIC
+//------------------------------------------------------------------------------------------------------------------------//
+
+FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
@@ -44,7 +32,6 @@ FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t maxPage
       parser->free_page = page;
    }
    parser->num_pages = numPages;
-   parser->max_pages = maxPages;
    return parser;
 }
 
@@ -85,49 +72,31 @@ char const* get_fix_error_text(FIXParser* parser)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int get_fix_parser_flags(FIXParser* parser)
+int fix_protocol_init(FIXParser* parser, char const* protFile)
 {
-   if (parser)
+   if(!parser)
    {
-      return parser->flags;
+      return FIX_FAILED;
    }
-   return FIX_FAILED;
+   FIXProtocolDescr* p = fix_protocol_descr_init(parser, protFile);
+   if (!p)
+   {
+      return FIX_FAILED;
+   }
+   if (parser->protocols[p->version])
+   {
+      free_fix_protocol_descr(parser->protocols[p->version]);
+   }
+   parser->protocols[p->version] = p;
+   return FIX_SUCCESS;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-void set_fix_va_error(FIXParser* parser, int code, char const* text, va_list ap)
-{
-   parser->err_code = code;
-   int n = vsnprintf(parser->err_text, ERROR_TXT_SIZE, text, ap);
-   parser->err_text[n - 1] = 0;
-}
-
+// PRIVATE
 //------------------------------------------------------------------------------------------------------------------------//
-void set_fix_error(FIXParser* parser, int code, char const* text, ...)
-{
-   va_list ap;
-   va_start(ap, text);
-   set_fix_va_error(parser, code, text, ap);
-   va_end(ap);
-}
 
-//------------------------------------------------------------------------------------------------------------------------//
-void reset_fix_error(FIXParser* parser)
-{
-   parser->err_code = 0;
-   parser->err_text[0] = 0;
-}
-
-
-//------------------------------------------------------------------------------------------------------------------------//
 FIXPage* fix_parser_get_page(FIXParser* parser)
 {
-   if (parser->max_pages > 0 && parser->max_pages == parser->num_pages)
-   {
-      set_fix_error(parser,
-            FIX_ERROR_NO_MORE_PAGES, "No more pages available. MaxPages = %d, NumPages = %d", parser->max_pages, parser->num_pages);
-      return NULL;
-   }
    FIXPage* page = NULL;
    if (parser->free_page == NULL) // no mode free pages
    {
@@ -154,23 +123,27 @@ void fix_parser_free_page(FIXParser* parser, FIXPage* page)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int fix_protocol_init(FIXParser* parser, char const* protFile)
+void set_fix_va_error(FIXParser* parser, int code, char const* text, va_list ap)
 {
-   if(!parser)
-   {
-      return FIX_FAILED;
-   }
-   FIXProtocolDescr* p = fix_protocol_descr_init(parser, protFile);
-   if (!p)
-   {
-      return FIX_FAILED;
-   }
-   if (parser->protocols[p->version])
-   {
-      free_fix_protocol_descr(parser->protocols[p->version]);
-   }
-   parser->protocols[p->version] = p;
-   return FIX_SUCCESS;
+   parser->err_code = code;
+   int n = vsnprintf(parser->err_text, ERROR_TXT_SIZE, text, ap);
+   parser->err_text[n - 1] = 0;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void set_fix_error(FIXParser* parser, int code, char const* text, ...)
+{
+   va_list ap;
+   va_start(ap, text);
+   set_fix_va_error(parser, code, text, ap);
+   va_end(ap);
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void reset_fix_error(FIXParser* parser)
+{
+   parser->err_code = 0;
+   parser->err_text[0] = 0;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
