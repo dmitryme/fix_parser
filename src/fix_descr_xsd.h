@@ -1,8 +1,11 @@
-/// @file   fix_descr_xsd.c
+/// @file   fix_descr_xsd.h
 /// @author Dmitry S. Melnikov, dmitryme@gmail.com
 /// @date   Created on: 07/30/2012 02:40:30 PM
 
-char const* fix_xsd = {
+#ifndef FIX_PARSER_FIX_DESCR_XSD_H
+#define FIX_PARSER_FIX_DESCR_XSD_H
+
+static char const* fix_xsd = {
 "<?xml version='1.0'?>"
 "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>"
 ""
@@ -107,3 +110,5 @@ char const* fix_xsd = {
 "   </xs:element>"
 "</xs:schema>"
 };
+
+#endif // FIX_PARSER_FIX_DESCR_XSD_H
