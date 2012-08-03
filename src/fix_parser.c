@@ -18,7 +18,7 @@
 // PUBLIC
 //------------------------------------------------------------------------------------------------------------------------//
 
-FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t flags)
+FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t maxPages, uint32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
@@ -97,6 +97,12 @@ int fix_protocol_init(FIXParser* parser, char const* protFile)
 
 FIXPage* fix_parser_get_page(FIXParser* parser)
 {
+   if (parser->max_pages > 0 && parser->max_pages == parser->num_pages)
+   {
+      set_fix_error(parser,
+         FIX_ERROR_NO_MORE_PAGES, "No more pages available. MaxPages = %d, NumPages = %d", parser->max_pages, parser->num_pages);
+      return NULL;
+   }
    FIXPage* page = NULL;
    if (parser->free_page == NULL) // no mode free pages
    {
