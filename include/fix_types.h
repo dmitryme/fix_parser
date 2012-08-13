@@ -23,7 +23,7 @@
 #define FIX_ERROR_UNKNOWN_PROTOCOL_DESCR 14
 #define FIX_ERROR_NO_MORE_PAGES          15
 
-typedef struct FIXTagTable_  FIXTagTable;
+typedef struct FIXTagTable_ FIXGroup;
 typedef struct FIXTag_ FIXTag;
 typedef struct FIXMessage_ FIXMessage;
 typedef struct FIXParser_ FIXParser;

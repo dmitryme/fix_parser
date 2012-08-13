@@ -15,14 +15,15 @@ struct FIXTag_
 {
    uint32_t num;
    FIXTagType type;
-   uint32_t size;
    struct FIXTag_* next;
-   union
-   {
-      FIXTagTable** grpTbl;
-      unsigned char data[1];
-   };
+   unsigned char data[sizeof(uint32_t)];
 } __attribute__((packed));
+
+typedef struct FIXTagTable_
+{
+   FIXTag* fix_tags[TABLE_SIZE];
+   struct FIXTagTable* next;
+} __attribute__((packed)) FIXTagTable;
 
 FIXTagTable* new_fix_table();
 void free_fix_table(FIXTagTable* tbl);
@@ -31,7 +32,7 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, un
 FIXTag* get_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum);
 int del_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum);
 
-FIXTagTable* add_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum);
+/*FIXTagTable* add_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum); */
 FIXTagTable* get_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
 int del_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
 

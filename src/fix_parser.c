@@ -18,7 +18,9 @@
 // PUBLIC
 //------------------------------------------------------------------------------------------------------------------------//
 
-FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t maxPages, uint32_t flags)
+FIXParser* new_fix_parser(
+      uint32_t pageSize, uint32_t numPages, uint32_t maxPages,
+      uint32_t numTables, uint32_t maxTables, uint32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
@@ -27,11 +29,20 @@ FIXParser* new_fix_parser(uint32_t pageSize, uint32_t numPages, uint32_t maxPage
    {
       FIXPage* page = calloc(1, sizeof(FIXPage) + pageSize - 1);
       page->size = pageSize;
-      page->next = parser->page;
-      parser->page = page;
+      page->next = parser->pages;
+      parser->pages = page;
       parser->free_page = page;
    }
    parser->num_pages = numPages;
+   for(uint32_t i = 0; i < numTables; ++i)
+   {
+      FIXTagTable* table = calloc(1, sizeof(FIXTagTable));
+      table->next = parser->tables;
+      parser->tables = table;
+      parser->free_table = table;
+   }
+   parser->num_tables = numTables;
+   parser->max_tables = maxTables;
    return parser;
 }
 
@@ -94,8 +105,7 @@ int fix_protocol_init(FIXParser* parser, char const* protFile)
 //------------------------------------------------------------------------------------------------------------------------//
 // PRIVATE
 //------------------------------------------------------------------------------------------------------------------------//
-
-FIXPage* fix_parser_get_page(FIXParser* parser)
+FIXPage* fix_parser_get_page(FIXParser* parser, uint32_t pageSize)
 {
    if (parser->max_pages > 0 && parser->max_pages == parser->num_pages)
    {
@@ -104,9 +114,9 @@ FIXPage* fix_parser_get_page(FIXParser* parser)
       return NULL;
    }
    FIXPage* page = NULL;
-   if (parser->free_page == NULL) // no mode free pages
+   if (parser->free_page == NULL) // no more free pages
    {
-      page = calloc(1, sizeof(FIXPage) + parser->page_size - 1);
+      page = calloc(1, sizeof(FIXPage) + (parser->page_size > pageSize ? parser->page_size : pageSize) - 1);
       page->size = parser->page_size;
       parser->free_page = page;
       ++parser->num_pages;
@@ -126,6 +136,39 @@ void fix_parser_free_page(FIXParser* parser, FIXPage* page)
    page->offset = 0;
    page->next = parser->free_page;
    parser->free_page = page;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+FIXTagTable* fix_parser_get_table(FIXParser* parser)
+{
+   if (parser->max_tables > 0 && parser->max_tables == parser->num_tables)
+   {
+      set_fix_error(parser,
+         FIX_ERROR_NO_MORE_TABLES,
+         "No more tables available. MaxTables = %d, NumTables = %d", parser->max_tables, parser->num_tables);
+      return NULL;
+   }
+   FIXTagTable* table = NULL;
+   if (parser->free_table == NULL) // no more free table
+   {
+      table = calloc(1, sizeof(FIXTagTable));
+      parser->free_table = table;
+      ++parser->num_tables;
+   }
+   else
+   {
+      table = parser->free_table;
+      parser->free_table = table->next;
+      table->next = NULL; // detach from pool
+   }
+   return table;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+void fix_parser_free_page(FIXParser* parser, FIXTagTable* table)
+{
+   table->next = parser->free_table;
+   parser->free_table = table;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//

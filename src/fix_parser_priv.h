@@ -21,15 +21,21 @@ struct FIXParser_
    int err_code;
    char err_text[ERROR_TXT_SIZE];
    uint32_t flags;
-   FIXPage* page;
+   FIXPage* pages;
    FIXPage* free_page;
    uint32_t num_pages;
    uint32_t max_pages;
    uint32_t page_size;
+   FIXTagTable* tables;
+   FIXTagTable* free_table;
+   uint32_t num_tables;
+   uint32_t max_tables;
 };
 
-FIXPage* fix_parser_get_page(FIXParser* parser);
+FIXPage* fix_parser_get_page(FIXParser* parser, uint32_t pageSize);
 void fix_parser_free_page(FIXParser* parser, FIXPage* page);
+FIXTagTable* fix_parser_get_table(FIXParser* parser);
+void fix_parser_free_tables(FIXParser* parser, FIXTagTable* table);
 void set_fix_va_error(FIXParser* parser, int code, char const* text, va_list ap);
 void set_fix_error(FIXParser* parser, int code, char const* text, ...);
 void reset_fix_error(FIXParser* parser);

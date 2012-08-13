@@ -42,10 +42,10 @@ FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char cons
       return NULL;
    }
    FIXMessage* msg = malloc(sizeof(FIXMessage));
-   msg->tags = new_fix_table();
+   msg->tags = fix_parser_get_table(parser);
    msg->descr = msg_descr;
    msg->parser = parser;
-   msg->pages = msg->curr_page = fix_parser_get_page(parser);
+   msg->pages = msg->curr_page = fix_parser_get_page(parser, 0);
    if (!msg->pages)
    {
       free_fix_message(msg);
@@ -187,7 +187,7 @@ FIXTag* set_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char 
          return NULL;
       }
    }
-   return set_tag(msg, grp, tagNum, (unsigned char*)val, strlen(val));
+   return set_tag(msg, grp, tagNum, (unsigned char*)val, strlen(val) + 1); // include terminal zero
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
@@ -444,6 +444,41 @@ int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val
 //------------------------------------------------------------------------------------------------------------------------//
 int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t buffLen)
 {
+   if(!msg)
+   {
+      return FIX_FAILED;
+   }
+   reset_fix_error(msg->parser);
+   FIXMessageDescr* descr = msg->descr;
+   for(uint32_t i = 0; i < descr->field_count; ++i)
+   {
+      FIXFieldDescr* field = &descr->fields[i];
+      FIXTag* tag = get_fix_table_tag(msg, NULL, field->field_type->num);
+      if (!tag && field->flags & FIELD_FLAG_REQUIRED)
+      {
+         set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", field->field_type->num);
+      }
+      int res = 0;
+      if (IS_STRING_TYPE(field->field_type->type))
+      {
+         res = snprintf(buff, buffLen, "%d=%s", field->field_type->num, (char const*)&tag->data);
+      }
+      else if (IS_INT_TYPE(field->field_type->type))
+      {
+         res = snprintf(buff, buffLen, "%d=%ld\001", field->field_type->num, *(long*)&tag->data);
+      }
+      else if (IS_CHAR_TYPE(field->field_type->type))
+      {
+         res = snprintf(buff, buffLen, "%d=%c\001", field->field_type->num, tag->data);
+      }
+      else if (IS_FLOAT_TYPE(field->field_type->type))
+      {
+         res = snprintf(buff, buffLen, "%d=%f\001", field->field_type->num, *(float*)&tag->data);
+      }
+      // TODO: check res for errors
+      buff += res;
+      buffLen -= res;
+   }
    return FIX_SUCCESS;
 }
 
@@ -463,7 +498,7 @@ void* fix_message_alloc(FIXMessage* msg, uint32_t size)
    }
    else
    {
-      FIXPage* new_page = fix_parser_get_page(msg->parser);
+      FIXPage* new_page = fix_parser_get_page(msg->parser, size);
       if (!new_page)
       {
          return NULL;
@@ -532,7 +567,7 @@ FIXTag* set_tag_fmt(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char con
          {
             tag = set_fix_table_tag(msg, grp, tagNum, (unsigned char*)p, n);
          }
-         else
+        else
          {
             tag = set_fix_table_tag(msg, msg->tags, tagNum, (unsigned char*)p, n);
          }
