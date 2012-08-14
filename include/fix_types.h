@@ -1,6 +1,7 @@
-/// @file   fix_types.h
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/31/2012 10:22:19 AM
+/* @file   fix_types.h
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/31/2012 10:22:19 AM
+*/
 
 #ifndef FIX_PARSER_FIX_TYPES_H
 #define FIX_PARSER_FIX_TYPES_H
@@ -101,4 +102,4 @@ typedef enum FIXFieldTypeEnum_
 FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
 FIXFieldTypeEnum str2FIXFIXFieldType(char const* type);
 
-#endif // FIX_PARSER_FIX_TYPES_H
+#endif /* FIX_PARSER_FIX_TYPES_H */

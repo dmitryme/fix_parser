@@ -1,6 +1,7 @@
-/// @file   fix_message_priv.h
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/30/2012 06:28:42 PM
+/* @file   fix_message_priv.h
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/30/2012 06:28:42 PM
+*/
 
 #ifndef FIX_PARSER_FIX_MESSAGE_PRIV_H
 #define FIX_PARSER_FIX_MESSAGE_PRIV_H
@@ -25,4 +26,4 @@ void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size);
 FIXTag* set_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
 FIXTag* set_tag_fmt(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...);
 
-#endif // FIX_PARSER_FIX_MESSAGE_PRIV_H
+#endif /* FIX_PARSER_FIX_MESSAGE_PRIV_H */

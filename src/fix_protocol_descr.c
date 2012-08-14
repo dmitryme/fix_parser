@@ -1,6 +1,7 @@
-/// @file   fix_protocol_descr.c
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/27/2012 06:14:53 PM
+/* @file   fix_protocol_descr.c
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/27/2012 06:14:53 PM
+*/
 
 #include "fix_protocol_descr.h"
 #include "fix_utils.h"

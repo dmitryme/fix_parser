@@ -1,6 +1,7 @@
-/// @file   fix_utils.c
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 08/02/2012 01:05:17 PM
+/* @file   fix_utils.c
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 08/02/2012 01:05:17 PM
+*/
 
 #include "fix_utils.h"
 

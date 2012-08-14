@@ -1,6 +1,7 @@
-/// @file   fix_utils.h
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/26/2012 04:14:35 PM
+/* @file   fix_utils.h
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/26/2012 04:14:35 PM
+*/
 
 #ifndef FIX_PARSER_FIX_UTILS_H
 #define FIX_PARSER_FIX_UTILS_H
@@ -12,4 +13,4 @@
 
 uint32_t hash_string(char const* s);
 
-#endif // FIX_PARSER_FIX_UTILS_H
+#endif /* FIX_PARSER_FIX_UTILS_H */

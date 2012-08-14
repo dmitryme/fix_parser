@@ -1,6 +1,7 @@
-/// @file   fix_message.c
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/30/2012 06:35:11 PM
+/* @file   fix_message.c
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/30/2012 06:35:11 PM
+*/
 
 #include "fix_message.h"
 #include "fix_message_priv.h"
@@ -16,9 +17,9 @@
 #include <stdio.h>
 #include <string.h>
 
-//------------------------------------------------------------------------------------------------------------------------//
-// PUBLICS
-//------------------------------------------------------------------------------------------------------------------------//
+/*-----------------------------------------------------------------------------------------------------------------------*/
+/* PUBLICS                                                                                                               */
+/*-----------------------------------------------------------------------------------------------------------------------*/
 FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char const* msgType)
 {
    if (!parser)
@@ -54,7 +55,7 @@ FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char cons
    return msg;
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 void free_fix_message(FIXMessage* msg)
 {
    FIXPage* page = msg->pages;
@@ -68,7 +69,7 @@ void free_fix_message(FIXMessage* msg)
    free(msg);
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* get_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
@@ -86,7 +87,7 @@ FIXTag* get_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
    }
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int del_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
@@ -104,8 +105,8 @@ int del_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
    }
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
-FIXGroup* add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
+/*------------------------------------------------------------------------------------------------------------------------*/
+/*FIXGroup* add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
    {
@@ -128,10 +129,10 @@ FIXGroup* add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
    {
       return add_fix_table_group(msg, msg->tags, tagNum);
    }
-}
+} */
 
-//------------------------------------------------------------------------------------------------------------------------//
-FIXGroup* get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
+/*------------------------------------------------------------------------------------------------------------------------*/
+/*FIXGroup* get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -146,10 +147,10 @@ FIXGroup* get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t gr
    {
       return get_fix_table_group(msg, msg->tags, tagNum, grpIdx);
    }
-}
+} */
 
-//------------------------------------------------------------------------------------------------------------------------//
-int del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
+/*------------------------------------------------------------------------------------------------------------------------*/
+/*int del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -164,9 +165,9 @@ int del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
    {
       return del_fix_table_group(msg, msg->tags, tagNum, grpIdx);
    }
-}
+}  */
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* val)
 {
    if (!msg)
@@ -183,14 +184,14 @@ FIXTag* set_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char con
       }
       if (!IS_STRING_TYPE(fdescr->field_type->type))
       {
-         set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%s'", tagNum, val);
+         set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tagNum, val);
          return NULL;
       }
    }
    return set_tag(msg, grp, tagNum, (unsigned char*)val, strlen(val) + 1); // include terminal zero
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long val)
 {
    if (!msg)
@@ -214,7 +215,7 @@ FIXTag* set_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long val)
    return set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long val)
 {
    if (!msg)
@@ -238,7 +239,7 @@ FIXTag* set_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned 
    return set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char val)
 {
    if (!msg)
@@ -262,7 +263,7 @@ FIXTag* set_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char val)
    return set_tag(msg, grp, tagNum, (unsigned char*)&val, 1);
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float val)
 {
    if (!msg)
@@ -286,7 +287,7 @@ FIXTag* set_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float val
    return set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int get_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long* val)
 {
    if (!msg)
@@ -317,7 +318,7 @@ int get_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long* val)
    return FIX_SUCCESS;
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int get_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long* val)
 {
    if (!msg)
@@ -348,7 +349,7 @@ int get_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long
    return FIX_SUCCESS;
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int get_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float* val)
 {
    if(!msg)
@@ -379,7 +380,7 @@ int get_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float* val)
    return FIX_SUCCESS;
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int get_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val)
 {
    if (!msg)
@@ -410,7 +411,7 @@ int get_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val)
    return FIX_SUCCESS;
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int get_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len)
 {
    if (!msg)
@@ -438,10 +439,10 @@ int get_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val, u
       return FIX_FAILED;
    }
    strncpy(val, (char const*)&tag->data, len);
-   return tag->size;
+   return strlen((char const*)&tag->data);
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t buffLen)
 {
    if(!msg)
@@ -482,9 +483,9 @@ int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t 
    return FIX_SUCCESS;
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
-// PRIVATES
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
+/* PRIVATES                                                                                                               */
+/*------------------------------------------------------------------------------------------------------------------------*/
 
 void* fix_message_alloc(FIXMessage* msg, uint32_t size)
 {
@@ -509,7 +510,7 @@ void* fix_message_alloc(FIXMessage* msg, uint32_t size)
    }
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size)
 {
    if (*(uint32_t*)(ptr - sizeof(uint32_t)) >= size)
@@ -522,7 +523,7 @@ void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size)
    }
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    if (grp)
@@ -535,7 +536,7 @@ FIXTag* set_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char c
    }
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXTag* set_tag_fmt(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...)
 {
    int n, size = 64;

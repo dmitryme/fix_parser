@@ -1,6 +1,7 @@
-/// @file   fix_tag.c
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/25/2012 03:35:31 PM
+/* @file   fix_tag.c
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/25/2012 03:35:31 PM
+*/
 
 #include "fix_tag.h"
 #include "fix_parser.h"
@@ -10,21 +11,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-FIXGroup* new_fix_table()
-{
-   return calloc(1, sizeof(struct FIXTagTable_));
-}
-
 FIXTag* free_fix_tag(FIXTag* fix_tag)
 {
    FIXTag* next = fix_tag->next;
    if (fix_tag->type == FIXTagType_Group)
    {
-      for(int i = 0; i < fix_tag->grp_count; ++i)
+      uint32_t grp_count = *(uint32_t*)&fix_tag->data;
+      for(int i = 0; i < grp_count; ++i)
       {
-         free_fix_table(fix_tag->grpTbl[i]);
+         /* TODO */
+         /*FIXGroup* grp = fix_tag->data*/
+         /*fix_parser_free_group()*/
+         /*free_fix_table(fix_tag->grpTbl[i]);*/
       }
-      free(fix_tag->grpTbl);
       free(fix_tag);
    }
    return next;
@@ -58,7 +57,7 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsig
    int idx = tagNum % TABLE_SIZE;
    if (!fix_tag)
    {
-      fix_tag = fix_message_alloc(msg, sizeof(FIXTag) - 1 + len);
+      fix_tag = fix_message_alloc(msg, sizeof(FIXTag));
       if (!fix_tag)
       {
          return NULL;
@@ -67,32 +66,17 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsig
       fix_tag->next = tbl->fix_tags[idx];
       fix_tag->num = tagNum;
       tbl->fix_tags[idx] = fix_tag;
+      fix_tag->data = fix_message_alloc(msg, len);
    }
    else
    {
-      FIXTag* new_fix_tag = fix_message_realloc(msg, fix_tag, sizeof(FIXTag) + len - 1);
-      if (!new_fix_tag)
-      {
-         return NULL;
-      }
-      new_fix_tag->type = FIXTagType_Value;
-      new_fix_tag->next = fix_tag->next;
-      new_fix_tag->num = fix_tag->num;
-      FIXTag** it = &tbl->fix_tags[idx];
-      while(*it != fix_tag)
-      {
-         if (*it == fix_tag)
-         {
-            *it = new_fix_tag;
-         }
-         else
-         {
-            it = &(*it)->next;
-         }
-      }
-      fix_tag = new_fix_tag;
+      fix_tag->data = fix_message_realloc(msg, fix_tag->data, len);
    }
-   memcpy(&fix_tag->data, data, len);
+   if (!fix_tag->data)
+   {
+      return NULL;
+   }
+   memcpy(fix_tag->data, data, len);
    return fix_tag;
 }
 
@@ -169,7 +153,7 @@ FIXGroup* add_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
    fix_tag->data = realloc(&fix_tag->data + sizeof(uint32_t), grp_count * sizeof(FIXGroup*));
    fix_tag->grpTbl[fix_tag->grp_count - 1] = new_fix_table();
    return fix_tag->grpTbl[fix_tag->grp_count - 1];
-}  */
+}
 
 FIXGroup* get_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx)
 {
@@ -223,4 +207,4 @@ int del_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_
       fix_tag->grpTbl[fix_tag->grp_count] = NULL;
    }
    return FIX_SUCCESS;
-}
+}  */

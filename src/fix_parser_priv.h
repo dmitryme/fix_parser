@@ -1,6 +1,7 @@
-/// @file   fix_parser_priv.h
-/// @author Dmitry S. Melnikov, dmitryme@gmail.com
-/// @date   Created on: 07/30/2012 10:54:30 AM
+/* @file   fix_parser_priv.h
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 07/30/2012 10:54:30 AM
+*/
 
 #ifndef FIX_PARSER_FIX_PARSER_PRIV_H
 #define FIX_PARSER_FIX_PARSER_PRIV_H
@@ -42,4 +43,4 @@ void set_fix_error(FIXParser* parser, int code, char const* text, ...);
 void reset_fix_error(FIXParser* parser);
 FIXProtocolDescr* get_fix_protocol_descr(FIXParser* parser, FIXProtocolVerEnum ver);
 
-#endif // FIX_PARSER_FIX_PARSER_PRIV_H
+#endif /* FIX_PARSER_FIX_PARSER_PRIV_H */
