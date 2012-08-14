@@ -20,7 +20,7 @@
 
 FIXParser* new_fix_parser(
       uint32_t pageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numTables, uint32_t maxTables, uint32_t flags)
+      uint32_t numGroups, uint32_t maxGroups, uint32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
@@ -34,15 +34,15 @@ FIXParser* new_fix_parser(
       parser->free_page = page;
    }
    parser->num_pages = numPages;
-   for(uint32_t i = 0; i < numTables; ++i)
+   for(uint32_t i = 0; i < numGroups; ++i)
    {
-      FIXTagTable* table = calloc(1, sizeof(FIXTagTable));
-      table->next = parser->tables;
-      parser->tables = table;
-      parser->free_table = table;
+      FIXGroup* group = calloc(1, sizeof(FIXGroup));
+      group->next = parser->groups;
+      parser->groups = group;
+      parser->free_group = group;
    }
-   parser->num_tables = numTables;
-   parser->max_tables = maxTables;
+   parser->num_groups = numGroups;
+   parser->max_groups = maxGroups;
    return parser;
 }
 
@@ -139,36 +139,35 @@ void fix_parser_free_page(FIXParser* parser, FIXPage* page)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTagTable* fix_parser_get_table(FIXParser* parser)
+FIXGroup* fix_parser_get_table(FIXParser* parser)
 {
-   if (parser->max_tables > 0 && parser->max_tables == parser->num_tables)
+   if (parser->max_groups > 0 && parser->max_groups == parser->num_groups)
    {
       set_fix_error(parser,
          FIX_ERROR_NO_MORE_TABLES,
-         "No more tables available. MaxTables = %d, NumTables = %d", parser->max_tables, parser->num_tables);
+         "No more tables available. MaxTables = %d, NumTables = %d", parser->max_groups, parser->num_groups);
       return NULL;
    }
-   FIXTagTable* table = NULL;
-   if (parser->free_table == NULL) // no more free table
+   FIXGroup* group = NULL;
+   if (parser->free_group == NULL) // no more free group
    {
-      table = calloc(1, sizeof(FIXTagTable));
-      parser->free_table = table;
-      ++parser->num_tables;
+      group = calloc(1, sizeof(FIXGroup));
+      ++parser->num_groups;
    }
    else
    {
-      table = parser->free_table;
-      parser->free_table = table->next;
-      table->next = NULL; // detach from pool
+      group = parser->free_group;
+      parser->free_group = group->next;
+      group->next = NULL; // detach from pool
    }
-   return table;
+   return group;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-void fix_parser_free_table(FIXParser* parser, FIXTagTable* table)
+void fix_parser_free_group(FIXParser* parser, FIXGroup* group)
 {
-   table->next = parser->free_table;
-   parser->free_table = table;
+   group->next = parser->free_group;
+   parser->free_group = group;
 }
 
 //------------------------------------------------------------------------------------------------------------------------//

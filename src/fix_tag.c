@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-FIXTagTable* new_fix_table()
+FIXGroup* new_fix_table()
 {
    return calloc(1, sizeof(struct FIXTagTable_));
 }
@@ -30,7 +30,7 @@ FIXTag* free_fix_tag(FIXTag* fix_tag)
    return next;
 }
 
-void free_fix_table(FIXTagTable* tbl)
+void free_fix_table(FIXGroup* tbl)
 {
    for(int i = 0; i < TABLE_SIZE; ++i)
    {
@@ -43,7 +43,7 @@ void free_fix_table(FIXTagTable* tbl)
    free(tbl);
 }
 
-FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
+FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
    if (!fix_tag && get_fix_error_code(msg->parser))
@@ -96,7 +96,7 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, un
    return fix_tag;
 }
 
-FIXTag* get_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
+FIXTag* get_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
    FIXTag* it = tbl->fix_tags[idx];
@@ -114,7 +114,7 @@ FIXTag* get_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
    return NULL;
 }
 
-int del_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
+int del_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
    FIXTag* fix_tag = tbl->fix_tags[idx];
@@ -148,7 +148,7 @@ int del_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
    return FIX_FAILED;
 }
 /*
-FIXTagTable* add_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum)
+FIXGroup* add_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
 {
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
    if (fix_tag && fix_tag->type != FIXTagType_Group)
@@ -166,12 +166,12 @@ FIXTagTable* add_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tag
       tbl->fix_tags[idx] = fix_tag;
    }
    uint32_t grp_count = ++*(uint32_t*)&fix_tag->data;
-   fix_tag->data = realloc(&fix_tag->data + sizeof(uint32_t), grp_count * sizeof(FIXTagTable*));
+   fix_tag->data = realloc(&fix_tag->data + sizeof(uint32_t), grp_count * sizeof(FIXGroup*));
    fix_tag->grpTbl[fix_tag->grp_count - 1] = new_fix_table();
    return fix_tag->grpTbl[fix_tag->grp_count - 1];
 }  */
 
-FIXTagTable* get_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
+FIXGroup* get_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx)
 {
    int const idx = tagNum % TABLE_SIZE;
    FIXTag* it = tbl->fix_tags[idx];
@@ -199,7 +199,7 @@ FIXTagTable* get_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tag
    return NULL;
 }
 
-int del_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx)
+int del_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx)
 {
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
    if (!fix_tag)

@@ -42,7 +42,7 @@ FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char cons
       return NULL;
    }
    FIXMessage* msg = malloc(sizeof(FIXMessage));
-   msg->tags = fix_parser_get_table(parser);
+   msg->tags = fix_parser_get_group(parser);
    msg->descr = msg_descr;
    msg->parser = parser;
    msg->pages = msg->curr_page = fix_parser_get_page(parser, 0);
@@ -64,12 +64,12 @@ void free_fix_message(FIXMessage* msg)
       fix_parser_free_page(msg->parser, page);
       page = next;
    }
-   free_fix_table(msg->tags);
+   fix_parser_free_group(msg->parser, msg->tags);
    free(msg);
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* get_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
+FIXTag* get_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
    {
@@ -87,7 +87,7 @@ FIXTag* get_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int del_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
+int del_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
    {
@@ -105,7 +105,7 @@ int del_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTagTable* add_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
+FIXGroup* add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
    {
@@ -131,7 +131,7 @@ FIXTagTable* add_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTagTable* get_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpIdx)
+FIXGroup* get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -149,7 +149,7 @@ FIXTagTable* get_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint3
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int del_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpIdx)
+int del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -167,7 +167,7 @@ int del_group(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, uint32_t grpId
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char const* val)
+FIXTag* set_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* val)
 {
    if (!msg)
    {
@@ -191,7 +191,7 @@ FIXTag* set_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char 
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long val)
+FIXTag* set_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long val)
 {
    if (!msg)
    {
@@ -215,7 +215,7 @@ FIXTag* set_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long va
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned long val)
+FIXTag* set_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long val)
 {
    if (!msg)
    {
@@ -239,7 +239,7 @@ FIXTag* set_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsign
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char val)
+FIXTag* set_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char val)
 {
    if (!msg)
    {
@@ -263,7 +263,7 @@ FIXTag* set_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char va
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float val)
+FIXTag* set_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float val)
 {
    if (!msg)
    {
@@ -287,7 +287,7 @@ FIXTag* set_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float 
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val)
+int get_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long* val)
 {
    if (!msg)
    {
@@ -318,7 +318,7 @@ int get_tag_long(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, long* val)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int get_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned long* val)
+int get_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long* val)
 {
    if (!msg)
    {
@@ -349,7 +349,7 @@ int get_tag_ulong(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned l
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int get_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float* val)
+int get_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float* val)
 {
    if(!msg)
    {
@@ -380,7 +380,7 @@ int get_tag_float(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, float* val
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int get_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val)
+int get_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val)
 {
    if (!msg)
    {
@@ -411,7 +411,7 @@ int get_tag_char(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-int get_tag_string(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char* val, uint32_t len)
+int get_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len)
 {
    if (!msg)
    {
@@ -456,7 +456,7 @@ int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t 
       FIXTag* tag = get_fix_table_tag(msg, NULL, field->field_type->num);
       if (!tag && field->flags & FIELD_FLAG_REQUIRED)
       {
-         set_fix_error(FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", field->field_type->num);
+         set_fix_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", field->field_type->num);
       }
       int res = 0;
       if (IS_STRING_TYPE(field->field_type->type))
@@ -469,7 +469,7 @@ int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t 
       }
       else if (IS_CHAR_TYPE(field->field_type->type))
       {
-         res = snprintf(buff, buffLen, "%d=%c\001", field->field_type->num, tag->data);
+         res = snprintf(buff, buffLen, "%d=%c\001", field->field_type->num, *(char*)&tag->data);
       }
       else if (IS_FLOAT_TYPE(field->field_type->type))
       {
@@ -523,7 +523,7 @@ void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
+FIXTag* set_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    if (grp)
    {
@@ -536,7 +536,7 @@ FIXTag* set_tag(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, unsigned cha
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXTag* set_tag_fmt(FIXMessage* msg, FIXTagTable* grp, uint32_t tagNum, char const* fmt, ...)
+FIXTag* set_tag_fmt(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...)
 {
    int n, size = 64;
    char *p, *np;

@@ -22,18 +22,18 @@ struct FIXTag_
 typedef struct FIXTagTable_
 {
    FIXTag* fix_tags[TABLE_SIZE];
-   struct FIXTagTable* next;
-} __attribute__((packed)) FIXTagTable;
+   struct FIXTagTable_* next;
+} __attribute__((packed)) FIXGroup;
 
-FIXTagTable* new_fix_table();
-void free_fix_table(FIXTagTable* tbl);
+FIXGroup* new_fix_table();
+void free_fix_table(FIXGroup* tbl);
 
-FIXTag* set_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len);
-FIXTag* get_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum);
-int del_fix_table_tag(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum);
+FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len);
+FIXTag* get_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum);
+int del_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum);
 
-/*FIXTagTable* add_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum); */
-FIXTagTable* get_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
-int del_fix_table_group(FIXMessage* msg, FIXTagTable* tbl, uint32_t tagNum, uint32_t grpIdx);
+/*FIXGroup* add_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum); */
+FIXGroup* get_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx);
+int del_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx);
 
 #endif // FIX_PARSER_FIX_TAG_H
