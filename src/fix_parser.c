@@ -165,7 +165,7 @@ FIXTagTable* fix_parser_get_table(FIXParser* parser)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-void fix_parser_free_page(FIXParser* parser, FIXTagTable* table)
+void fix_parser_free_table(FIXParser* parser, FIXTagTable* table)
 {
    table->next = parser->free_table;
    parser->free_table = table;
