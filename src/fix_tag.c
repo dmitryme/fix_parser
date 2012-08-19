@@ -29,17 +29,17 @@ FIXTag* free_fix_tag(FIXTag* fix_tag)
    return next;
 }
 
-void free_fix_table(FIXGroup* tbl)
+void free_fix_group(FIXGroup* grp)
 {
    for(int i = 0; i < TABLE_SIZE; ++i)
    {
-      FIXTag* fix_tag = tbl->fix_tags[i];
+      FIXTag* fix_tag = grp->fix_tags[i];
       while(fix_tag)
       {
          fix_tag = free_fix_tag(fix_tag);
       }
    }
-   free(tbl);
+   fix_parser_free_group(grp);
 }
 
 FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
