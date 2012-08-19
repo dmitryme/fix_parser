@@ -29,29 +29,25 @@ FIXTag* free_fix_tag(FIXTag* fix_tag)
    return next;
 }
 
-void free_fix_group(FIXGroup* grp)
-{
-   for(int i = 0; i < TABLE_SIZE; ++i)
-   {
-      FIXTag* fix_tag = grp->fix_tags[i];
-      while(fix_tag)
-      {
-         fix_tag = free_fix_tag(fix_tag);
-      }
-   }
-   fix_parser_free_group(grp);
-}
+/* TODO */
+/*void free_fix_group(FIXGroup* grp)*/
+/*{*/
+/*   for(int i = 0; i < TABLE_SIZE; ++i)*/
+/*   {*/
+/*      FIXTag* fix_tag = grp->fix_tags[i];*/
+/*      while(fix_tag)*/
+/*      {*/
+/*         fix_tag = free_fix_tag(fix_tag);*/
+/*      }*/
+/*   }*/
+/*   fix_parser_free_group(grp);*/
+/*}*/
 
 FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
    if (!fix_tag && get_fix_error_code(msg->parser))
    {
-      return NULL;
-   }
-   if (fix_tag->type != FIXTagType_Value)
-   {
-      set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return NULL;
    }
    int idx = tagNum % TABLE_SIZE;
