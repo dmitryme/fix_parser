@@ -11,41 +11,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-FIXTag* free_fix_tag(FIXTag* fix_tag)
+typedef struct FIXGroups_
 {
-   FIXTag* next = fix_tag->next;
-   if (fix_tag->type == FIXTagType_Group)
-   {
-      uint32_t grp_count = *(uint32_t*)&fix_tag->data;
-      for(int i = 0; i < grp_count; ++i)
-      {
-         /* TODO */
-         /*FIXGroup* grp = fix_tag->data*/
-         /*fix_parser_free_group()*/
-         /*free_fix_table(fix_tag->grpTbl[i]);*/
-      }
-      free(fix_tag);
-   }
-   return next;
-}
+   uint32_t cnt;
+   FIXGroup** grp;
+} FIXGroups;
 
-/* TODO */
-/*void free_fix_group(FIXGroup* grp)*/
-/*{*/
-/*   for(int i = 0; i < TABLE_SIZE; ++i)*/
-/*   {*/
-/*      FIXTag* fix_tag = grp->fix_tags[i];*/
-/*      while(fix_tag)*/
-/*      {*/
-/*         fix_tag = free_fix_tag(fix_tag);*/
-/*      }*/
-/*   }*/
-/*   fix_parser_free_group(grp);*/
-/*}*/
+FIXTag* free_fix_tag(FIXMessage* msg, FIXTag* fix_tag);
 
-FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsigned char const* data, uint32_t len)
+/*-----------------------------------------------------------------------------------------------------------------------*/
+/* PUBLICS                                                                                                               */
+/*-----------------------------------------------------------------------------------------------------------------------*/
+FIXTag* fix_tag_set(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
-   FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
+   FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (!fix_tag && get_fix_error_code(msg->parser))
    {
       return NULL;
@@ -59,9 +38,9 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsig
          return NULL;
       }
       fix_tag->type = FIXTagType_Value;
-      fix_tag->next = tbl->fix_tags[idx];
+      fix_tag->next = grp->fix_tags[idx];
       fix_tag->num = tagNum;
-      tbl->fix_tags[idx] = fix_tag;
+      grp->fix_tags[idx] = fix_tag;
       fix_tag->data = fix_message_alloc(msg, len);
    }
    else
@@ -76,10 +55,11 @@ FIXTag* set_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, unsig
    return fix_tag;
 }
 
-FIXTag* get_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXTag* fix_tag_get(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
-   FIXTag* it = tbl->fix_tags[idx];
+   FIXTag* it = grp->fix_tags[idx];
    while(it)
    {
       if (it->num == tagNum)
@@ -94,10 +74,11 @@ FIXTag* get_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
    return NULL;
 }
 
-int del_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
+/*------------------------------------------------------------------------------------------------------------------------*/
+int fix_tag_del(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
-   FIXTag* fix_tag = tbl->fix_tags[idx];
+   FIXTag* fix_tag = grp->fix_tags[idx];
    FIXTag* prev = fix_tag;
    while(fix_tag)
    {
@@ -105,12 +86,11 @@ int del_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
       {
          if (prev == fix_tag)
          {
-            free_fix_tag(fix_tag);
-            tbl->fix_tags[idx] = NULL;
+            grp->fix_tags[idx] = free_fix_tag(msg, fix_tag);
          }
          else
          {
-            prev->next = free_fix_tag(fix_tag);
+            prev->next = free_fix_tag(msg, fix_tag);
          }
          return FIX_SUCCESS;
       }
@@ -124,52 +104,74 @@ int del_fix_table_tag(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
          fix_tag = fix_tag->next;
       }
    }
-   set_fix_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "FIXTag not found");
+   fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "FIXTag not found");
    return FIX_FAILED;
 }
-/*
-FIXGroup* add_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum)
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 {
-   FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
+   FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (fix_tag && fix_tag->type != FIXTagType_Group)
    {
-      set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return NULL;
    }
    if (!fix_tag)
    {
       uint32_t const idx = tagNum % TABLE_SIZE;
-      fix_tag = calloc(1, sizeof(FIXTag));
+      fix_tag = fix_message_alloc(msg, sizeof(FIXTag));
       fix_tag->type = FIXTagType_Group;
       fix_tag->num = tagNum;
-      fix_tag->next = tbl->fix_tags[idx];
-      tbl->fix_tags[idx] = fix_tag;
+      fix_tag->next = grp->fix_tags[idx];
+      grp->fix_tags[idx] = fix_tag;
+      fix_tag->data = fix_message_alloc(msg, sizeof(FIXGroups));
+      FIXGroups* grps = (FIXGroups*)fix_tag->data;
+      grps->cnt = 1;
+      grps->grp[0] = fix_parser_get_group(msg->parser);
+      if (!grps->grp[0])
+      {
+         return NULL;
+      }
    }
-   uint32_t grp_count = ++*(uint32_t*)&fix_tag->data;
-   fix_tag->data = realloc(&fix_tag->data + sizeof(uint32_t), grp_count * sizeof(FIXGroup*));
-   fix_tag->grpTbl[fix_tag->grp_count - 1] = new_fix_table();
-   return fix_tag->grpTbl[fix_tag->grp_count - 1];
+   else
+   {
+      FIXGroups* grps = (FIXGroups*)fix_tag->data;
+      FIXGroups* new_grps = fix_message_realloc(msg, fix_tag->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * grps->cnt);
+      new_grps->cnt = grps->cnt + 1;
+      memcpy(new_grps->grp, grps->grp, sizeof(FIXGroup*) * grps->cnt);
+      new_grps->grp[new_grps->cnt - 1] = fix_parser_get_group(msg->parser);
+      if (!new_grps->grp[new_grps->cnt - 1])
+      {
+         return NULL;
+      }
+      fix_tag->data = new_grps;
+   }
+   FIXGroups* grps = (FIXGroups*)fix_tag->data;
+   return grps->grp[grps->cnt - 1];
 }
 
-FIXGroup* get_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx)
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXGroup* fix_tag_get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    int const idx = tagNum % TABLE_SIZE;
-   FIXTag* it = tbl->fix_tags[idx];
+   FIXTag* it = grp->fix_tags[idx];
    while(it)
    {
       if (it->num == tagNum)
       {
          if (it->type != FIXTagType_Group)
          {
-            set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+            fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
             return NULL;
          }
-         if (grpIdx >= it->grp_count)
+         FIXGroups* grps = (FIXGroups*)it->data;
+         if (grpIdx >= grps->cnt)
          {
-            set_fix_error(msg->parser, FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
+            fix_parser_set_error(msg->parser, FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
             return NULL;
          }
-         return it->grpTbl[grpIdx];
+         return grps->grp[grpIdx];
       }
       else
       {
@@ -179,28 +181,46 @@ FIXGroup* get_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, u
    return NULL;
 }
 
-int del_fix_table_group(FIXMessage* msg, FIXGroup* tbl, uint32_t tagNum, uint32_t grpIdx)
+/*------------------------------------------------------------------------------------------------------------------------*/
+int fix_tag_del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
-   FIXTag* fix_tag = get_fix_table_tag(msg, tbl, tagNum);
+   FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (!fix_tag)
    {
       return FIX_FAILED;
    }
    if (fix_tag->type != FIXTagType_Group)
    {
-      set_fix_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
+      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return FIX_FAILED;
    }
-   free_fix_table(fix_tag->grpTbl[grpIdx]);
-   fix_tag->grp_count =-1;
-   if (fix_tag->grp_count == grpIdx)
+   FIXGroups* grps = (FIXGroups*)fix_tag->data;
+   fix_parser_free_group(msg->parser, grps->grp[grpIdx]);
+   grps->cnt -= 1;
+   if (grps->cnt == grpIdx)
    {
-      fix_tag->grpTbl[fix_tag->grp_count] = NULL;
+      grps->grp[grps->cnt] = NULL;
    }
    else
    {
-      memcpy(&fix_tag->grpTbl[grpIdx], fix_tag->grpTbl[grpIdx + 1], fix_tag->grp_count - grpIdx);
-      fix_tag->grpTbl[fix_tag->grp_count] = NULL;
+      memcpy(&grps->grp[grpIdx], &grps->grp[grpIdx + 1], grps->cnt - grpIdx);
+      grps->grp[grps->cnt] = NULL;
    }
    return FIX_SUCCESS;
-}  */
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+/* PRIVATES                                                                                                               */
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXTag* free_fix_tag(FIXMessage* msg, FIXTag* fix_tag)
+{
+   if (fix_tag->type == FIXTagType_Group)
+   {
+      FIXGroups* grps = (FIXGroups*)fix_tag->data;
+      for(int i = 0; i < grps->cnt; ++i)
+      {
+         fix_parser_free_group(msg->parser, grps->grp[i]);
+      }
+   }
+   return fix_tag->next;
+}
