@@ -43,7 +43,7 @@ FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char cons
       return NULL;
    }
    FIXMessage* msg = malloc(sizeof(FIXMessage));
-   msg->tags = fix_parser_get_group(parser);
+   msg->tags = msg->used_groups = fix_parser_get_group(parser);
    if (!msg->tags)
    {
       free_fix_message(msg);
@@ -66,12 +66,52 @@ void free_fix_message(FIXMessage* msg)
    FIXPage* page = msg->pages;
    while(page)
    {
-      FIXPage* next = page->next;
-      fix_parser_free_page(msg->parser, page);
-      page = next;
+      page = fix_parser_free_page(msg->parser, page);
    }
-   fix_parser_free_group(msg->parser, msg->tags);
+   FIXGroup* grp = msg->used_groups;
+   while(grp)
+   {
+      grp = fix_parser_free_group(msg->parser, grp);
+
+   }
    free(msg);
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXGroup* fix_message_get_group(FIXMessage* msg)
+{
+   FIXGroup* grp = fix_parser_get_group(msg->parser);
+   if (grp)
+   {
+      grp->next = msg->used_groups;
+      msg->used_groups = grp;
+   }
+   return grp;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+void fix_message_free_group(FIXMessage* msg, FIXGroup* grp)
+{
+   FIXGroup* curr_grp = grp;
+   FIXGroup* prev_grp = grp;
+   while(curr_grp)
+   {
+      if (curr_grp == grp)
+      {
+         if (curr_grp == prev_grp)
+         {
+            msg->used_groups = grp->next;
+         }
+         else
+         {
+            prev_grp->next = curr_grp->next;
+         }
+         fix_parser_free_group(msg->parser, grp);
+         break;
+      }
+      prev_grp = curr_grp;
+      curr_grp = curr_grp->next;
+   }
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
