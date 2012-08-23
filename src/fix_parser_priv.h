@@ -34,9 +34,9 @@ struct FIXParser_
 };
 
 FIXPage* fix_parser_get_page(FIXParser* parser, uint32_t pageSize);
-void fix_parser_free_page(FIXParser* parser, FIXPage* page);
+FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
 FIXGroup* fix_parser_get_group(FIXParser* parser);
-void fix_parser_free_group(FIXParser* parser, FIXGroup* group);
+FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
 void fix_parser_set_va_error(FIXParser* parser, int code, char const* text, va_list ap);
 void fix_parser_set_error(FIXParser* parser, int code, char const* text, ...);
 void fix_parser_reset_error(FIXParser* parser);
