@@ -14,7 +14,7 @@
 typedef struct FIXGroups_
 {
    uint32_t cnt;
-   FIXGroup** grp;
+   FIXGroup* grp[1];
 } FIXGroups;
 
 FIXTag* free_fix_tag(FIXMessage* msg, FIXTag* fix_tag);
@@ -27,6 +27,11 @@ FIXTag* fix_tag_set(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned ch
    FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (!fix_tag && get_fix_error_code(msg->parser))
    {
+      return NULL;
+   }
+   if (fix_tag && fix_tag->type == FIXTagType_Group)
+   {
+      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "FIXTag has wrong type");
       return NULL;
    }
    int idx = tagNum % TABLE_SIZE;
@@ -94,15 +99,8 @@ int fix_tag_del(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
          }
          return FIX_SUCCESS;
       }
-      if (prev == fix_tag)
-      {
-         fix_tag = fix_tag->next;
-      }
-      else
-      {
-         prev = fix_tag;
-         fix_tag = fix_tag->next;
-      }
+      prev = fix_tag;
+      fix_tag = fix_tag->next;
    }
    fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "FIXTag not found");
    return FIX_FAILED;
@@ -126,9 +124,13 @@ FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
       fix_tag->next = grp->fix_tags[idx];
       grp->fix_tags[idx] = fix_tag;
       fix_tag->data = fix_message_alloc(msg, sizeof(FIXGroups));
+      if (!fix_tag->data)
+      {
+         return NULL;
+      }
       FIXGroups* grps = (FIXGroups*)fix_tag->data;
       grps->cnt = 1;
-      grps->grp[0] = fix_parser_get_group(msg->parser);
+      grps->grp[0] = fix_message_get_group(msg);
       if (!grps->grp[0])
       {
          return NULL;
@@ -140,7 +142,7 @@ FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
       FIXGroups* new_grps = fix_message_realloc(msg, fix_tag->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * grps->cnt);
       new_grps->cnt = grps->cnt + 1;
       memcpy(new_grps->grp, grps->grp, sizeof(FIXGroup*) * grps->cnt);
-      new_grps->grp[new_grps->cnt - 1] = fix_parser_get_group(msg->parser);
+      new_grps->grp[new_grps->cnt - 1] = fix_message_get_group(msg);
       if (!new_grps->grp[new_grps->cnt - 1])
       {
          return NULL;
@@ -148,7 +150,10 @@ FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
       fix_tag->data = new_grps;
    }
    FIXGroups* grps = (FIXGroups*)fix_tag->data;
-   return grps->grp[grps->cnt - 1];
+   FIXGroup* new_grp = grps->grp[grps->cnt - 1];
+   new_grp->next = msg->used_groups;
+   msg->used_groups = new_grp;
+   return grp;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -195,7 +200,7 @@ int fix_tag_del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t 
       return FIX_FAILED;
    }
    FIXGroups* grps = (FIXGroups*)fix_tag->data;
-   fix_parser_free_group(msg->parser, grps->grp[grpIdx]);
+   fix_message_free_group(msg, grps->grp[grpIdx]);
    grps->cnt -= 1;
    if (grps->cnt == grpIdx)
    {
@@ -205,6 +210,10 @@ int fix_tag_del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t 
    {
       memcpy(&grps->grp[grpIdx], &grps->grp[grpIdx + 1], grps->cnt - grpIdx);
       grps->grp[grps->cnt] = NULL;
+   }
+   if (!grps->cnt) // all groups has been deleted, so tag will be deleted either
+   {
+      return fix_tag_del(msg, grp, tagNum);
    }
    return FIX_SUCCESS;
 }
