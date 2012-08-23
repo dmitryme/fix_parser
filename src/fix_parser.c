@@ -154,12 +154,14 @@ FIXPage* fix_parser_get_page(FIXParser* parser, uint32_t pageSize)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_parser_free_page(FIXParser* parser, FIXPage* page)
+FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page)
 {
+   FIXPage* next = page->next;
    page->offset = 0;
    page->next = parser->page;
    parser->page = page;
    --parser->used_pages;
+   return next;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -188,12 +190,14 @@ FIXGroup* fix_parser_get_group(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_parser_free_group(FIXParser* parser, FIXGroup* group)
+FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group)
 {
+   FIXGroup* next = group->next;
    memset(group, 0, sizeof(FIXGroup));
    group->next = parser->group;
    parser->group = group;
    --parser->used_groups;
+   return next;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
