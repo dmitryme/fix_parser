@@ -11,12 +11,9 @@
 
 #include <stdint.h>
 
-#define FIX_PARSER_FLAGS_CHECKCRC 0x01
-#define FIX_PARSER_FLAGS_VALIDATE 0x02
-
 FIXParser* new_fix_parser(
-      uint32_t pageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, uint32_t flags);
+      uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
+      uint32_t numGroups, uint32_t maxGroups, FIXParserFlags flags);
 void free_fix_parser(FIXParser* parser);
 
 int get_fix_error_code(FIXParser* parser);
