@@ -92,8 +92,8 @@ FIXGroup* fix_message_get_group(FIXMessage* msg)
 /*------------------------------------------------------------------------------------------------------------------------*/
 void fix_message_free_group(FIXMessage* msg, FIXGroup* grp)
 {
-   FIXGroup* curr_grp = grp;
-   FIXGroup* prev_grp = grp;
+   FIXGroup* curr_grp = msg->used_groups;
+   FIXGroup* prev_grp = msg->used_groups;
    while(curr_grp)
    {
       if (curr_grp == grp)
