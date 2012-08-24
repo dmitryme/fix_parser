@@ -26,6 +26,12 @@ typedef struct FIXTagTable_
    struct FIXTagTable_* next;
 } __attribute__((packed)) FIXGroup;
 
+typedef struct FIXGroups_
+{
+   uint32_t cnt;
+   FIXGroup* group[1];
+} FIXGroups;
+
 FIXTag* fix_tag_set(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
 FIXTag* fix_tag_get(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum);
 int fix_tag_del(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum);
