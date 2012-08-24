@@ -266,6 +266,8 @@ START_TEST(AddGetDelGroupTest)
    FIXTag* tag = fix_tag_get(msg, msg->tags, 1);
    fail_unless(tag != NULL);
    fail_unless(*(uint32_t*)tag->data, 1);
+   fail_unless(msg->used_groups == grp);
+   fail_unless(parser->used_groups == 2);
 
    long val = 100;
    FIXTag* tag1 = fix_tag_set(msg, msg->tags, 1, (unsigned char*)&val, sizeof(val));
@@ -275,14 +277,29 @@ START_TEST(AddGetDelGroupTest)
    FIXGroup* grp1 = fix_tag_add_group(msg, msg->tags, 1);
    fail_unless(grp1 != NULL);
    fail_unless(*(uint32_t*)tag->data, 2);
+   fail_unless(msg->used_groups == grp1);
+   fail_unless(msg->used_groups->next == grp);
+   fail_unless(parser->used_groups == 3);
+   fail_unless(parser->group == NULL);
 
    FIXGroup* grp2 = fix_tag_add_group(msg, msg->tags, 1);
    fail_unless(grp2 != NULL);
    fail_unless(*(uint32_t*)tag->data, 3);
+   fail_unless(msg->used_groups == grp2);
+   fail_unless(msg->used_groups->next == grp1);
+   fail_unless(msg->used_groups->next->next == grp);
+   fail_unless(parser->used_groups == 4);
+   fail_unless(parser->group == NULL);
 
    FIXGroup* grp3 = fix_tag_add_group(msg, msg->tags, 1);
    fail_unless(grp3 != NULL);
    fail_unless(*(uint32_t*)tag->data, 4);
+   fail_unless(msg->used_groups == grp3);
+   fail_unless(msg->used_groups->next == grp2);
+   fail_unless(msg->used_groups->next->next == grp1);
+   fail_unless(msg->used_groups->next->next->next == grp);
+   fail_unless(parser->used_groups == 5);
+   fail_unless(parser->group == NULL);
 
    FIXGroup* grp4 = fix_tag_get_group(msg, msg->tags, 1, 4);
    fail_unless(grp4 == NULL);
@@ -293,14 +310,121 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(fix_tag_get_group(msg, msg->tags, 1, 1) == grp1);
    fail_unless(fix_tag_get_group(msg, msg->tags, 1, 0) == grp);
 
+   FIXGroups* grps = (FIXGroups*)tag->data;
+   fail_unless(grps->cnt == 4);
+   fail_unless(grps->group[0] == grp);
+   fail_unless(grps->group[1] == grp1);
+   fail_unless(grps->group[2] == grp2);
+   fail_unless(grps->group[3] == grp3);
+
+   fail_unless(parser->group == NULL);
+   fail_unless(msg->used_groups == grp3);
+
    fail_unless(fix_tag_del_group(msg, msg->tags, 1, 3) == FIX_SUCCESS);
-   fail_unless(*(uint32_t*)tag->data, 3);
+   fail_unless(parser->group == grp3);
+   fail_unless(parser->group->next == NULL);
+   fail_unless(msg->used_groups == grp2);
+   fail_unless(msg->used_groups->next == grp1);
+   fail_unless(msg->used_groups->next->next == grp);
+   fail_unless(msg->used_groups->next->next->next == NULL);
+
+   fail_unless(grps->cnt == 3);
+   fail_unless(grps->group[0] == grp);
+   fail_unless(grps->group[1] == grp1);
+   fail_unless(grps->group[2] == grp2);
+   fail_unless(grps->group[3] == NULL);
+
    fail_unless(fix_tag_del_group(msg, msg->tags, 1, 1) == FIX_SUCCESS);
-   fail_unless(*(uint32_t*)tag->data, 2);
+   fail_unless(parser->group == grp1);
+   fail_unless(parser->group->next == grp3);
+   fail_unless(parser->group->next->next == NULL);
+   fail_unless(msg->used_groups == grp2);
+   fail_unless(msg->used_groups->next == grp);
+   fail_unless(msg->used_groups->next->next == NULL);
+
+   fail_unless(grps->cnt == 2);
+   fail_unless(grps->group[0] == grp);
+   fail_unless(grps->group[1] == grp2);
+   fail_unless(grps->group[2] == NULL);
+   fail_unless(grps->group[3] == NULL);
+
    fail_unless(fix_tag_del_group(msg, msg->tags, 1, 0) == FIX_SUCCESS);
-   fail_unless(*(uint32_t*)tag->data, 1);
+   fail_unless(parser->group == grp);
+   fail_unless(parser->group->next == grp1);
+   fail_unless(parser->group->next->next == grp3);
+   fail_unless(msg->used_groups == grp2);
+   fail_unless(msg->used_groups->next == NULL);
+
+   fail_unless(grps->cnt == 1);
+   fail_unless(grps->group[0] == grp2);
+   fail_unless(grps->group[1] == NULL);
+   fail_unless(grps->group[2] == NULL);
+   fail_unless(grps->group[3] == NULL);
+
    fail_unless(fix_tag_del_group(msg, msg->tags, 1, 0) == FIX_SUCCESS);
    fail_unless(fix_tag_get(msg, msg->tags, 1) == NULL);
+   fail_unless(parser->group == grp2);
+   fail_unless(parser->group->next == grp);
+   fail_unless(parser->group->next->next == grp1);
+   fail_unless(parser->group->next->next->next == grp3);
+   fail_unless(msg->used_groups == NULL);
+
+   free_fix_parser(parser);
+   free(msg);
+}
+END_TEST
+
+START_TEST(NestedGroupsTest)
+{
+   FIXParser* parser = new_fix_parser(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   fail_unless(parser != NULL);
+   fail_unless(parser->err_code == 0);
+
+   FIXMessage* msg = new_fake_message(parser);
+
+   FIXGroup* grp = fix_tag_add_group(msg, msg->tags, 1);
+   fail_unless(grp != NULL);
+   FIXTag* tag = fix_tag_get(msg, msg->tags, 1);
+   fail_unless(tag != NULL);
+   fail_unless(*(uint32_t*)tag->data, 1);
+   fail_unless(msg->used_groups == grp);
+   fail_unless(parser->used_groups == 2);
+
+   FIXGroup* nested_grp = fix_tag_add_group(msg, grp, 65);
+   fail_unless(nested_grp != NULL);
+   FIXTag* nested_tag = fix_tag_get(msg, grp, 65);
+   fail_unless(nested_tag != NULL);
+   fail_unless(nested_tag->type == FIXTagType_Group);
+   fail_unless(parser->used_groups == 3);
+
+   fail_unless(msg->used_groups == nested_grp);
+   fail_unless(msg->used_groups->next == grp);
+   fail_unless(msg->used_groups->next->next == NULL);
+
+   FIXGroup* nested_grp1 = fix_tag_add_group(msg, nested_grp, 131);
+   fail_unless(nested_grp1 != NULL);
+   FIXTag* nested_tag1 = fix_tag_get(msg, nested_grp, 131);
+   fail_unless(nested_tag1 != NULL);
+   fail_unless(nested_tag1->type == FIXTagType_Group);
+   fail_unless(parser->used_groups == 4);
+
+   fail_unless(msg->used_groups == nested_grp1);
+   fail_unless(msg->used_groups->next == nested_grp);
+   fail_unless(msg->used_groups->next->next == grp);
+   fail_unless(msg->used_groups->next->next->next == NULL);
+
+   fail_unless(fix_tag_del_group(msg, nested_grp, 131, 0) == FIX_SUCCESS);
+
+   fail_unless(msg->used_groups == nested_grp);
+   fail_unless(msg->used_groups->next == grp);
+   fail_unless(msg->used_groups->next->next == NULL);
+   fail_unless(parser->group == nested_grp1);
+
+   fail_unless(fix_tag_del_group(msg, msg->tags, 1, 0) == FIX_SUCCESS);
+   fail_unless(msg->used_groups == NULL);
+   fail_unless(parser->group == grp);
+   fail_unless(parser->group->next == nested_grp);
+   fail_unless(parser->group->next->next == NULL);
 
    free_fix_parser(parser);
    free(msg);
@@ -315,6 +439,7 @@ Suite* make_fix_tag_tests_suite()
    tcase_add_test(tc_core, DelTagTest);
    tcase_add_test(tc_core, GetTagTest);
    tcase_add_test(tc_core, AddGetDelGroupTest);
+   tcase_add_test(tc_core, NestedGroupsTest);
    suite_add_tcase(s, tc_core);
    return s;
 }
