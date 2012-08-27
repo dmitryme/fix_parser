@@ -1,37 +1,37 @@
-/* @file   fix_message.h
+/* @file   fix_msg.h
    @author Dmitry S. Melnikov, dmitryme@gmail.com
    @date   Created on: 07/30/2012 06:28:42 PM
 */
 
-#ifndef FIX_PARSER_FIX_MESSAGE_H
-#define FIX_PARSER_FIX_MESSAGE_H
+#ifndef FIX_PARSER_FIX_MSG_H
+#define FIX_PARSER_FIX_MSG_H
 
 #include "fix_types.h"
 
 #include <stdint.h>
 
-FIXMessage* new_fix_message(FIXParser* parser, FIXProtocolVerEnum ver, char const* msgType);
-void free_fix_message(FIXMessage* msg);
+FIXMsg* fix_msg_create(FIXParser* parser, FIXProtocolVerEnum ver, char const* msgType);
+void fix_msg_free(FIXMsg* msg);
 
-FIXTag* get_fix_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum);
-int del_fix_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum);
+FIXTag* fix_msg_get_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
+int fix_msg_del_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
 
-FIXGroup* add_fix_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum);
-FIXGroup* get_fix_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx);
-int del_fix_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx);
+FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
+FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx);
+int fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx);
 
-FIXTag* set_fix_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* val);
-FIXTag* set_fix_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long val);
-FIXTag* set_fix_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long val);
-FIXTag* set_fix_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char val);
-FIXTag* set_fix_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float val);
+FIXTag* fix_msg_set_tag_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* val);
+FIXTag* fix_msg_set_tag_long(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, long val);
+FIXTag* fix_msg_set_tag_ulong(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned long val);
+FIXTag* fix_msg_set_tag_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val);
+FIXTag* fix_msg_set_tag_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float val);
 
-int get_fix_tag_long(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, long* val);
-int get_fix_tag_ulong(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned long* val);
-int get_fix_tag_float(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, float* val);
-int get_fix_tag_char(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val);
-int get_fix_tag_string(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len);
+int fix_msg_get_tag_long(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, long* val);
+int fix_msg_get_tag_ulong(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned long* val);
+int fix_msg_get_tag_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float* val);
+int fix_msg_get_tag_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val);
+int fix_msg_get_tag_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len);
 
-int fix_message_to_string(FIXMessage* msg, char delimiter, char* buff, uint32_t buffLen);
+int fix_message_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen);
 
-#endif /* FIX_PARSER_FIX_MESSAGE_H */
+#endif /* FIX_PARSER_FIX_MSG_H */
