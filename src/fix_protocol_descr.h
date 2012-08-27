@@ -33,29 +33,29 @@ typedef struct FIXFieldDescr_
    struct FIXFieldDescr_*  next;
 } FIXFieldDescr;
 
-typedef struct FIXMessageDescr_
+typedef struct FIXMsgDescr_
 {
    char* type;
    char* name;
    uint32_t field_count;
    FIXFieldDescr* fields;
    FIXFieldDescr** field_index;
-   struct FIXMessageDescr_* next;
-} FIXMessageDescr;
+   struct FIXMsgDescr_* next;
+} FIXMsgDescr;
 
 typedef struct FIXProtocolDescr_
 {
    FIXProtocolVerEnum version;
    FIXFieldType* field_types[FIELD_TYPE_CNT];
-   FIXMessageDescr* messages[MSG_CNT];
+   FIXMsgDescr* messages[MSG_CNT];
 } FIXProtocolDescr;
 
 FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file);
 void free_fix_protocol_descr(FIXProtocolDescr* prot);
 
 FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr const* prot, char const* name);
-FIXMessageDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type);
-FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMessageDescr const* msg, uint32_t num);
+FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type);
+FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t num);
 FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t num);
 
 #endif /* FIX_PARSER_FIX_PROTOCOL_DESCR_H */
