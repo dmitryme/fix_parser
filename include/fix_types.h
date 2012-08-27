@@ -28,7 +28,7 @@
 
 typedef struct FIXTagTable_ FIXGroup;
 typedef struct FIXTag_ FIXTag;
-typedef struct FIXMessage_ FIXMessage;
+typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
 
 typedef enum FixParserFlags_
