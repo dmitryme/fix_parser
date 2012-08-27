@@ -6,7 +6,7 @@
 #include "fix_parser.h"
 #include "fix_parser_priv.h"
 #include "fix_protocol_descr.h"
-#include "fix_message.h"
+#include "fix_msg.h"
 #include "fix_page.h"
 
 #include <stdint.h>
@@ -19,7 +19,7 @@
 /* PUBLIC                                                                                                                 */
 /*------------------------------------------------------------------------------------------------------------------------*/
 
-FIXParser* new_fix_parser(
+FIXParser* fix_parser_create(
       uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
       uint32_t numGroups, uint32_t maxGroups, FIXParserFlags flags)
 {
@@ -48,7 +48,7 @@ FIXParser* new_fix_parser(
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void free_fix_parser(FIXParser* parser)
+void fix_parser_free(FIXParser* parser)
 {
    if (parser)
    {
@@ -120,7 +120,7 @@ int fix_protocol_init(FIXParser* parser, char const* protFile)
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATE                                                                                                                */
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXPage* fix_parser_get_page(FIXParser* parser, uint32_t pageSize)
+FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize)
 {
    if (parser->max_pages > 0 && parser->max_pages == parser->used_pages)
    {
@@ -165,7 +165,7 @@ FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_parser_get_group(FIXParser* parser)
+FIXGroup* fix_parser_alloc_group(FIXParser* parser)
 {
    if (parser->max_groups > 0 && parser->max_groups == parser->used_groups)
    {
@@ -242,7 +242,7 @@ FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ve
 /*   ParserState_Value*/
 /*} ParserStateEnum;*/
 
-int parse_fix(FIXParser* parser, FIXMessage** msg, char const* data, uint32_t len)
+int parse_fix(FIXParser* parser, FIXMsg** msg, char const* data, uint32_t len)
 {
    /*if (!data)*/
    /*{*/
