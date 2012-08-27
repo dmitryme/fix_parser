@@ -6,17 +6,18 @@
 #include "fix_tag.h"
 #include "fix_parser.h"
 #include "fix_parser_priv.h"
-#include "fix_message_priv.h"
+#include "fix_msg_priv.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-FIXTag* free_fix_tag(FIXMessage* msg, FIXTag* fix_tag);
+FIXTag* fix_tag_free(FIXMsg* msg, FIXTag* fix_tag);
+void fix_group_free(FIXMsg* msg, FIXGroup* group);
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXTag* fix_tag_set(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
+FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
 {
    FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (!fix_tag && get_fix_error_code(msg->parser))
@@ -31,20 +32,20 @@ FIXTag* fix_tag_set(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned ch
    int idx = tagNum % TABLE_SIZE;
    if (!fix_tag)
    {
-      fix_tag = fix_message_alloc(msg, sizeof(FIXTag));
+      fix_tag = fix_msg_alloc(msg, sizeof(FIXTag));
       if (!fix_tag)
       {
          return NULL;
       }
       fix_tag->type = FIXTagType_Value;
-      fix_tag->next = grp->fix_tags[idx];
+      fix_tag->next = grp->tags[idx];
       fix_tag->num = tagNum;
-      grp->fix_tags[idx] = fix_tag;
-      fix_tag->data = fix_message_alloc(msg, len);
+      grp->tags[idx] = fix_tag;
+      fix_tag->data = fix_msg_alloc(msg, len);
    }
    else
    {
-      fix_tag->data = fix_message_realloc(msg, fix_tag->data, len);
+      fix_tag->data = fix_msg_realloc(msg, fix_tag->data, len);
    }
    if (!fix_tag->data)
    {
@@ -55,10 +56,10 @@ FIXTag* fix_tag_set(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned ch
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXTag* fix_tag_get(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
+FIXTag* fix_tag_get(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
-   FIXTag* it = grp->fix_tags[idx];
+   FIXTag* it = grp->tags[idx];
    while(it)
    {
       if (it->num == tagNum)
@@ -74,10 +75,10 @@ FIXTag* fix_tag_get(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_tag_del(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
+int fix_tag_del(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
 {
    uint32_t const idx = tagNum % TABLE_SIZE;
-   FIXTag* fix_tag = grp->fix_tags[idx];
+   FIXTag* fix_tag = grp->tags[idx];
    FIXTag* prev = fix_tag;
    while(fix_tag)
    {
@@ -85,11 +86,11 @@ int fix_tag_del(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
       {
          if (prev == fix_tag)
          {
-            grp->fix_tags[idx] = free_fix_tag(msg, fix_tag);
+            grp->tags[idx] = fix_tag_free(msg, fix_tag);
          }
          else
          {
-            prev->next = free_fix_tag(msg, fix_tag);
+            prev->next = fix_tag_free(msg, fix_tag);
          }
          return FIX_SUCCESS;
       }
@@ -101,7 +102,7 @@ int fix_tag_del(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
+FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
 {
    FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (fix_tag && fix_tag->type != FIXTagType_Group)
@@ -112,19 +113,19 @@ FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
    if (!fix_tag)
    {
       uint32_t const idx = tagNum % TABLE_SIZE;
-      fix_tag = fix_message_alloc(msg, sizeof(FIXTag));
+      fix_tag = fix_msg_alloc(msg, sizeof(FIXTag));
       fix_tag->type = FIXTagType_Group;
       fix_tag->num = tagNum;
-      fix_tag->next = grp->fix_tags[idx];
-      grp->fix_tags[idx] = fix_tag;
-      fix_tag->data = fix_message_alloc(msg, sizeof(FIXGroups));
+      fix_tag->next = grp->tags[idx];
+      grp->tags[idx] = fix_tag;
+      fix_tag->data = fix_msg_alloc(msg, sizeof(FIXGroups));
       if (!fix_tag->data)
       {
          return NULL;
       }
       FIXGroups* grps = (FIXGroups*)fix_tag->data;
       grps->cnt = 1;
-      grps->group[0] = fix_message_get_group(msg);
+      grps->group[0] = fix_msg_alloc_group(msg);
       if (!grps->group[0])
       {
          return NULL;
@@ -133,10 +134,10 @@ FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
    else
    {
       FIXGroups* grps = (FIXGroups*)fix_tag->data;
-      FIXGroups* new_grps = fix_message_realloc(msg, fix_tag->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * grps->cnt);
+      FIXGroups* new_grps = fix_msg_realloc(msg, fix_tag->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * grps->cnt);
       new_grps->cnt = grps->cnt + 1;
       memcpy(new_grps->group, grps->group, sizeof(FIXGroup*) * grps->cnt);
-      new_grps->group[new_grps->cnt - 1] = fix_message_get_group(msg);
+      new_grps->group[new_grps->cnt - 1] = fix_msg_alloc_group(msg);
       if (!new_grps->group[new_grps->cnt - 1])
       {
          return NULL;
@@ -149,10 +150,10 @@ FIXGroup* fix_tag_add_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_tag_get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
+FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    int const idx = tagNum % TABLE_SIZE;
-   FIXTag* it = grp->fix_tags[idx];
+   FIXTag* it = grp->tags[idx];
    while(it)
    {
       if (it->num == tagNum)
@@ -179,7 +180,7 @@ FIXGroup* fix_tag_get_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uin
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_tag_del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
+int fix_group_del(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (!fix_tag)
@@ -192,7 +193,7 @@ int fix_tag_del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t 
       return FIX_FAILED;
    }
    FIXGroups* grps = (FIXGroups*)fix_tag->data;
-   fix_message_free_group(msg, grps->group[grpIdx]);
+   fix_group_free(msg, grps->group[grpIdx]);
    grps->cnt -= 1;
    if (grps->cnt == grpIdx)
    {
@@ -214,15 +215,29 @@ int fix_tag_del_group(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, uint32_t 
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATES                                                                                                               */
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXTag* free_fix_tag(FIXMessage* msg, FIXTag* fix_tag)
+FIXTag* fix_tag_free(FIXMsg* msg, FIXTag* fix_tag)
 {
    if (fix_tag->type == FIXTagType_Group)
    {
       FIXGroups* grps = (FIXGroups*)fix_tag->data;
       for(int i = 0; i < grps->cnt; ++i)
       {
-         fix_parser_free_group(msg->parser, grps->group[i]);
+         fix_group_free(msg, grps->group[i]);
       }
    }
    return fix_tag->next;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+void fix_group_free(FIXMsg* msg, FIXGroup* group)
+{
+   for(int i = 0; i < TABLE_SIZE; ++i)
+   {
+      FIXTag* tag = group->tags[i];
+      while(tag)
+      {
+         tag = fix_tag_free(msg, tag);
+      }
+   }
+   fix_msg_free_group(msg, group);
 }
