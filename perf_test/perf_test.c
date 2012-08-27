@@ -1,3 +1,8 @@
+/* @file   perf_test.c
+   @author Dmitry S. Melnikov, dmitryme@gmail.com
+   @date   Created on: 08/27/2012 05:35:55 PM
+*/
+
 #include "fix_parser.h"
 
 #include <stdio.h>
