@@ -18,6 +18,17 @@ FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver)
    return FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT;
 }
 
+char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver)
+{
+   if (ver == FIX42) return "FIX.4.2";
+   if (ver == FIX44) return "FIX.4.4";
+   if (ver == FIX50) return "FIXT.1.1";
+   if (ver == FIX50SP1) return "FIXT.1.1";
+   if (ver == FIX50SP2) return "FIXT.1.1";
+   if (ver == FIXT11) return "FIXT.1.1";
+   return "";
+}
+
 FIXFieldTypeEnum str2FIXFIXFieldType(char const* type)
 {
    if (!strcmp(type, "Int"))           { return FIXFieldType_Int; }
