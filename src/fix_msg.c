@@ -658,19 +658,19 @@ int fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen)
       int res = 0;
       if (IS_STRING_TYPE(field->field_type->type))
       {
-         res = snprintf(buff, buffLen, "%d=%s", field->field_type->num, (char const*)&tag->data);
+         res = snprintf(buff, buffLen, "%d=%s", field->field_type->num, (char const*)tag->data);
       }
       else if (IS_INT_TYPE(field->field_type->type))
       {
-         res = snprintf(buff, buffLen, "%d=%ld\001", field->field_type->num, *(long*)&tag->data);
+         res = snprintf(buff, buffLen, "%d=%ld\001", field->field_type->num, *(long*)tag->data);
       }
       else if (IS_CHAR_TYPE(field->field_type->type))
       {
-         res = snprintf(buff, buffLen, "%d=%c\001", field->field_type->num, *(char*)&tag->data);
+         res = snprintf(buff, buffLen, "%d=%c\001", field->field_type->num, *(char*)tag->data);
       }
       else if (IS_FLOAT_TYPE(field->field_type->type))
       {
-         res = snprintf(buff, buffLen, "%d=%f\001", field->field_type->num, *(float*)&tag->data);
+         res = snprintf(buff, buffLen, "%d=%f\001", field->field_type->num, *(float*)tag->data);
       }
       // TODO: check res for errors
       buff += res;
