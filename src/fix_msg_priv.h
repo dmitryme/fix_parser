@@ -24,8 +24,12 @@ struct FIXMsg_
 
 void* fix_msg_alloc(FIXMsg* msg, uint32_t size);
 void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size);
+
+FIXTag* fix_msg_get_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
 FIXTag* fix_msg_set_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
 FIXTag* fix_msg_set_tag_fmt(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...);
+int fix_msg_del_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
+
 FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
 void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
 
