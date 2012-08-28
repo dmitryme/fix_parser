@@ -107,6 +107,7 @@ typedef enum FIXFieldTypeEnum_
    (type == FIXFieldType_Char || type == FIXFieldType_Boolean)
 
 FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
+char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver);
 FIXFieldTypeEnum str2FIXFIXFieldType(char const* type);
 
 #endif /* FIX_PARSER_FIX_TYPES_H */
