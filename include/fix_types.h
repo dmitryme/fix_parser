@@ -59,54 +59,42 @@ typedef enum FIXProtocolVerEnum_
 typedef enum FIXFieldTypeEnum_
 {
    FIXFieldType_Unknown              = -1,
-   FIXFieldType_Int                  = 1,
-   FIXFieldType_Length               = 2,
-   FIXFieldType_NumInGroup           = 3,
-   FIXFieldType_SeqNum               = 4,
-   FIXFieldType_TagNum               = 5,
-   FIXFieldType_DayOfMonth           = 6,
-   FIXFieldType_Float                = 7,
-   FIXFieldType_Qty                  = 8,
-   FIXFieldType_Price                = 9,
-   FIXFieldType_PriceOffset          = 10,
-   FIXFieldType_Amt                  = 11,
-   FIXFieldType_Percentage           = 12,
-   FIXFieldType_Char                 = 13,
-   FIXFieldType_Boolean              = 14,
-   FIXFieldType_String               = 15,
-   FIXFieldType_MultipleValueString  = 16,
-   FIXFieldType_Country              = 17,
-   FIXFieldType_Currency             = 18,
-   FIXFieldType_Exchange             = 19,
-   FIXFieldType_MonthYear            = 20,
-   FIXFieldType_UTCTimestamp         = 21,
-   FIXFieldType_UTCTimeOnly          = 22,
-   FIXFieldType_UTCDateOnly          = 23,
-   FIXFieldType_LocalMktDate         = 24,
-   FIXFieldType_Data                 = 25,
-   FIXFieldType_TZTimeOnly           = 26,
-   FIXFieldType_TZTimestamp          = 27,
-   FIXFieldType_XMLData              = 28,
-   FIXFieldType_Language             = 29
+   FIXFieldType_Int                  = 0x01,
+   FIXFieldType_Length               = 0x02,
+   FIXFieldType_NumInGroup           = 0x03,
+   FIXFieldType_SeqNum               = 0x04,
+   FIXFieldType_TagNum               = 0x05,
+   FIXFieldType_DayOfMonth           = 0x06,
+   FIXFieldType_Float                = 0x10,
+   FIXFieldType_Qty                  = 0x20,
+   FIXFieldType_Price                = 0x30,
+   FIXFieldType_PriceOffset          = 0x40,
+   FIXFieldType_Amt                  = 0x50,
+   FIXFieldType_Percentage           = 0x60,
+   FIXFieldType_Char                 = 0x100,
+   FIXFieldType_Boolean              = 0x200,
+   FIXFieldType_String               = 0x1000,
+   FIXFieldType_MultipleValueString  = 0x2000,
+   FIXFieldType_Country              = 0x3000,
+   FIXFieldType_Currency             = 0x4000,
+   FIXFieldType_Exchange             = 0x5000,
+   FIXFieldType_MonthYear            = 0x6000,
+   FIXFieldType_UTCTimestamp         = 0x7000,
+   FIXFieldType_UTCTimeOnly          = 0x8000,
+   FIXFieldType_UTCDateOnly          = 0x9000,
+   FIXFieldType_LocalMktDate         = 0xA000,
+   FIXFieldType_TZTimeOnly           = 0xB000,
+   FIXFieldType_TZTimestamp          = 0xC000,
+   FIXFieldType_Language             = 0xD000,
+   FIXFieldType_XMLData              = 0x20000,
+   FIXFieldType_Data                 = 0x10000
 } FIXFieldTypeEnum;
 
-#define IS_STRING_TYPE(type) \
-   (type == FIXFieldType_String || type == FIXFieldType_MultipleValueString || type == FIXFieldType_Country || \
-    type == FIXFieldType_Currency || type == FIXFieldType_Exchange || type == FIXFieldType_MonthYear || \
-    type == FIXFieldType_UTCTimestamp || type == FIXFieldType_UTCTimeOnly || type == FIXFieldType_UTCTimeOnly || \
-    type == FIXFieldType_UTCDateOnly || type == FIXFieldType_LocalMktDate || type == FIXFieldType_TZTimeOnly || \
-    type == FIXFieldType_TZTimestamp)
-
-#define IS_INT_TYPE(type) \
-   (type == FIXFieldType_Int || type == FIXFieldType_Length || type == FIXFieldType_NumInGroup || type == FIXFieldType_SeqNum || \
-    type == FIXFieldType_TagNum || type == FIXFieldType_DayOfMonth)
-
-#define IS_FLOAT_TYPE(type) \
-   (type == FIXFieldType_Float || type == FIXFieldType_Qty || type == FIXFieldType_Price || type == FIXFieldType_PriceOffset || \
-    type == FIXFieldType_Amt || type == FIXFieldType_Percentage)
-
-#define IS_CHAR_TYPE(type) \
-   (type == FIXFieldType_Char || type == FIXFieldType_Boolean)
+#define IS_STRING_TYPE(type) ((type & 0xF000) > 0)
+#define IS_INT_TYPE(type)    ((type & 0x0F) > 0)
+#define IS_FLOAT_TYPE(type)  ((type & 0xF0) > 0)
+#define IS_CHAR_TYPE(type)   ((type & 0xF00) > 0)
+#define IS_DATA_TYPE(type)   ((type & 0xF0000) > 0)
 
 FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
 char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver);
