@@ -13,7 +13,7 @@
 
 FIXParser* fix_parser_create(
       uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, FIXParserFlags flags);
+      uint32_t numGroups, uint32_t maxGroups, FIXParserFlagEnum flags);
 void fix_parser_free(FIXParser* parser);
 
 int get_fix_error_code(FIXParser* parser);
