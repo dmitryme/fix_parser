@@ -64,7 +64,7 @@ int ltoa(long val, char* buff, size_t buffLen)
    int i = 0;
    for(; nd; ++i, --nd)
    {
-      int digit = (int)val/pow10(nd - 1);
+      long digit = val/pow10(nd - 1);
       buff[i] = digit + 48;
       val -= digit * pow10(nd - 1);
    }
