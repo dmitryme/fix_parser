@@ -21,7 +21,7 @@
 
 FIXParser* fix_parser_create(
       uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, FIXParserFlags flags)
+      uint32_t numGroups, uint32_t maxGroups, FIXParserFlagEnum flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
