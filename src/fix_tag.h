@@ -15,7 +15,7 @@
 struct FIXTag_
 {
    uint32_t num;
-   FIXTagType type;
+   FIXTagTypeEnum type;
    struct FIXTag_* next;
    void* data;
 } __attribute__((packed));
