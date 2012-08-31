@@ -32,7 +32,7 @@ typedef struct FIXGroups_
    FIXGroup* group[1];
 } FIXGroups;
 
-FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
+FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint16_t len);
 FIXTag* fix_tag_get(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
 int fix_tag_del(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
 
