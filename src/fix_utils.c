@@ -35,9 +35,9 @@ int numdigits(long val)
    return cnt;
 }
 
-long pow10(int n)
+long lpow10(int n)
 {
-   static long arr[15] =
+   static long arr[19] =
    {
       1,
       10,
@@ -53,7 +53,11 @@ long pow10(int n)
       100000000000,
       1000000000000,
       10000000000000,
-      100000000000000
+      100000000000000,
+      1000000000000000,
+      10000000000000000,
+      100000000000000000,
+      1000000000000000000
    };
    return arr[n];
 }
@@ -64,9 +68,10 @@ int ltoa(long val, char* buff, size_t buffLen)
    int i = 0;
    for(; nd; ++i, --nd)
    {
-      long digit = val/pow10(nd - 1);
+      long pow = lpow10(nd - 1);
+      long digit = val/pow;
       buff[i] = digit + 48;
-      val -= digit * pow10(nd - 1);
+      val -= digit * pow;
    }
    return i;
 }
@@ -77,23 +82,23 @@ int dtoa(double val, char* buff, size_t buffLen)
    int nd = numdigits(val);
    int j = nd;
    int i = 0;
-   for(; j; ++i, --j)
+   for(; buffLen && j; ++i, --j, --buffLen)
    {
-      long pow = pow10(j - 1);
+      long pow = lpow10(j - 1);
       int digit = (int)m/pow;
       buff[i] = digit + 48;
       m -= (pow * digit);
    }
-   m = (long)(val * pow10(15 - nd)) - (long)val * pow10(15 - nd);
-   if (m)
+   m = (long)(val * lpow10(15 - nd)) - (long)val * lpow10(15 - nd);
+   if (m && buffLen)
    {
       buff[i] = '.';
       ++i;
    }
    j = 15 - nd;
-   for(; m && j; ++i, --j)
+   for(; buffLen && m && j; ++i, --j, --buffLen)
    {
-      long pow = pow10(j - 1);
+      long pow = lpow10(j - 1);
       long digit = m/pow;
       buff[i] = digit + 48;
       m -= (pow * digit);
