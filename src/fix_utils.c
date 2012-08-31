@@ -37,7 +37,7 @@ int numdigits(long val)
 
 long pow10(int n)
 {
-   static long arr[19] =
+   static long arr[15] =
    {
       1,
       10,
@@ -53,11 +53,7 @@ long pow10(int n)
       100000000000,
       1000000000000,
       10000000000000,
-      100000000000000,
-      1000000000000000,
-      10000000000000000,
-      100000000000000000,
-      1000000000000000000
+      100000000000000
    };
    return arr[n];
 }
@@ -88,9 +84,12 @@ int dtoa(double val, char* buff, size_t buffLen)
       buff[i] = digit + 48;
       m -= (pow * digit);
    }
-   buff[i] = '.';
-   ++i;
    m = (long)(val * pow10(15 - nd)) - (long)val * pow10(15 - nd);
+   if (m)
+   {
+      buff[i] = '.';
+      ++i;
+   }
    j = 15 - nd;
    for(; m && j; ++i, --j)
    {
