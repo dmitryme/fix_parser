@@ -22,3 +22,82 @@ uint32_t hash_string(char const* s)
 
     return hash;
 }
+
+int numdigits(long val)
+{
+   int cnt = 0;
+   do
+   {
+      ++cnt;
+      val /= 10;
+   }
+   while(val);
+   return cnt;
+}
+
+long pow10(int n)
+{
+   static long arr[19] =
+   {
+      1,
+      10,
+      100,
+      1000,
+      10000,
+      100000,
+      1000000,
+      10000000,
+      100000000,
+      1000000000,
+      10000000000,
+      100000000000,
+      1000000000000,
+      10000000000000,
+      100000000000000,
+      1000000000000000,
+      10000000000000000,
+      100000000000000000,
+      1000000000000000000
+   };
+   return arr[n];
+}
+
+int ltoa(long val, char* buff, size_t buffLen)
+{
+   int nd = numdigits(val);
+   int i = 0;
+   for(; nd; ++i, --nd)
+   {
+      int digit = (int)val/pow10(nd - 1);
+      buff[i] = digit + 48;
+      val -= digit * pow10(nd - 1);
+   }
+   return i;
+}
+
+int dtoa(double val, char* buff, size_t buffLen)
+{
+   long m = (long)val;
+   int nd = numdigits(val);
+   int j = nd;
+   int i = 0;
+   for(; j; ++i, --j)
+   {
+      long pow = pow10(j - 1);
+      int digit = (int)m/pow;
+      buff[i] = digit + 48;
+      m -= (pow * digit);
+   }
+   buff[i] = '.';
+   ++i;
+   m = (long)(val * pow10(15 - nd)) - (long)val * pow10(15 - nd);
+   j = 15 - nd;
+   for(; m && j; ++i, --j)
+   {
+      long pow = pow10(j - 1);
+      long digit = m/pow;
+      buff[i] = digit + 48;
+      m -= (pow * digit);
+   }
+   return i;
+}
