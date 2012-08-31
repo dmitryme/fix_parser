@@ -33,6 +33,6 @@ int fix_msg_get_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float* val);
 int fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val);
 int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len);
 
-int fix_message_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen);
+int fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen);
 
 #endif /* FIX_PARSER_FIX_MSG_H */
