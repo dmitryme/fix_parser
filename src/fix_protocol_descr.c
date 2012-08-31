@@ -113,7 +113,7 @@ void free_field_type(FIXFieldType* ft)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void free_message(FIXMessageDescr* msg)
+void free_message(FIXMsgDescr* msg)
 {
    free(msg->name);
    free(msg->type);
@@ -145,10 +145,10 @@ void free_fix_protocol_descr(FIXProtocolDescr* prot)
    }
    for(int i = 0; i < MSG_CNT; ++i)
    {
-      FIXMessageDescr* msg = prot->messages[i];
+      FIXMsgDescr* msg = prot->messages[i];
       while(msg)
       {
-         FIXMessageDescr* next_msg = msg->next;
+         FIXMsgDescr* next_msg = msg->next;
          free_message(msg);
          msg = next_msg;
       }
@@ -272,9 +272,9 @@ void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** in
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXMessageDescr* load_message(FIXParser* parser, xmlNode const* msg_node, xmlNode const* root, FIXProtocolDescr const* prot)
+FIXMsgDescr* load_message(FIXParser* parser, xmlNode const* msg_node, xmlNode const* root, FIXProtocolDescr const* prot)
 {
-   FIXMessageDescr* msg = (FIXMessageDescr*)calloc(1, sizeof(FIXMessageDescr));
+   FIXMsgDescr* msg = (FIXMsgDescr*)calloc(1, sizeof(FIXMsgDescr));
    char const* name = get_attr(msg_node, "name");
    msg->name = malloc(strlen(name) + 1);
    strcpy(msg->name, name);
@@ -325,7 +325,7 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
    {
       if (msg_node->type == XML_ELEMENT_NODE && !strcmp((char const*)msg_node->name, "message"))
       {
-         FIXMessageDescr* msg = load_message(parser, msg_node, root, prot);
+         FIXMsgDescr* msg = load_message(parser, msg_node, root, prot);
          if (!msg)
          {
             free(prot);
@@ -358,10 +358,10 @@ FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr co
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXMessageDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type)
+FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type)
 {
    int idx = hash_string(type) % MSG_CNT;
-   FIXMessageDescr* msg = prot->messages[idx];
+   FIXMsgDescr* msg = prot->messages[idx];
    while(msg)
    {
       if (!strcmp(msg->type, type))
@@ -370,12 +370,12 @@ FIXMessageDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr 
       }
       msg = msg->next;
    }
-   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_MSG, "FIXMessageDescr with type '%s' not found", type);
+   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_MSG, "FIXMsgDescr with type '%s' not found", type);
    return NULL;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMessageDescr const* msg, uint32_t num)
+FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t num)
 {
    int idx = num % FIELD_DESCR_CNT;
    FIXFieldDescr* fld = msg->field_index[idx];

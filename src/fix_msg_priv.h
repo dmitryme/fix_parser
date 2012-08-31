@@ -1,10 +1,10 @@
-/* @file   fix_message_priv.h
+/* @file   fix_msg_priv.h
    @author Dmitry S. Melnikov, dmitryme@gmail.com
    @date   Created on: 07/30/2012 06:28:42 PM
 */
 
-#ifndef FIX_PARSER_FIX_MESSAGE_PRIV_H
-#define FIX_PARSER_FIX_MESSAGE_PRIV_H
+#ifndef FIX_PARSER_FIX_MSG_PRIV_H
+#define FIX_PARSER_FIX_MSG_PRIV_H
 
 #include "fix_types.h"
 #include "fix_protocol_descr.h"
@@ -12,21 +12,25 @@
 
 #include <stdint.h>
 
-struct FIXMessage_
+struct FIXMsg_
 {
    FIXParser* parser;
-   FIXMessageDescr* descr;
+   FIXMsgDescr* descr;
    FIXGroup* tags;
    FIXPage* pages;
    FIXPage* curr_page;
    FIXGroup* used_groups;
 };
 
-void* fix_message_alloc(FIXMessage* msg, uint32_t size);
-void* fix_message_realloc(FIXMessage* msg, void* ptr, uint32_t size);
-FIXTag* fix_message_set_tag(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
-FIXTag* fix_message_set_tag_fmt(FIXMessage* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...);
-FIXGroup* fix_message_get_group(FIXMessage* msg);
-void fix_message_free_group(FIXMessage* msg, FIXGroup* grp);
+void* fix_msg_alloc(FIXMsg* msg, uint32_t size);
+void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size);
 
-#endif /* FIX_PARSER_FIX_MESSAGE_PRIV_H */
+FIXTag* fix_msg_get_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
+FIXTag* fix_msg_set_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len);
+FIXTag* fix_msg_set_tag_fmt(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...);
+int fix_msg_del_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum);
+
+FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
+void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
+
+#endif /* FIX_PARSER_FIX_MSG_PRIV_H */

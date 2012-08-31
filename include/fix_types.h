@@ -6,6 +6,8 @@
 #ifndef FIX_PARSER_FIX_TYPES_H
 #define FIX_PARSER_FIX_TYPES_H
 
+#include "fix_tag_num.h"
+
 #define FIX_FAILED                        -1
 #define FIX_SUCCESS                        0
 #define FIX_ERROR_TAG_HAS_WRONG_TYPE       1
@@ -28,20 +30,20 @@
 
 typedef struct FIXTagTable_ FIXGroup;
 typedef struct FIXTag_ FIXTag;
-typedef struct FIXMessage_ FIXMessage;
+typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
 
-typedef enum FixParserFlags_
+typedef enum FixParserFlagEnum_
 {
    FixParserFlags_CheckCRC = 0x01,
    FIXParserFlags_Validate = 0x02
-} FIXParserFlags;
+} FIXParserFlagEnum;
 
-typedef enum FIXTagType_
+typedef enum FIXTagTypeEnum_
 {
    FIXTagType_Value = 1,
    FIXTagType_Group = 2
-} FIXTagType;
+} FIXTagTypeEnum;
 
 typedef enum FIXProtocolVerEnum_
 {
@@ -107,6 +109,7 @@ typedef enum FIXFieldTypeEnum_
    (type == FIXFieldType_Char || type == FIXFieldType_Boolean)
 
 FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
+char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver);
 FIXFieldTypeEnum str2FIXFIXFieldType(char const* type);
 
 #endif /* FIX_PARSER_FIX_TYPES_H */

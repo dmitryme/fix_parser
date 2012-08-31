@@ -10,7 +10,7 @@
 
 START_TEST(CreateParserTest)
 {
-   FIXParser* parser = new_fix_parser(512, 0, 2, 5, 2, 5, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, FIXParserFlags_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
    fail_unless(parser->flags == FIXParserFlags_Validate);
@@ -24,13 +24,13 @@ START_TEST(CreateParserTest)
    fail_unless(parser->used_groups == 0);
    fail_unless(parser->max_groups == 5);
 
-   free_fix_parser(parser);
+   fix_parser_free(parser);
 }
 END_TEST
 
 START_TEST(SetErrorParserTest)
 {
-   FIXParser* parser = new_fix_parser(512, 0, 2, 5, 2, 5, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, FIXParserFlags_Validate);
    fail_unless(parser != NULL);
 
    fix_parser_set_error(parser, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
@@ -43,29 +43,29 @@ START_TEST(SetErrorParserTest)
    fail_unless(parser->err_code == 0);
    fail_unless(!strcmp(parser->err_text, ""));
 
-   free_fix_parser(parser);
+   fix_parser_free(parser);
 }
 END_TEST
 
 START_TEST(GetFreePageTest)
 {
-   FIXParser* parser = new_fix_parser(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXPage* nextp = parser->page->next;
-   FIXPage* p = fix_parser_get_page(parser, 0);
+   FIXPage* p = fix_parser_alloc_page(parser, 0);
 
    fail_unless(p->next == NULL);
    fail_unless(parser->page == nextp);
    fail_unless(parser->used_pages == 1);
 
-   FIXPage* p1 = fix_parser_get_page(parser, 0);
+   FIXPage* p1 = fix_parser_alloc_page(parser, 0);
    fail_unless(p1 == nextp);
    fail_unless(p1->next == NULL);
    fail_unless(parser->used_pages == 2);
 
-   FIXPage* p2 = fix_parser_get_page(parser, 0);
+   FIXPage* p2 = fix_parser_alloc_page(parser, 0);
    fail_unless(parser->page == NULL);
    fail_unless(p2 != nextp);
    fail_unless(p1->next == NULL);
@@ -85,30 +85,30 @@ START_TEST(GetFreePageTest)
 
    fail_unless(parser->used_pages == 0);
 
-   free_fix_parser(parser);
+   fix_parser_free(parser);
 }
 END_TEST
 
 START_TEST(MaxPagesTest)
 {
-   FIXParser* parser = new_fix_parser(512, 0, 2, 2, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 2, 2, 0, FIXParserFlags_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXPage* nextp = parser->page->next;
    fail_unless(parser->page != NULL);
 
-   FIXPage* p = fix_parser_get_page(parser, 0);
+   FIXPage* p = fix_parser_alloc_page(parser, 0);
    fail_unless(p->next == NULL);
    fail_unless(parser->page == nextp);
    fail_unless(parser->used_pages == 1);
 
-   FIXPage* p1 = fix_parser_get_page(parser, 0);
+   FIXPage* p1 = fix_parser_alloc_page(parser, 0);
    fail_unless(p1 == nextp);
    fail_unless(p1->next == NULL);
    fail_unless(parser->used_pages == 2);
 
-   FIXPage* p2 = fix_parser_get_page(parser, 0);
+   FIXPage* p2 = fix_parser_alloc_page(parser, 0);
    fail_unless(p2 == NULL);
    fail_unless(parser->err_code == FIX_ERROR_NO_MORE_PAGES);
    fail_unless(parser->page == NULL);
@@ -119,36 +119,36 @@ START_TEST(MaxPagesTest)
    fail_unless(parser->page == p);
    fail_unless(parser->used_pages == 1);
 
-   p = fix_parser_get_page(parser, 0);
+   p = fix_parser_alloc_page(parser, 0);
 
    fail_unless(p->next == NULL);
    fail_unless(parser->page == NULL);
    fail_unless(parser->used_pages == 2);
 
-   free_fix_parser(parser);
+   fix_parser_free(parser);
 }
 END_TEST
 
 START_TEST(MaxGroupsTest)
 {
-   FIXParser* parser = new_fix_parser(512, 0, 2, 0, 2, 2, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 2, FIXParserFlags_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXGroup* nextg = parser->group->next;
    fail_unless(parser->group != NULL);
 
-   FIXGroup* g = fix_parser_get_group(parser);
+   FIXGroup* g = fix_parser_alloc_group(parser);
    fail_unless(g->next == NULL);
    fail_unless(parser->group == nextg);
    fail_unless(parser->used_groups == 1);
 
-   FIXGroup* g1 = fix_parser_get_group(parser);
+   FIXGroup* g1 = fix_parser_alloc_group(parser);
    fail_unless(g1 == nextg);
    fail_unless(g1->next == NULL);
    fail_unless(parser->used_groups == 2);
 
-   FIXGroup* p2 = fix_parser_get_group(parser);
+   FIXGroup* p2 = fix_parser_alloc_group(parser);
    fail_unless(p2 == NULL);
    fail_unless(parser->err_code == FIX_ERROR_NO_MORE_GROUPS);
    fail_unless(parser->group == NULL);
@@ -156,60 +156,60 @@ START_TEST(MaxGroupsTest)
 
    fix_parser_free_group(parser, g);
 
-   g = fix_parser_get_group(parser);
+   g = fix_parser_alloc_group(parser);
    fail_unless(g->next == NULL);
    fail_unless(parser->group == NULL);
    fail_unless(parser->used_groups == 2);
 
-   free_fix_parser(parser);
+   fix_parser_free(parser);
 }
 END_TEST
 
 START_TEST(MaxPageSizeTest)
 {
    {
-      FIXParser* parser = new_fix_parser(512, 0, 1, 0, 2, 0, FIXParserFlags_Validate);
+      FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, FIXParserFlags_Validate);
       fail_unless(parser != NULL);
       fail_unless(parser->err_code == 0);
 
-      FIXPage* p = fix_parser_get_page(parser, 0);
+      FIXPage* p = fix_parser_alloc_page(parser, 0);
       fail_unless(p->next == NULL);
       fail_unless(parser->used_pages == 1);
       fail_unless(p->size == 512);
 
-      FIXPage* p1 = fix_parser_get_page(parser, 1024);
+      FIXPage* p1 = fix_parser_alloc_page(parser, 1024);
       fail_unless(p1->next == NULL);
       fail_unless(parser->used_pages == 2);
       fail_unless(p1->size == 1024);
 
-      FIXPage* p2 = fix_parser_get_page(parser, 10240);
+      FIXPage* p2 = fix_parser_alloc_page(parser, 10240);
       fail_unless(p2->next == NULL);
       fail_unless(parser->used_pages == 3);
       fail_unless(p2->size == 10240);
 
-      free_fix_parser(parser);
+      fix_parser_free(parser);
    }
    {
-      FIXParser* parser = new_fix_parser(512, 512, 1, 0, 2, 0, FIXParserFlags_Validate);
+      FIXParser* parser = fix_parser_create(512, 512, 1, 0, 2, 0, FIXParserFlags_Validate);
       fail_unless(parser != NULL);
       fail_unless(parser->err_code == 0);
 
-      FIXPage* p = fix_parser_get_page(parser, 0);
+      FIXPage* p = fix_parser_alloc_page(parser, 0);
       fail_unless(p != NULL);
       fail_unless(parser->used_pages == 1);
       fail_unless(p->size == 512);
 
-      FIXPage* p1 = fix_parser_get_page(parser, 500);
+      FIXPage* p1 = fix_parser_alloc_page(parser, 500);
       fail_unless(p1 != NULL);
       fail_unless(parser->used_pages == 2);
       fail_unless(p->size == 512);
 
-      FIXPage* p2 = fix_parser_get_page(parser, 513);
+      FIXPage* p2 = fix_parser_alloc_page(parser, 513);
       fail_unless(p2 == NULL);
       fail_unless(parser->err_code == FIX_ERROR_TOO_BIG_PAGE);
       fail_unless(parser->used_pages == 2);
 
-      free_fix_parser(parser);
+      fix_parser_free(parser);
    }
 }
 END_TEST
