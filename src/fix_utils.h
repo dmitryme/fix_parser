@@ -14,7 +14,7 @@
 uint32_t hash_string(char const* s);
 int numdigits(long val);
 long pow10(int n);
-int ltoa(long val, char* buff, size_t buffLen);
-int dtoa(double val, char* buff, size_t buffLen);
+int ltoa(long val, char* buff, uint32_t buffLen);
+int dtoa(double val, char* buff, uint32_t buffLen);
 
 #endif /* FIX_PARSER_FIX_UTILS_H */
