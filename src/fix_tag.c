@@ -17,7 +17,7 @@ void fix_group_free(FIXMsg* msg, FIXGroup* group);
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint32_t len)
+FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char const* data, uint16_t len)
 {
    FIXTag* fix_tag = fix_tag_get(msg, grp, tagNum);
    if (!fix_tag && get_fix_error_code(msg->parser))
@@ -41,17 +41,18 @@ FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char c
       fix_tag->next = grp->tags[idx];
       fix_tag->num = tagNum;
       grp->tags[idx] = fix_tag;
-      fix_tag->data = fix_msg_alloc(msg, len);
+      fix_tag->data = fix_msg_alloc(msg, sizeof(uint16_t) + len);
    }
    else
    {
-      fix_tag->data = fix_msg_realloc(msg, fix_tag->data, len);
+      fix_tag->data = fix_msg_realloc(msg, fix_tag->data, sizeof(uint16_t) + len);
    }
    if (!fix_tag->data)
    {
       return NULL;
    }
-   memcpy(fix_tag->data, data, len);
+   *(uint16_t*)fix_tag->data = len;
+   memcpy(fix_tag->data + sizeof(uint16_t), data, len);
    return fix_tag;
 }
 
