@@ -62,7 +62,7 @@ long lpow10(int n)
    return arr[n];
 }
 
-int ltoa(long val, char* buff, size_t buffLen)
+int ltoa(long val, char* buff, uint32_t buffLen)
 {
    int nd = numdigits(val);
    int i = 0;
@@ -76,7 +76,7 @@ int ltoa(long val, char* buff, size_t buffLen)
    return i;
 }
 
-int dtoa(double val, char* buff, size_t buffLen)
+int dtoa(double val, char* buff, uint32_t buffLen)
 {
    long m = (long)val;
    int nd = numdigits(val);
