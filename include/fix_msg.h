@@ -18,18 +18,14 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_
 int fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx);
 
 int fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* val);
-int fix_msg_set_int(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val);
-int fix_msg_set_uint(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t val);
+int fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val);
 int fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t val);
-int fix_msg_set_uint64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint64_t val);
 int fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val);
-int fix_msg_set_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float val);
+int fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double val);
 
-int fix_msg_get_int(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val);
-int fix_msg_get_uint(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t* val);
+int fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val);
 int fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* val);
-int fix_msg_get_uint64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint64_t* val);
-int fix_msg_get_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float* val);
+int fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* val);
 int fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val);
 int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len);
 
