@@ -360,7 +360,7 @@ FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr co
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type)
 {
-   int idx = hash_string(type) % MSG_CNT;
+   int idx = fix_utils_hash_string(type) % MSG_CNT;
    FIXMsgDescr* msg = prot->messages[idx];
    while(msg)
    {
