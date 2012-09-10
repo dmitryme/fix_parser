@@ -11,6 +11,7 @@
 #include "fix_tag.h"
 #include "fix_types.h"
 #include "fix_page.h"
+#include "fix_utils.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -57,6 +58,7 @@ FIXMsg* fix_msg_create(FIXParser* parser, FIXProtocolVerEnum ver, char const* ms
       fix_msg_free(msg);
       return NULL;
    }
+   msg->body_len = 0;
    fix_msg_set_string(msg, msg->tags, 8, FIXProtocolVerEnum2BeginString(ver));
    fix_msg_set_string(msg, msg->tags, 35, msgType);
    return msg;
@@ -142,14 +144,7 @@ int fix_msg_del_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (grp)
-   {
-      return fix_tag_del(msg, grp, tagNum);
-   }
-   else
-   {
-      return fix_tag_del(msg, msg->tags, tagNum);
-   }
+   return fix_tag_del(msg, grp, tagNum);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -160,27 +155,18 @@ FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
       return NULL;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlags_Validate)
+   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
+   if (!fdescr)
    {
-      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-      if (!fdescr)
-      {
-         return NULL;
-      }
-      if (fdescr->field_type->type != FIXFieldType_NumInGroup)
-      {
-         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' is not a group tag", tagNum);
-         return NULL;
-      }
+      return NULL;
    }
-   if (grp)
+   if (fdescr->field_type->type != FIXFieldType_NumInGroup)
    {
-      return fix_group_add(msg, grp, tagNum);
+      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' is not a group tag", tagNum);
+      return NULL;
    }
-   else
-   {
-      return fix_group_add(msg, msg->tags, tagNum);
-   }
+   FIXTag* tag = NULL;
+   return fix_group_add(msg, grp, tagNum, &tag);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -191,7 +177,7 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_
       return NULL;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlags_Validate)
+   if (msg->parser->flags & FIXParserFlag_Validate)
    {
       FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
       if (!fdescr)
@@ -204,14 +190,7 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_
          return NULL;
       }
    }
-   if (grp)
-   {
-      return fix_group_get(msg, grp, tagNum, grpIdx);
-   }
-   else
-   {
-      return fix_group_get(msg, msg->tags, tagNum, grpIdx);
-   }
+   return fix_group_get(msg, grp, tagNum, grpIdx);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -222,7 +201,7 @@ int fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpI
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlags_Validate)
+   if (msg->parser->flags & FIXParserFlag_Validate)
    {
       FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
       if (!fdescr)
@@ -235,208 +214,146 @@ int fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpI
          return FIX_FAILED;
       }
    }
-   if (grp)
-   {
-      return fix_group_del(msg, grp, tagNum, grpIdx);
-   }
-   else
-   {
-      return fix_group_del(msg, msg->tags, tagNum, grpIdx);
-   }
+   return fix_group_del(msg, grp, tagNum, grpIdx);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 int fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* val)
 {
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags * FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_STRING_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)val, strlen(val) + 1); // include terminal zero
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
+   if (!msg)
+   {
+      return FIX_FAILED;
+   }
+   fix_parser_reset_error(msg->parser);
+   if (msg->parser->flags & FIXParserFlag_Validate)
+   {
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
+      if (!fdescr)
+      {
+         return FIX_FAILED;
+      }
+      if (!IS_STRING_TYPE(fdescr->field_type->type))
+      {
+         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tagNum, val);
+         return FIX_FAILED;
+   return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_int(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val)
+int fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val)
 {
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags & FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_INT_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%d'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_uint(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t val)
-{
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags & FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_INT_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%u'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
+   if (!msg)
+   {
+      return FIX_FAILED;
+   }
+   fix_parser_reset_error(msg->parser);
+   if (msg->parser->flags & FIXParserFlag_Validate)
+   {
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
+      if (!fdescr)
+      {
+         return FIX_FAILED;
+      }
+      if (!IS_INT_TYPE(fdescr->field_type->type))
+      {
+         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%d'", tagNum, val);
+         return FIX_FAILED;
+      }
+   }
+   char buff[64] = {};
+   int res = fix_utils_ltoa(val, buff, sizeof(buff));
+   FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)buff, res);
+   return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 int fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t val)
 {
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags & FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_INT_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%ld'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_uint64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint64_t val)
-{
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags & FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_INT_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%lu'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
+   if (!msg)
+   {
+      return FIX_FAILED;
+   }
+   fix_parser_reset_error(msg->parser);
+   if (msg->parser->flags & FIXParserFlag_Validate)
+   {
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
+      if (!fdescr)
+      {
+         return FIX_FAILED;
+      }
+      if (!IS_INT_TYPE(fdescr->field_type->type))
+      {
+         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%ld'", tagNum, val);
+         return FIX_FAILED;
+      }
+   }
+   char buff[64] = {};
+   int res = fix_utils_ltoa(val, buff, sizeof(buff));
+   FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)buff, res);
+   return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 int fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val)
 {
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags & FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_CHAR_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%c'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, 1);
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
+   if (!msg)
+   {
+      return FIX_FAILED;
+   }
+   fix_parser_reset_error(msg->parser);
+   if (msg->parser->flags & FIXParserFlag_Validate)
+   {
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
+      if (!fdescr)
+      {
+         return FIX_FAILED;
+      }
+      if (!IS_CHAR_TYPE(fdescr->field_type->type))
+      {
+         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%c'", tagNum, val);
+         return FIX_FAILED;
+      }
+   }
+   FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, 1);
+   return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float val)
-{
-  if (!msg)
-  {
-     return FIX_FAILED;
-  }
-  fix_parser_reset_error(msg->parser);
-  if (msg->parser->flags & FIXParserFlags_Validate)
-  {
-     FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
-     if (!fdescr)
-     {
-        return FIX_FAILED;
-     }
-     if (!IS_FLOAT_TYPE(fdescr->field_type->type))
-     {
-        fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%f'", tagNum, val);
-        return FIX_FAILED;
-     }
-  }
-  FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)&val, sizeof(val));
-  return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_int(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val)
+int fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double val)
 {
    if (!msg)
    {
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
+   if (msg->parser->flags & FIXParserFlag_Validate)
    {
-      tag = fix_tag_get(msg, grp, tagNum);
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
+      if (!fdescr)
+      {
+         return FIX_FAILED;
+      }
+      if (!IS_FLOAT_TYPE(fdescr->field_type->type))
+      {
+         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%f'", tagNum, val);
+         return FIX_FAILED;
+      }
    }
-   else
+   char buff[64] = {};
+   int res = fix_utils_dtoa(val, buff, sizeof(buff));
+   FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)buff, res);
+   return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val)
+{
+   if (!msg)
    {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
+      return FIX_FAILED;
    }
+   fix_parser_reset_error(msg->parser);
+   FIXTag* tag = fix_tag_get(msg, grp, tagNum);
    if (!tag)
    {
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
@@ -447,39 +364,12 @@ int fix_msg_get_int(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val)
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   *val = *(int32_t*)tag->data;
-   return FIX_SUCCESS;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_uint(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t* val)
-{
-   if (!msg)
+   if (tag->size > sizeof(int32_t))
    {
+      fix_parser_set_error(msg->parser, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", tag->size);
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
-   {
-      tag = fix_tag_get(msg, grp, tagNum);
-   }
-   else
-   {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
-   }
-   if (!tag)
-   {
-      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
-      return FIX_FAILED;
-   }
-   if (tag->type != FIXTagType_Value)
-   {
-      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
-      return FIX_FAILED;
-   }
-   *val = *(uint32_t*)tag->data;
-   return FIX_SUCCESS;
+   return fix_utils_atoi32(tag->data, tag->size, val);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -490,15 +380,7 @@ int fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* val)
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
-   {
-      tag = fix_tag_get(msg, grp, tagNum);
-   }
-   else
-   {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
-   }
+   FIXTag* tag = fix_tag_get(msg, grp, tagNum);
    if (!tag)
    {
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
@@ -509,58 +391,18 @@ int fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* val)
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   *val = *(int64_t*)tag->data;
-   return FIX_SUCCESS;
+   return fix_utils_atoi64(tag->data, tag->size, val);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_uint64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint64_t* val)
-{
-   if (!msg)
-   {
-      return FIX_FAILED;
-   }
-   fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
-   {
-      tag = fix_tag_get(msg, grp, tagNum);
-   }
-   else
-   {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
-   }
-   if (!tag)
-   {
-      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
-      return FIX_FAILED;
-   }
-   if (tag->type != FIXTagType_Value)
-   {
-      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
-      return FIX_FAILED;
-   }
-   *val = *(uint64_t*)tag->data;
-   return FIX_SUCCESS;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float* val)
+int fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* val)
 {
    if(!msg)
    {
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
-   {
-      tag = fix_tag_get(msg, grp, tagNum);
-   }
-   else
-   {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
-   }
+   FIXTag* tag = fix_tag_get(msg, grp, tagNum);
    if (!tag)
    {
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
@@ -571,8 +413,7 @@ int fix_msg_get_float(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, float* val)
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   *val = *(float*)tag->data;
-   return FIX_SUCCESS;
+   return fix_utils_atod(tag->data, tag->size, val);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -583,15 +424,7 @@ int fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val)
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
-   {
-      tag = fix_tag_get(msg, grp, tagNum);
-   }
-   else
-   {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
-   }
+   FIXTag* tag = fix_tag_get(msg, grp, tagNum);
    if (!tag)
    {
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
@@ -602,7 +435,7 @@ int fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val)
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   *val = *(char*)tag->data;
+   *val = *(char*)(tag->data);
    return FIX_SUCCESS;
 }
 
@@ -614,15 +447,7 @@ int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, u
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   FIXTag* tag = NULL;
-   if (grp)
-   {
-      tag = fix_tag_get(msg, grp, tagNum);
-   }
-   else
-   {
-      tag = fix_tag_get(msg, msg->tags, tagNum);
-   }
+   FIXTag* tag = fix_tag_get(msg, grp, tagNum);
    if (!tag)
    {
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' not found", tagNum);
@@ -634,8 +459,12 @@ int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, u
       return FIX_FAILED;
    }
    strncpy(val, (char const*)tag->data, len);
-   uint32_t const srclen = strlen((char const*)tag->data);
-   return srclen > len ? len : srclen;
+   int copied = tag->size > len ? len : tag->size;
+   if (copied < len)
+   {
+      val[copied] = 0;
+   }
+   return copied;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -647,35 +476,67 @@ int fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen)
    }
    fix_parser_reset_error(msg->parser);
    FIXMsgDescr* descr = msg->descr;
+   uint32_t crc = 0;
    for(uint32_t i = 0; i < descr->field_count; ++i)
    {
-      FIXFieldDescr* field = &descr->fields[i];
-      FIXTag* tag = fix_tag_get(msg, NULL, field->field_type->num);
-      if (!tag && field->flags & FIELD_FLAG_REQUIRED)
+      char* prev = buff;
+      FIXFieldDescr* fdescr = &descr->fields[i];
+      FIXTag* tag = fix_tag_get(msg, NULL, fdescr->field_type->num);
+   /*   if (fdescr->field_type->num == FIXTagNum_BodyLength)*/
+   /*   {*/
+   /*      int res = fix_utils_ltoa(fdescr->field_type->num, buff, buffLen);*/
+   /*      buff += res;*/
+   /*      buffLen -= res;*/
+   /*      *buff = '=';*/
+   /*      ++buff;*/
+   /*      --buffLen;*/
+   /*      res = fix_utils_ltoa(msg->body_len, buff, buffLen);*/
+   /*      buff += res;*/
+   /*      buffLen -= res;*/
+   /*      *buff = delimiter;*/
+   /*      ++buff;*/
+   /*      --buffLen;*/
+   /*   }*/
+   /*   else if(fdescr->field_type->num == FIXTagNum_CheckSum)*/
+   /*   {*/
+   /*      int res = fix_utils_ltoa(fdescr->field_type->num, buff, buffLen);*/
+   /*      buff += res;*/
+   /*      buffLen -= res;*/
+   /*      *buff = '=';*/
+   /*      ++buff;*/
+   /*      --buffLen;*/
+   /*      res = fix_utils_ltoa(crc % 256, buff, buffLen);*/
+   /*      buff += res;*/
+   /*      buffLen -= res;*/
+   /*      *buff = delimiter;*/
+   /*      ++buff;*/
+   /*      --buffLen;*/
+   /*   }*/
+   /*   else if (!tag && fdescr->flags & FIELD_FLAG_REQUIRED)*/
+   /*   {*/
+   /*      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", fdescr->field_type->num);*/
+   /*   }*/
+      if(tag)
       {
-         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", field->field_type->num);
+         int res = fix_utils_ltoa(tag->num, buff, buffLen);
+         buff += res;
+         buffLen -= res;
+         *buff = '=';
+         ++buff;
+         --buffLen;
+         strncpy(buff, tag->data, tag->size);
+         buff += tag->size;
+         buffLen -= tag->size;
+         *buff = delimiter;
+         ++buff;
+         --buffLen;
       }
-      int res = 0;
-      if (IS_STRING_TYPE(field->field_type->type))
-      {
-         res = snprintf(buff, buffLen, "%d=%s", field->field_type->num, (char const*)tag->data);
-      }
-      else if (IS_INT_TYPE(field->field_type->type))
-      {
-         res = snprintf(buff, buffLen, "%d=%ld\001", field->field_type->num, *(long*)tag->data);
-      }
-      else if (IS_CHAR_TYPE(field->field_type->type))
-      {
-         res = snprintf(buff, buffLen, "%d=%c\001", field->field_type->num, *(char*)tag->data);
-      }
-      else if (IS_FLOAT_TYPE(field->field_type->type))
-      {
-         res = snprintf(buff, buffLen, "%d=%f\001", field->field_type->num, *(float*)tag->data);
-      }
-      // TODO: check res for errors
-      buff += res;
-      buffLen -= res;
    }
+   /*for(;tag && fdescr->field_type->num != FIXTagNum_CheckSum && prev != buff; ++prev)*/
+   /*{*/
+   /*   crc += *prev;*/
+   /*}*/
+   /*}*/
    return FIX_SUCCESS;
 }
 
@@ -729,63 +590,5 @@ FIXTag* fix_msg_set_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned ch
    else
    {
       return fix_tag_set(msg, msg->tags, tagNum, data, len);
-   }
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-FIXTag* set_tag_fmt(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* fmt, ...)
-{
-   int n, size = 64;
-   char *p, *np;
-   va_list ap;
-
-   if ((p = malloc(size)) == NULL)
-   {
-      fix_parser_set_error(msg->parser, FIX_ERROR_MALLOC, "Unable to allocate %d bytes", size);
-      return NULL;
-   }
-
-   while (1)
-   {
-      va_start(ap, fmt);
-      n = vsnprintf(p, size, fmt, ap);
-      va_end(ap);
-
-      if (n < 0)
-      {
-         fix_parser_set_error(msg->parser, FIX_ERROR_INVALID_ARGUMENT, "Unable to set tag. Wrong format '%s'", fmt);
-         return NULL;
-      }
-
-      if (n < size)
-      {
-         FIXTag* tag = NULL;
-         if (grp)
-         {
-            tag = fix_tag_set(msg, grp, tagNum, (unsigned char*)p, n);
-         }
-        else
-         {
-            tag = fix_tag_set(msg, msg->tags, tagNum, (unsigned char*)p, n);
-         }
-         free(p);
-         return tag;
-      }
-
-      if (size == n)
-      {
-         size *= 2;
-      }
-
-      if ((np = realloc (p, size)) == NULL)
-      {
-         free(p);
-         fix_parser_set_error(msg->parser, FIX_ERROR_MALLOC, "Unable to allocate %d bytes", size);
-         return NULL;
-      }
-      else
-      {
-         p = np;
-      }
    }
 }
