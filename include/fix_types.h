@@ -35,8 +35,8 @@ typedef struct FIXParser_ FIXParser;
 
 typedef enum FixParserFlagEnum_
 {
-   FixParserFlags_CheckCRC = 0x01,
-   FIXParserFlags_Validate = 0x02
+   FixParserFlag_CheckCRC = 0x01,
+   FIXParserFlag_Validate = 0x02
 } FIXParserFlagEnum;
 
 typedef enum FIXTagTypeEnum_
