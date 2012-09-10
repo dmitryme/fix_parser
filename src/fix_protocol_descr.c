@@ -174,7 +174,7 @@ int load_field_types(FIXParser* parser, FIXProtocolDescr* prot, xmlNode const* r
          fld->name = (char*)malloc(strlen(name) + 1);
          strcpy(fld->name, name);
          fld->type = str2FIXFIXFieldType(get_attr(field, "type"));
-         int idx = hash_string(fld->name) % FIELD_TYPE_CNT;
+         int idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = prot->field_types[idx];
          prot->field_types[idx] = fld;
       }
