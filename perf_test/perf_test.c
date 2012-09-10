@@ -26,7 +26,7 @@ void create_msg_test(FIXParser* parser)
 
       fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678");
       fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ");
-      fix_msg_set_int(msg, NULL, FIXTagNum_MsgSeqNum, 34);
+      fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34);
       fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1");
       fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230");
       fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1");
@@ -37,14 +37,14 @@ void create_msg_test(FIXParser* parser)
       fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM");
       fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12");
       fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1');
-      fix_msg_set_float(msg, NULL, FIXTagNum_OrderQty, 25);
-      fix_msg_set_float(msg, NULL, FIXTagNum_Price, 135155.0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25);
+      fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0);
       fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0');
-      fix_msg_set_float(msg, NULL, FIXTagNum_LastQty, 0);
-      fix_msg_set_float(msg, NULL, FIXTagNum_LastPx, 0.0);
-      fix_msg_set_float(msg, NULL, FIXTagNum_LeavesQty, 25.0);
-      fix_msg_set_float(msg, NULL, FIXTagNum_CumQty, 0);
-      fix_msg_set_float(msg, NULL, FIXTagNum_AvgPx, 0.0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0);
       fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1');
       fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12");
 
@@ -68,7 +68,7 @@ void msg_to_string(FIXParser* parser)
 
    fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678");
    fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ");
-   fix_msg_set_int(msg, NULL, FIXTagNum_MsgSeqNum, 34);
+   fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34);
    fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1");
    fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230");
    fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1");
@@ -79,14 +79,14 @@ void msg_to_string(FIXParser* parser)
    fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM");
    fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12");
    fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1');
-   fix_msg_set_float(msg, NULL, FIXTagNum_OrderQty, 25);
-   fix_msg_set_float(msg, NULL, FIXTagNum_Price, 135155.0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25);
+   fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0);
    fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0');
-   fix_msg_set_float(msg, NULL, FIXTagNum_LastQty, 0);
-   fix_msg_set_float(msg, NULL, FIXTagNum_LastPx, 0.0);
-   fix_msg_set_float(msg, NULL, FIXTagNum_LeavesQty, 25.0);
-   fix_msg_set_float(msg, NULL, FIXTagNum_CumQty, 0);
-   fix_msg_set_float(msg, NULL, FIXTagNum_AvgPx, 0.0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0);
    fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1');
    fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12");
 
@@ -95,7 +95,7 @@ void msg_to_string(FIXParser* parser)
    for(int i = 0; i < 100000; ++i)
    {
       char buff[1024];
-      fix_msg_to_string(msg, 1, buff, sizeof(buff));
+      fix_msg_to_string(msg, '|', buff, sizeof(buff));
    }
 
    clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
@@ -107,7 +107,7 @@ void msg_to_string(FIXParser* parser)
 
 int main()
 {
-   FIXParser* parser = fix_parser_create(1024, 0, 2, 0, 1000, 0, 0/*FIXParserFlags_Validate*/);
+   FIXParser* parser = fix_parser_create(1024, 0, 2, 0, 1000, 0, FIXParserFlag_Validate);
 
    int res = fix_protocol_init(parser, "fix44.xml");
    if (res == FIX_FAILED)
