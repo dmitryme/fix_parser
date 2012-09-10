@@ -20,6 +20,7 @@ struct FIXMsg_
    FIXPage* pages;
    FIXPage* curr_page;
    FIXGroup* used_groups;
+   uint32_t body_len;
 };
 
 void* fix_msg_alloc(FIXMsg* msg, uint32_t size);
