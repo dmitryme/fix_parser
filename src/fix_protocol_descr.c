@@ -344,7 +344,7 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr const* prot, char const* name)
 {
-   int idx = hash_string(name) % FIELD_TYPE_CNT;
+   int idx = fix_utils_hash_string(name) % FIELD_TYPE_CNT;
    FIXFieldType* fld = prot->field_types[idx];
    while(fld)
    {
