@@ -331,7 +331,7 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
             free(prot);
             return NULL;
          }
-         int idx = hash_string(msg->type) % MSG_CNT;
+         int idx = fix_utils_hash_string(msg->type) % MSG_CNT;
          msg->next = prot->messages[idx];
          prot->messages[idx] = msg;
       }
