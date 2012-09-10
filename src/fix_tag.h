@@ -22,11 +22,11 @@ struct FIXTag_
    void* data;
 } __attribute__((packed));
 
-typedef struct FIXTagTable_
+typedef struct FIXGroup_
 {
    FIXTag* tags[GROUP_SIZE];
    struct FIXGroup_* next;
-} __attribute__((packed)) FIXGroup;
+} __attribute__((packed));
 
 typedef struct FIXGroups_
 {
