@@ -30,7 +30,6 @@ typedef struct FIXTagTable_
 
 typedef struct FIXGroups_
 {
-   uint32_t cnt;
    FIXGroup* group[1];
 } FIXGroups;
 
