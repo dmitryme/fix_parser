@@ -22,72 +22,78 @@ FIXMsg* new_fake_message(FIXParser* parser)
 
 START_TEST(SetTagTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
-   long val = 1000;
-   FIXTag* tag = fix_tag_set(msg, msg->tags, 1, (unsigned char const*)&val, sizeof(val));
+   char const val[] = {"1000"};
+   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)val, sizeof(val));
    fail_unless(msg->tags->tags[1] == tag);
    fail_unless(tag->num == 1);
    fail_unless(tag->type == FIXTagType_Value);
    fail_unless(tag->next == NULL);
-   fail_unless(*(long*)tag->data, val);
+   fail_unless(!strncmp(tag->data, val, sizeof(val)));
+   fail_unless(tag->size == sizeof(val));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 4 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 16 + sizeof("1000"));
    fail_unless(msg->curr_page->next == NULL);
 
-   FIXTag* tag11 = fix_tag_set(msg, msg->tags, 2, (unsigned char const*)&val, sizeof(val));
+   FIXTag* tag11 = fix_tag_set(msg, NULL, 2, (unsigned char const*)val, sizeof(val));
    fail_unless(msg->tags->tags[2] == tag11);
    fail_unless(tag11->num == 2);
    fail_unless(tag11->type == FIXTagType_Value);
    fail_unless(tag11->next == NULL);
-   fail_unless(*(long*)tag11->data, val);
+   fail_unless(!strncmp(tag11->data, val, sizeof(val)));
+   fail_unless(tag11->size == sizeof(val));
 
-   FIXTag* tag12 = fix_tag_set(msg, msg->tags, 30, (unsigned char const*)&val, sizeof(val));
+   FIXTag* tag12 = fix_tag_set(msg, NULL, 30, (unsigned char const*)val, sizeof(val));
    fail_unless(msg->tags->tags[30] == tag12);
    fail_unless(tag12->num == 30);
    fail_unless(tag12->type == FIXTagType_Value);
    fail_unless(tag12->next == NULL);
-   fail_unless(*(long*)tag12->data, val);
+   fail_unless(!strncmp(tag12->data, val, sizeof(val)));
+   fail_unless(tag12->size == sizeof(val));
 
-   val = 2000;
-   FIXTag* tag1 = fix_tag_set(msg, msg->tags, 1, (unsigned char const*)&val, sizeof(val));
+   char const val1[] = {"2000"};
+   FIXTag* tag1 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val1, sizeof(val1));
    fail_unless(tag == tag1);
    fail_unless(tag1->num == 1);
    fail_unless(tag1->type == FIXTagType_Value);
    fail_unless(tag1->next == NULL);
-   fail_unless(*(long*)tag1->data, val);
+   fail_unless(!strncmp(tag1->data, val1, sizeof(val1)));
+   fail_unless(tag1->size == sizeof(val1));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag) + 4 + sizeof(val)));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val1) + 8 + sizeof(val) + 8 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
-   int val1 = 64;
-   FIXTag* tag2 = fix_tag_set(msg, msg->tags, 1, (unsigned char const*)&val1, sizeof(val1));
+   char const val2[] = {"64"};
+   FIXTag* tag2 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val2, sizeof(val2));
    fail_unless(tag2 == tag);
    fail_unless(tag2->num == 1);
    fail_unless(tag2->type == FIXTagType_Value);
    fail_unless(tag2->next == NULL);
-   fail_unless(*(int*)tag2->data, val1);
+   fail_unless(!strncmp(tag2->data, val2, sizeof(val2)));
+   fail_unless(tag1->size == sizeof(val2));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag) + 4 + sizeof(val)));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val1) + 8 + sizeof(val) + 8 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
-   char const* txt = "Hello world!";
-   FIXTag* tag3 = fix_tag_set(msg, msg->tags, 1, (unsigned char const*)txt, strlen(txt));
+   char const txt[] = "Hello world!";
+   FIXTag* tag3 = fix_tag_set(msg, NULL, 1, (unsigned char const*)txt, sizeof(txt));
    fail_unless(tag3 == tag);
    fail_unless(tag3->num == 1);
    fail_unless(tag3->type == FIXTagType_Value);
    fail_unless(tag3->next == NULL);
-   fail_unless(!strcmp((char const*)tag3->data, txt));
+   fail_unless(!strncmp(tag3->data, txt, sizeof(txt)));
+   fail_unless(tag3->size == sizeof(txt));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag) + 4 + sizeof(val)) + 4 + strlen(txt));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val1) + 8 + sizeof(val) + 8 + sizeof(val) + 8 + sizeof(txt));
    fail_unless(msg->curr_page->next == NULL);
 
    fix_parser_free(parser);
@@ -97,62 +103,62 @@ END_TEST
 
 START_TEST(DelTagTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
    long val = 1000;
-   FIXTag* tag = fix_tag_set(msg, msg->tags, 1, (unsigned char const*)&val, sizeof(val));
+   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)&val, sizeof(val));
    fail_unless(msg->tags->tags[1] == tag);
    fail_unless(tag->num == 1);
    fail_unless(tag->type == FIXTagType_Value);
    fail_unless(tag->next == NULL);
-   fail_unless(*(long*)tag->data, val);
+   fail_unless(*(long*)tag->data == val);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 4 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 8 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
    long val1 = 2000;
-   FIXTag* tag1 = fix_tag_set(msg, msg->tags, 65, (unsigned char const*)&val1, sizeof(val1));
+   FIXTag* tag1 = fix_tag_set(msg, NULL, 65, (unsigned char const*)&val1, sizeof(val1));
    fail_unless(msg->tags->tags[1] == tag1);
    fail_unless(tag1->num == 65);
    fail_unless(tag1->type == FIXTagType_Value);
    fail_unless(tag1->next == tag);
-   fail_unless(*(long*)tag1->data, val1);
+   fail_unless(*(long*)tag1->data == val1);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 2 * (4 + sizeof(FIXTag) + 4 + sizeof(val)));
+   fail_unless(msg->curr_page->offset == 2 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val1));
    fail_unless(msg->curr_page->next == NULL);
 
    long val2 = 3000;
-   FIXTag* tag2 = fix_tag_set(msg, msg->tags, 129, (unsigned char const*)&val2, sizeof(val2));
+   FIXTag* tag2 = fix_tag_set(msg, NULL, 129, (unsigned char const*)&val2, sizeof(val2));
    fail_unless(msg->tags->tags[1] == tag2);
    fail_unless(tag2->num == 129);
    fail_unless(tag2->type == FIXTagType_Value);
    fail_unless(tag2->next == tag1);
-   fail_unless(*(long*)tag2->data, val2);
+   fail_unless(*(long*)tag2->data == val2);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag) + 4 + sizeof(val)));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val1) + 8 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
    long val3 = 4000;
-   FIXTag* tag3 = fix_tag_set(msg, msg->tags, 193, (unsigned char const*)&val3, sizeof(val3));
+   FIXTag* tag3 = fix_tag_set(msg, NULL, 193, (unsigned char const*)&val3, sizeof(val3));
 
    fail_unless(msg->tags->tags[1] == tag3);
    fail_unless(tag3->num == 193);
    fail_unless(tag3->type == FIXTagType_Value);
    fail_unless(tag3->next == tag2);
-   fail_unless(*(long*)tag2->data, val3);
+   fail_unless(*(long*)tag3->data == val3);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag) + 4 + sizeof(val)));
+   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val) + 8 + sizeof(val1) + 8 + sizeof(val3));
    fail_unless(msg->curr_page->next == NULL);
 
-   int res = fix_tag_del(msg, msg->tags, 1);
+   int res = fix_tag_del(msg, NULL, 1);
    fail_unless(res == FIX_SUCCESS);
    fail_unless(msg->tags->tags[1] == tag3);
    fail_unless(msg->tags->tags[1]->next == tag2);
@@ -160,7 +166,7 @@ START_TEST(DelTagTest)
    fail_unless(msg->tags->tags[1]->next->next->next == NULL);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag) + 4 + sizeof(val)));
+   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val) + 8 + sizeof(val1) + 8 + sizeof(val3));
    fail_unless(msg->curr_page->next == NULL);
 
    res = fix_tag_del(msg, msg->tags, 129);
@@ -185,14 +191,14 @@ END_TEST
 
 START_TEST(GetTagTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
    long val = 1000;
-   FIXTag* tag = fix_tag_set(msg, msg->tags, 1, (unsigned char const*)&val, sizeof(val));
+   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)&val, sizeof(val));
    fail_unless(msg->tags->tags[1] == tag);
    fail_unless(tag->num == 1);
    fail_unless(tag->type == FIXTagType_Value);
@@ -200,7 +206,7 @@ START_TEST(GetTagTest)
    fail_unless(*(long*)tag->data, val);
 
    long val1 = 2000;
-   FIXTag* tag1 = fix_tag_set(msg, msg->tags, 65, (unsigned char const*)&val1, sizeof(val1));
+   FIXTag* tag1 = fix_tag_set(msg, NULL, 65, (unsigned char const*)&val1, sizeof(val1));
    fail_unless(msg->tags->tags[1] == tag1);
    fail_unless(msg->tags->tags[1]->next == tag);
    fail_unless(tag1->num == 65);
@@ -209,7 +215,7 @@ START_TEST(GetTagTest)
    fail_unless(*(long*)tag1->data, val1);
 
    long val2 = 3000;
-   FIXTag* tag2 = fix_tag_set(msg, msg->tags, 129, (unsigned char const*)&val2, sizeof(val2));
+   FIXTag* tag2 = fix_tag_set(msg, NULL, 129, (unsigned char const*)&val2, sizeof(val2));
    fail_unless(msg->tags->tags[1] == tag2);
    fail_unless(msg->tags->tags[1]->next == tag1);
    fail_unless(msg->tags->tags[1]->next->next == tag);
@@ -219,7 +225,7 @@ START_TEST(GetTagTest)
    fail_unless(*(long*)tag2->data, val2);
 
    long val3 = 4000;
-   FIXTag* tag3 = fix_tag_set(msg, msg->tags, 193, (unsigned char const*)&val3, sizeof(val3));
+   FIXTag* tag3 = fix_tag_set(msg, NULL, 193, (unsigned char const*)&val3, sizeof(val3));
    fail_unless(msg->tags->tags[1] == tag3);
    fail_unless(msg->tags->tags[1]->next == tag2);
    fail_unless(msg->tags->tags[1]->next->next == tag1);
@@ -230,7 +236,7 @@ START_TEST(GetTagTest)
    fail_unless(*(long*)tag2->data, val3);
 
    long val4 = 4000;
-   FIXTag* tag4 = fix_tag_set(msg, msg->tags, 2, (unsigned char const*)&val4, sizeof(val4));
+   FIXTag* tag4 = fix_tag_set(msg, NULL, 2, (unsigned char const*)&val4, sizeof(val4));
    fail_unless(msg->tags->tags[1] == tag3);
    fail_unless(msg->tags->tags[1]->next == tag2);
    fail_unless(msg->tags->tags[1]->next->next == tag1);
@@ -255,43 +261,48 @@ END_TEST
 
 START_TEST(AddGetDelGroupTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
-   FIXGroup* grp = fix_group_add(msg, msg->tags, 1);
-   fail_unless(grp != NULL);
-   FIXTag* tag = fix_tag_get(msg, msg->tags, 1);
+   FIXTag* tag = NULL;
+   FIXGroup* grp = fix_group_add(msg, NULL, 1, &tag);
    fail_unless(tag != NULL);
-   fail_unless(*(uint32_t*)tag->data, 1);
+   fail_unless(grp != NULL);
+   fail_unless(tag->size, 1);
    fail_unless(msg->used_groups == grp);
    fail_unless(parser->used_groups == 2);
 
    long val = 100;
-   FIXTag* tag1 = fix_tag_set(msg, msg->tags, 1, (unsigned char*)&val, sizeof(val));
+   FIXTag* tag1 = fix_tag_set(msg, NULL, 1, (unsigned char*)&val, sizeof(val));
    fail_unless(tag1 == NULL);
    fail_unless(parser->err_code == FIX_ERROR_TAG_HAS_WRONG_TYPE);
 
-   FIXGroup* grp1 = fix_group_add(msg, msg->tags, 1);
+   FIXTag* tag11 = NULL;
+   FIXGroup* grp1 = fix_group_add(msg, NULL, 1, &tag1);
+   fail_unless(tag11 != NULL);
    fail_unless(grp1 != NULL);
-   fail_unless(*(uint32_t*)tag->data, 2);
+   fail_unless(tag1->size, 2);
    fail_unless(msg->used_groups == grp1);
    fail_unless(msg->used_groups->next == grp);
    fail_unless(parser->used_groups == 3);
    fail_unless(parser->group == NULL);
 
-   FIXGroup* grp2 = fix_group_add(msg, msg->tags, 1);
+   FIXTag* tag2 = NULL;
+   FIXGroup* grp2 = fix_group_add(msg, NULL, 1, &tag2);
+   fail_unless(tag2 != NULL);
    fail_unless(grp2 != NULL);
-   fail_unless(*(uint32_t*)tag->data, 3);
+   fail_unless(tag2->size, 3);
    fail_unless(msg->used_groups == grp2);
    fail_unless(msg->used_groups->next == grp1);
    fail_unless(msg->used_groups->next->next == grp);
    fail_unless(parser->used_groups == 4);
    fail_unless(parser->group == NULL);
 
-   FIXGroup* grp3 = fix_group_add(msg, msg->tags, 1);
+   FIXTag* tag3 = NULL;
+   FIXGroup* grp3 = fix_group_add(msg, NULL, 1, &tag3);
    fail_unless(grp3 != NULL);
    fail_unless(*(uint32_t*)tag->data, 4);
    fail_unless(msg->used_groups == grp3);
@@ -301,17 +312,17 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(parser->used_groups == 5);
    fail_unless(parser->group == NULL);
 
-   FIXGroup* grp4 = fix_group_get(msg, msg->tags, 1, 4);
+   FIXGroup* grp4 = fix_group_get(msg, NULL, 1, 4);
    fail_unless(grp4 == NULL);
    fail_unless(parser->err_code == FIX_ERROR_GROUP_WRONG_INDEX);
 
-   fail_unless(fix_group_get(msg, msg->tags, 1, 3) == grp3);
-   fail_unless(fix_group_get(msg, msg->tags, 1, 2) == grp2);
-   fail_unless(fix_group_get(msg, msg->tags, 1, 1) == grp1);
-   fail_unless(fix_group_get(msg, msg->tags, 1, 0) == grp);
+   fail_unless(fix_group_get(msg, NULL, 1, 3) == grp3);
+   fail_unless(fix_group_get(msg, NULL, 1, 2) == grp2);
+   fail_unless(fix_group_get(msg, NULL, 1, 1) == grp1);
+   fail_unless(fix_group_get(msg, NULL, 1, 0) == grp);
 
    FIXGroups* grps = (FIXGroups*)tag->data;
-   fail_unless(grps->cnt == 4);
+   fail_unless(tag->size == 4);
    fail_unless(grps->group[0] == grp);
    fail_unless(grps->group[1] == grp1);
    fail_unless(grps->group[2] == grp2);
@@ -320,7 +331,7 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(parser->group == NULL);
    fail_unless(msg->used_groups == grp3);
 
-   fail_unless(fix_group_del(msg, msg->tags, 1, 3) == FIX_SUCCESS);
+   fail_unless(fix_group_del(msg, NULL, 1, 3) == FIX_SUCCESS);
    fail_unless(parser->group == grp3);
    fail_unless(parser->group->next == NULL);
    fail_unless(msg->used_groups == grp2);
@@ -328,13 +339,13 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(msg->used_groups->next->next == grp);
    fail_unless(msg->used_groups->next->next->next == NULL);
 
-   fail_unless(grps->cnt == 3);
+   fail_unless(tag->size == 3);
    fail_unless(grps->group[0] == grp);
    fail_unless(grps->group[1] == grp1);
    fail_unless(grps->group[2] == grp2);
    fail_unless(grps->group[3] == NULL);
 
-   fail_unless(fix_group_del(msg, msg->tags, 1, 1) == FIX_SUCCESS);
+   fail_unless(fix_group_del(msg, NULL, 1, 1) == FIX_SUCCESS);
    fail_unless(parser->group == grp1);
    fail_unless(parser->group->next == grp3);
    fail_unless(parser->group->next->next == NULL);
@@ -342,27 +353,27 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(msg->used_groups->next == grp);
    fail_unless(msg->used_groups->next->next == NULL);
 
-   fail_unless(grps->cnt == 2);
+   fail_unless(tag->size == 2);
    fail_unless(grps->group[0] == grp);
    fail_unless(grps->group[1] == grp2);
    fail_unless(grps->group[2] == NULL);
    fail_unless(grps->group[3] == NULL);
 
-   fail_unless(fix_group_del(msg, msg->tags, 1, 0) == FIX_SUCCESS);
+   fail_unless(fix_group_del(msg, NULL, 1, 0) == FIX_SUCCESS);
    fail_unless(parser->group == grp);
    fail_unless(parser->group->next == grp1);
    fail_unless(parser->group->next->next == grp3);
    fail_unless(msg->used_groups == grp2);
    fail_unless(msg->used_groups->next == NULL);
 
-   fail_unless(grps->cnt == 1);
+   fail_unless(tag->size == 1);
    fail_unless(grps->group[0] == grp2);
    fail_unless(grps->group[1] == NULL);
    fail_unless(grps->group[2] == NULL);
    fail_unless(grps->group[3] == NULL);
 
-   fail_unless(fix_group_del(msg, msg->tags, 1, 0) == FIX_SUCCESS);
-   fail_unless(fix_tag_get(msg, msg->tags, 1) == NULL);
+   fail_unless(fix_group_del(msg, NULL, 1, 0) == FIX_SUCCESS);
+   fail_unless(fix_tag_get(msg, NULL, 1) == NULL);
    fail_unless(parser->group == grp2);
    fail_unless(parser->group->next == grp);
    fail_unless(parser->group->next->next == grp1);
@@ -376,24 +387,24 @@ END_TEST
 
 START_TEST(NestedGroupsTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlags_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
-   FIXGroup* grp = fix_group_add(msg, msg->tags, 1);
-   fail_unless(grp != NULL);
-   FIXTag* tag = fix_tag_get(msg, msg->tags, 1);
+   FIXTag* tag = NULL;
+   FIXGroup* grp = fix_group_add(msg, NULL, 1, &tag);
    fail_unless(tag != NULL);
-   fail_unless(*(uint32_t*)tag->data, 1);
+   fail_unless(grp != NULL);
+   fail_unless(tag->size, 1);
    fail_unless(msg->used_groups == grp);
    fail_unless(parser->used_groups == 2);
 
-   FIXGroup* nested_grp = fix_group_add(msg, grp, 65);
-   fail_unless(nested_grp != NULL);
-   FIXTag* nested_tag = fix_tag_get(msg, grp, 65);
+   FIXTag* nested_tag = NULL;
+   FIXGroup* nested_grp = fix_group_add(msg, grp, 65, &nested_tag);
    fail_unless(nested_tag != NULL);
+   fail_unless(nested_grp != NULL);
    fail_unless(nested_tag->type == FIXTagType_Group);
    fail_unless(parser->used_groups == 3);
 
@@ -401,10 +412,10 @@ START_TEST(NestedGroupsTest)
    fail_unless(msg->used_groups->next == grp);
    fail_unless(msg->used_groups->next->next == NULL);
 
-   FIXGroup* nested_grp1 = fix_group_add(msg, nested_grp, 131);
-   fail_unless(nested_grp1 != NULL);
-   FIXTag* nested_tag1 = fix_tag_get(msg, nested_grp, 131);
+   FIXTag* nested_tag1 = NULL;
+   FIXGroup* nested_grp1 = fix_group_add(msg, nested_grp, 131, &nested_tag1);
    fail_unless(nested_tag1 != NULL);
+   fail_unless(nested_grp1 != NULL);
    fail_unless(nested_tag1->type == FIXTagType_Group);
    fail_unless(parser->used_groups == 4);
 
@@ -420,7 +431,7 @@ START_TEST(NestedGroupsTest)
    fail_unless(msg->used_groups->next->next == NULL);
    fail_unless(parser->group == nested_grp1);
 
-   fail_unless(fix_group_del(msg, msg->tags, 1, 0) == FIX_SUCCESS);
+   fail_unless(fix_group_del(msg, NULL, 1, 0) == FIX_SUCCESS);
    fail_unless(msg->used_groups == NULL);
    fail_unless(parser->group == grp);
    fail_unless(parser->group->next == nested_grp);
