@@ -13,7 +13,7 @@ START_TEST(CreateParserTest)
    FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, FIXParserFlag_Validate);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
-   fail_unless(parser->flags == FIXParserFlags_Validate);
+   fail_unless(parser->flags == FIXParserFlag_Validate);
    fail_unless(parser->page != NULL);
    fail_unless(parser->page->next != NULL);
    fail_unless(parser->page->next->next == NULL);
