@@ -236,6 +236,9 @@ int fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* 
       {
          fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tagNum, val);
          return FIX_FAILED;
+      }
+   }
+   FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)val, strlen(val));
    return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
