@@ -11,10 +11,13 @@
 #define LIKE(x)    __builtin_expect(!!(x), 1)
 #define UNLIKE(x)  __builtin_expect(!!(x), 0)
 
-uint32_t hash_string(char const* s);
-int numdigits(long val);
-long lpow10(int n);
-int ltoa(long val, char* buff, uint32_t buffLen);
-int dtoa(double val, char* buff, uint32_t buffLen);
+uint32_t fix_utils_hash_string(char const* s);
+int fix_utils_numdigits(long val);
+long fix_utils_lpow10(int n);
+int fix_utils_ltoa(long val, char* buff, uint32_t buffLen);
+int fix_utils_dtoa(double val, char* buff, uint32_t buffLen);
+int fix_utils_atoi32(char const* buff, uint32_t buffLen, int32_t* val);
+int fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val);
+int fix_utils_atod(char const* buff, uint32_t buffLen, double* val);
 
 #endif /* FIX_PARSER_FIX_UTILS_H */
