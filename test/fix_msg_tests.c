@@ -10,25 +10,108 @@
 
 #include <check.h>
 
+#define HEADER_LENGTH 15
+
 START_TEST(CreateMsgTest)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, 0);
+   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
    fail_unless(p != NULL);
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix44.xml") == FIX_SUCCESS);
 
-   FIXMsg* msg = fix_msg_create(p, FIX44, "D");
+   FIXMsg* msg = fix_msg_create(p, FIX44, "8");
    fail_unless(msg != NULL);
    fail_unless(msg->used_groups == group);
+   fail_unless(msg->body_len == HEADER_LENGTH);
 
    char buff[10];
    fail_unless(fix_msg_get_string(msg, NULL, 8, buff, sizeof(buff)) == 7);
    fail_unless(!strcmp(buff, "FIX.4.4"));
+
    char msgType[10];
    fail_unless(fix_msg_get_string(msg, NULL, 35, msgType, sizeof(msgType)) == 1);
-   fail_unless(!strcmp(msgType, "D"));
+   fail_unless(!strcmp(msgType, "8"));
 
-   fail_unless(fix_msg_set_string(msg, NULL, 11, "ClOrdID") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14);
+
+   fail_unless(fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ExecID, "FE_1_9494_1") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15);
+
+   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_ExecType, '0') == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6);
+
+   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_OrdStatus, '1') == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13);
+
+   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1') == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10);
+
+   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0') == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5);
+
+   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0) == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4);
+
+   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1') == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5);
+
+   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12") == FIX_SUCCESS);
+   fail_unless(msg->body_len == HEADER_LENGTH + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 13);
+
+   int32_t val = 0;
+   fail_unless(fix_msg_get_int32(msg, NULL, FIXTagNum_MsgSeqNum, &val) == FIX_SUCCESS);
+   fail_unless(val == 34);
+
+   double price = 0.0;
+   fail_unless(fix_msg_get_double(msg, NULL, FIXTagNum_Price, &price) == FIX_SUCCESS);
+   fail_unless(price == 135155.0);
+
+   char text[10] = {};
+   fail_unless(fix_msg_get_string(msg, NULL, FIXTagNum_Text, text, sizeof(text)) == 9);
+   fail_unless(!strncmp(text, "COMMENT12", 9));
 
    fix_msg_free(msg);
    fix_parser_free(p);
