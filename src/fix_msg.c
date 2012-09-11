@@ -137,7 +137,7 @@ FIXTag* fix_msg_get_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_del_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
+int32_t fix_msg_del_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
 {
    if (!msg)
    {
@@ -194,7 +194,7 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
+int32_t fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -218,7 +218,7 @@ int fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t grpI
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* val)
+int32_t fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* val)
 {
    if (!msg)
    {
@@ -243,7 +243,7 @@ int fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const* 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val)
+int32_t fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val)
 {
    if (!msg)
    {
@@ -264,13 +264,13 @@ int fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t val)
       }
    }
    char buff[64] = {};
-   int res = fix_utils_ltoa(val, buff, sizeof(buff));
+   int32_t res = fix_utils_ltoa(val, buff, sizeof(buff));
    FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)buff, res);
    return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t val)
+int32_t fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t val)
 {
    if (!msg)
    {
@@ -291,13 +291,13 @@ int fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t val)
       }
    }
    char buff[64] = {};
-   int res = fix_utils_ltoa(val, buff, sizeof(buff));
+   int32_t res = fix_utils_ltoa(val, buff, sizeof(buff));
    FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)buff, res);
    return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val)
+int32_t fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val)
 {
    if (!msg)
    {
@@ -322,7 +322,7 @@ int fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double val)
+int32_t fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double val)
 {
    if (!msg)
    {
@@ -343,13 +343,13 @@ int fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double val)
       }
    }
    char buff[64] = {};
-   int res = fix_utils_dtoa(val, buff, sizeof(buff));
+   int32_t res = fix_utils_dtoa(val, buff, sizeof(buff));
    FIXTag* tag = fix_msg_set_tag(msg, grp, tagNum, (unsigned char*)buff, res);
    return tag != NULL ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val)
+int32_t fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val)
 {
    if (!msg)
    {
@@ -376,7 +376,7 @@ int fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* val)
+int32_t fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* val)
 {
    if (!msg)
    {
@@ -398,7 +398,7 @@ int fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* val)
+int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* val)
 {
    if(!msg)
    {
@@ -420,7 +420,7 @@ int fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val)
+int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val)
 {
    if (!msg)
    {
@@ -443,7 +443,7 @@ int fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len)
+int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, uint32_t len)
 {
    if (!msg)
    {
@@ -462,7 +462,7 @@ int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, u
       return FIX_FAILED;
    }
    strncpy(val, (char const*)tag->data, len);
-   int copied = tag->size > len ? len : tag->size;
+   int32_t copied = tag->size > len ? len : tag->size;
    if (copied < len)
    {
       val[copied] = 0;
@@ -471,7 +471,7 @@ int fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val, u
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen)
+int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen)
 {
    if(!msg)
    {
@@ -485,61 +485,36 @@ int fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen)
       char* prev = buff;
       FIXFieldDescr* fdescr = &descr->fields[i];
       FIXTag* tag = fix_tag_get(msg, NULL, fdescr->field_type->num);
-   /*   if (fdescr->field_type->num == FIXTagNum_BodyLength)*/
-   /*   {*/
-   /*      int res = fix_utils_ltoa(fdescr->field_type->num, buff, buffLen);*/
-   /*      buff += res;*/
-   /*      buffLen -= res;*/
-   /*      *buff = '=';*/
-   /*      ++buff;*/
-   /*      --buffLen;*/
-   /*      res = fix_utils_ltoa(msg->body_len, buff, buffLen);*/
-   /*      buff += res;*/
-   /*      buffLen -= res;*/
-   /*      *buff = delimiter;*/
-   /*      ++buff;*/
-   /*      --buffLen;*/
-   /*   }*/
-   /*   else if(fdescr->field_type->num == FIXTagNum_CheckSum)*/
-   /*   {*/
-   /*      int res = fix_utils_ltoa(fdescr->field_type->num, buff, buffLen);*/
-   /*      buff += res;*/
-   /*      buffLen -= res;*/
-   /*      *buff = '=';*/
-   /*      ++buff;*/
-   /*      --buffLen;*/
-   /*      res = fix_utils_ltoa(crc % 256, buff, buffLen);*/
-   /*      buff += res;*/
-   /*      buffLen -= res;*/
-   /*      *buff = delimiter;*/
-   /*      ++buff;*/
-   /*      --buffLen;*/
-   /*   }*/
-   /*   else if (!tag && fdescr->flags & FIELD_FLAG_REQUIRED)*/
-   /*   {*/
-   /*      fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", fdescr->field_type->num);*/
-   /*   }*/
-      if(tag)
+      int32_t res = FIX_SUCCESS;
+      if (fdescr->field_type->num == FIXTagNum_BodyLength)
       {
-         int res = fix_utils_ltoa(tag->num, buff, buffLen);
-         buff += res;
-         buffLen -= res;
-         *buff = '=';
-         ++buff;
-         --buffLen;
-         strncpy(buff, tag->data, tag->size);
-         buff += tag->size;
-         buffLen -= tag->size;
-         *buff = delimiter;
-         ++buff;
-         --buffLen;
+         res = int32_to_fix_msg(msg->parser, fdescr->field_type->num, msg->body_len, delimiter, &buff, &buffLen);
+      }
+      else if(fdescr->field_type->num == FIXTagNum_CheckSum)
+      {
+         res = int32_to_fix_msg(msg->parser, fdescr->field_type->num, crc % 256, delimiter, &buff, &buffLen);
+      }
+      else if (!tag && fdescr->flags & FIELD_FLAG_REQUIRED)
+      {
+         fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", fdescr->field_type->num);
+      }
+      if (tag && tag->type == FIXTagType_Group)
+      {
+         // TODO
+      }
+      else if(tag)
+      {
+         res = fix_tag_to_fix_msg(msg->parser, tag, delimiter, &buff, &buffLen);
+      }
+      if (res == FIX_FAILED)
+      {
+         return FIX_FAILED;
+      }
+      for(;tag && fdescr->field_type->num != FIXTagNum_CheckSum && prev != buff; ++prev)
+      {
+         crc += *prev;
       }
    }
-   /*for(;tag && fdescr->field_type->num != FIXTagNum_CheckSum && prev != buff; ++prev)*/
-   /*{*/
-   /*   crc += *prev;*/
-   /*}*/
-   /*}*/
    return FIX_SUCCESS;
 }
 
@@ -594,4 +569,81 @@ FIXTag* fix_msg_set_tag(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned ch
    {
       return fix_tag_set(msg, msg->tags, tagNum, data, len);
    }
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tagNum, int32_t val, char delimiter, char** buff, uint32_t* buffLen)
+{
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   int res = fix_utils_ltoa(tagNum, *buff, *buffLen);
+   *buff += res;
+   *buffLen -= res;
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   *(*buff) = '=';
+   ++(*buff);
+   --(*buffLen);
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   res = fix_utils_ltoa(val, *buff, *buffLen);
+   *buff += res;
+   *buffLen -= res;
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   *(*buff) = delimiter;
+   ++(*buff);
+   --(*buffLen);
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int32_t fix_tag_to_fix_msg(FIXParser* parser, FIXTag* tag, char delimiter, char** buff, uint32_t* buffLen)
+{
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   int res = fix_utils_ltoa(tag->num, *buff, *buffLen);
+   *buff += res;
+   *buffLen -= res;
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   *(*buff) = '=';
+   ++(*buff);
+   --(*buffLen);
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   uint32_t const len = (*buffLen > tag->size) ? tag->size : *buffLen;
+   strncpy(*buff, tag->data, len);
+   *buff += len;
+   *buffLen -= len;
+   if (UNLIKE(*buffLen == 0))
+   {
+      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      return FIX_FAILED;
+   }
+   *(*buff) = delimiter;
+   ++(*buff);
+   --(*buffLen);
+   return FIX_SUCCESS;
 }
