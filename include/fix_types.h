@@ -27,6 +27,7 @@
 #define FIX_ERROR_NO_MORE_PAGES           15
 #define FIX_ERROR_NO_MORE_GROUPS          16
 #define FIX_ERROR_TOO_BIG_PAGE            17
+#define FIX_ERROR_NO_MORE_SPACE           18
 
 typedef struct FIXGroup_ FIXGroup;
 typedef struct FIXTag_ FIXTag;
