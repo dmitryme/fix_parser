@@ -26,14 +26,14 @@ void xmlErrorHandler(void* ctx, char const* msg, ...)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int initLibXml(FIXParser* parser)
+int32_t initLibXml(FIXParser* parser)
 {
    xmlSetGenericErrorFunc(parser, xmlErrorHandler);
    return 0;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int xml_validate(FIXParser* parser, xmlDoc* doc)
+int32_t xml_validate(FIXParser* parser, xmlDoc* doc)
 {
    xmlSchemaParserCtxtPtr pctx = xmlSchemaNewMemParserCtxt(fix_xsd, strlen(fix_xsd));
    xmlSchemaPtr schema = xmlSchemaParse(pctx);
@@ -44,7 +44,7 @@ int xml_validate(FIXParser* parser, xmlDoc* doc)
    xmlSchemaValidCtxtPtr validCtx = xmlSchemaNewValidCtxt(schema);
    xmlSchemaSetValidErrors(validCtx, &xmlErrorHandler, &xmlErrorHandler, parser);
 
-   int res = xmlSchemaValidateDoc(validCtx, doc);
+   int32_t res = xmlSchemaValidateDoc(validCtx, doc);
 
    xmlSchemaFreeValidCtxt(validCtx);
    xmlSchemaFree(schema);
@@ -133,7 +133,7 @@ void free_fix_protocol_descr(FIXProtocolDescr* prot)
    {
       return;
    }
-   for(int i = 0; i < FIELD_TYPE_CNT; ++i)
+   for(int32_t i = 0; i < FIELD_TYPE_CNT; ++i)
    {
       FIXFieldType* ft = prot->field_types[i];
       while(ft)
@@ -143,7 +143,7 @@ void free_fix_protocol_descr(FIXProtocolDescr* prot)
          ft = next_ft;
       }
    }
-   for(int i = 0; i < MSG_CNT; ++i)
+   for(int32_t i = 0; i < MSG_CNT; ++i)
    {
       FIXMsgDescr* msg = prot->messages[i];
       while(msg)
@@ -156,7 +156,7 @@ void free_fix_protocol_descr(FIXProtocolDescr* prot)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int load_field_types(FIXParser* parser, FIXProtocolDescr* prot, xmlNode const* root)
+int32_t load_field_types(FIXParser* parser, FIXProtocolDescr* prot, xmlNode const* root)
 {
    xmlNode const* field = get_first(get_first(root, "fields"), "field");
    while(field)
@@ -174,7 +174,7 @@ int load_field_types(FIXParser* parser, FIXProtocolDescr* prot, xmlNode const* r
          fld->name = (char*)malloc(strlen(name) + 1);
          strcpy(fld->name, name);
          fld->type = str2FIXFIXFieldType(get_attr(field, "type"));
-         int idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
+         int32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = prot->field_types[idx];
          prot->field_types[idx] = fld;
       }
@@ -184,7 +184,7 @@ int load_field_types(FIXParser* parser, FIXProtocolDescr* prot, xmlNode const* r
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int load_fields(FIXParser* parser, FIXFieldDescr** fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* root, FIXProtocolDescr const* prot)
+int32_t load_fields(FIXParser* parser, FIXFieldDescr** fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* root, FIXProtocolDescr const* prot)
 {
    xmlNode const* field = msg_node->children;
    while(field)
@@ -261,7 +261,7 @@ void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** in
    for(uint32_t i = 0; i < field_count; ++i)
    {
       FIXFieldDescr* fld = &fields[i];
-      int idx = fld->field_type->num % FIELD_DESCR_CNT;
+      int32_t idx = fld->field_type->num % FIELD_DESCR_CNT;
       fld->next = index[idx];
       index[idx] = fld;
       if (fld->group_count)
@@ -331,7 +331,7 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
             free(prot);
             return NULL;
          }
-         int idx = fix_utils_hash_string(msg->type) % MSG_CNT;
+         int32_t idx = fix_utils_hash_string(msg->type) % MSG_CNT;
          msg->next = prot->messages[idx];
          prot->messages[idx] = msg;
       }
@@ -344,7 +344,7 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr const* prot, char const* name)
 {
-   int idx = fix_utils_hash_string(name) % FIELD_TYPE_CNT;
+   int32_t idx = fix_utils_hash_string(name) % FIELD_TYPE_CNT;
    FIXFieldType* fld = prot->field_types[idx];
    while(fld)
    {
@@ -360,7 +360,7 @@ FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr co
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type)
 {
-   int idx = fix_utils_hash_string(type) % MSG_CNT;
+   int32_t idx = fix_utils_hash_string(type) % MSG_CNT;
    FIXMsgDescr* msg = prot->messages[idx];
    while(msg)
    {
@@ -374,27 +374,35 @@ FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr cons
    return NULL;
 }
 
-/*-----------------------------------------------------------------------------------------------------------------------*/
+//------------------------------------------------------------------------------------------------------------------------//
+
+#define FIND_DESCR_STEP \
+if (!fld) return 0; \
+if (fld->field_type->num == num) return fld; \
+fld = fld->next;
+
 FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t num)
 {
-   int idx = num % FIELD_DESCR_CNT;
+   int32_t idx = num % FIELD_DESCR_CNT;
    FIXFieldDescr* fld = msg->field_index[idx];
-   while(fld)
-   {
-      if (fld->field_type->num == num)
-      {
-         return fld;
-      }
-      fld = fld->next;
-   }
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
+   FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
    fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with num %d not found in message '%s'", num, msg->name);
-   return NULL;
+   return 0;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t num)
 {
-   int idx = num % FIELD_DESCR_CNT;
+   int32_t idx = num % FIELD_DESCR_CNT;
    FIXFieldDescr* fld = field->group_index[idx];
    while(fld)
    {
