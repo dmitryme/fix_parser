@@ -112,7 +112,7 @@ int main()
 
 Tag* makeTag(int num)
 {
-   Tag* tag = malloc(sizeof(Tag));
+   Tag* tag = сalloc(1, sizeof(Tag));
    tag->num = num;
    return tag;
 }
