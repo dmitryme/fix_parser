@@ -6,6 +6,8 @@
 #include "fix_utils.h"
 #include "fix_types.h"
 
+#define DOUBLE_MAX_DIGITS 15
+
 uint32_t fix_utils_hash_string(char const* s)
 {
     uint32_t hash = 0;
@@ -24,9 +26,9 @@ uint32_t fix_utils_hash_string(char const* s)
     return hash;
 }
 
-int fix_utils_numdigits(long val)
+int32_t fix_utils_numdigits(long val)
 {
-   int cnt = 0;
+   int32_t cnt = 0;
    do
    {
       ++cnt;
@@ -36,7 +38,7 @@ int fix_utils_numdigits(long val)
    return cnt;
 }
 
-long lpow10(int n)
+long lpow10(int32_t n)
 {
    static long arr[19] =
    {
@@ -63,20 +65,20 @@ long lpow10(int n)
    return arr[n];
 }
 
-int fix_utils_ltoa(long val, char* buff, uint32_t buffLen)
+int32_t fix_utils_ltoa(long val, char* buff, uint32_t buffLen)
 {
    if (!buff)
    {
       return FIX_FAILED;
    }
-   int i = 0;
+   int32_t i = 0;
    if (val < 0)
    {
       buff[i++] = '-';
       val = -val;
       --buffLen;
    }
-   int nd = fix_utils_numdigits(val);
+   int32_t nd = fix_utils_numdigits(val);
    for(; buffLen && nd; ++i, --nd, --buffLen)
    {
       long pow = lpow10(nd - 1);
@@ -87,13 +89,13 @@ int fix_utils_ltoa(long val, char* buff, uint32_t buffLen)
    return i;
 }
 
-int fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
+int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
 {
    if (!buff)
    {
       return FIX_FAILED;
    }
-   int i = 0;
+   int32_t i = 0;
    if (val < 0)
    {
       buff[i++] = '-';
@@ -101,22 +103,22 @@ int fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
       --buffLen;
    }
    long m = (long)val;
-   int nd = fix_utils_numdigits(val);
-   int j = nd;
+   int32_t nd = fix_utils_numdigits(val);
+   int32_t j = nd;
    for(; buffLen && j; ++i, --j, --buffLen)
    {
       long pow = lpow10(j - 1);
-      int digit = (int)m/pow;
+      int32_t digit = (int32_t)m/pow;
       buff[i] = digit + 48;
       m -= (pow * digit);
    }
-   m = (long)(val * lpow10(15 - nd)) - (long)val * lpow10(15 - nd);
+   m = (long)(val * lpow10(DOUBLE_MAX_DIGITS - nd)) - (long)val * lpow10(DOUBLE_MAX_DIGITS - nd);
    if (m && buffLen)
    {
       buff[i] = '.';
       ++i;
    }
-   j = 15 - nd;
+   j = DOUBLE_MAX_DIGITS - nd;
    for(; buffLen && m && j; ++i, --j, --buffLen)
    {
       long pow = lpow10(j - 1);
@@ -127,14 +129,14 @@ int fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
    return i;
 }
 
-int fix_utils_atoi32(char const* buff, uint32_t buffLen, int32_t* val)
+int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, int32_t* val)
 {
    if (!val)
    {
       return FIX_FAILED;
    }
    *val = 0;
-   int i = 0;
+   int32_t i = 0;
    int32_t sign = 1;
    if (buff[i] == '-')
    {
@@ -153,14 +155,14 @@ int fix_utils_atoi32(char const* buff, uint32_t buffLen, int32_t* val)
    return FIX_SUCCESS;
 }
 
-int fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val)
+int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val)
 {
    if (!val)
    {
       return FIX_FAILED;
    }
    *val = 0;
-   int i = 0;
+   int32_t i = 0;
    int64_t sign = 1;
    if (buff[i] == '-')
    {
@@ -179,14 +181,14 @@ int fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val)
    return FIX_SUCCESS;
 }
 
-int fix_utils_atod(char const* buff, uint32_t buffLen, double* val)
+int32_t fix_utils_atod(char const* buff, uint32_t buffLen, double* val)
 {
    if (!val)
    {
       return FIX_FAILED;
    }
    *val = 0.0;
-   int i = 0;
+   int32_t i = 0;
    int32_t sign = 1;
    if (buff[i] == '-')
    {
@@ -207,7 +209,7 @@ int fix_utils_atod(char const* buff, uint32_t buffLen, double* val)
       *val = *val * 10 + (buff[i] - 48);
    }
    double exp = 0.0;
-   for(int j = 1;i < buffLen; ++i, ++j)
+   for(int32_t j = 1;i < buffLen; ++i, ++j)
    {
       if ((buff[i] < '0' || buff[i] > '9'))
       {
