@@ -29,71 +29,71 @@ START_TEST(SetTagTest)
    FIXMsg* msg = new_fake_message(parser);
 
    char const val[] = {"1000"};
-   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)val, sizeof(val));
+   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)val, strlen(val));
    fail_unless(msg->tags->tags[1] == tag);
    fail_unless(tag->num == 1);
    fail_unless(tag->type == FIXTagType_Value);
    fail_unless(tag->next == NULL);
-   fail_unless(!strncmp(tag->data, val, sizeof(val)));
-   fail_unless(tag->size == sizeof(val));
+   fail_unless(!strncmp(tag->data, val, strlen(val)));
+   fail_unless(tag->size == strlen(val));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 16 + sizeof("1000"));
+   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 4 + strlen(val));
    fail_unless(msg->curr_page->next == NULL);
 
-   FIXTag* tag11 = fix_tag_set(msg, NULL, 2, (unsigned char const*)val, sizeof(val));
+   FIXTag* tag11 = fix_tag_set(msg, NULL, 2, (unsigned char const*)val, strlen(val));
    fail_unless(msg->tags->tags[2] == tag11);
    fail_unless(tag11->num == 2);
    fail_unless(tag11->type == FIXTagType_Value);
    fail_unless(tag11->next == NULL);
-   fail_unless(!strncmp(tag11->data, val, sizeof(val)));
-   fail_unless(tag11->size == sizeof(val));
+   fail_unless(!strncmp(tag11->data, val, strlen(val)));
+   fail_unless(tag11->size == strlen(val));
 
-   FIXTag* tag12 = fix_tag_set(msg, NULL, 30, (unsigned char const*)val, sizeof(val));
+   FIXTag* tag12 = fix_tag_set(msg, NULL, 30, (unsigned char const*)val, strlen(val));
    fail_unless(msg->tags->tags[30] == tag12);
    fail_unless(tag12->num == 30);
    fail_unless(tag12->type == FIXTagType_Value);
    fail_unless(tag12->next == NULL);
-   fail_unless(!strncmp(tag12->data, val, sizeof(val)));
-   fail_unless(tag12->size == sizeof(val));
+   fail_unless(!strncmp(tag12->data, val, strlen(val)));
+   fail_unless(tag12->size == strlen(val));
 
    char const val1[] = {"2000"};
-   FIXTag* tag1 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val1, sizeof(val1));
+   FIXTag* tag1 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val1, strlen(val1));
    fail_unless(tag == tag1);
    fail_unless(tag1->num == 1);
    fail_unless(tag1->type == FIXTagType_Value);
    fail_unless(tag1->next == NULL);
-   fail_unless(!strncmp(tag1->data, val1, sizeof(val1)));
-   fail_unless(tag1->size == sizeof(val1));
+   fail_unless(!strncmp(tag1->data, val1, strlen(val1)));
+   fail_unless(tag1->size == strlen(val1));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val1) + 8 + sizeof(val) + 8 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val));
    fail_unless(msg->curr_page->next == NULL);
 
    char const val2[] = {"64"};
-   FIXTag* tag2 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val2, sizeof(val2));
+   FIXTag* tag2 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val2, strlen(val2));
    fail_unless(tag2 == tag);
    fail_unless(tag2->num == 1);
    fail_unless(tag2->type == FIXTagType_Value);
    fail_unless(tag2->next == NULL);
-   fail_unless(!strncmp(tag2->data, val2, sizeof(val2)));
-   fail_unless(tag1->size == sizeof(val2));
+   fail_unless(!strncmp(tag2->data, val2, strlen(val2)));
+   fail_unless(tag1->size == strlen(val2));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val1) + 8 + sizeof(val) + 8 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val));
    fail_unless(msg->curr_page->next == NULL);
 
    char const txt[] = "Hello world!";
-   FIXTag* tag3 = fix_tag_set(msg, NULL, 1, (unsigned char const*)txt, sizeof(txt));
+   FIXTag* tag3 = fix_tag_set(msg, NULL, 1, (unsigned char const*)txt, strlen(txt));
    fail_unless(tag3 == tag);
    fail_unless(tag3->num == 1);
    fail_unless(tag3->type == FIXTagType_Value);
    fail_unless(tag3->next == NULL);
-   fail_unless(!strncmp(tag3->data, txt, sizeof(txt)));
-   fail_unless(tag3->size == sizeof(txt));
+   fail_unless(!strncmp(tag3->data, txt, strlen(txt)));
+   fail_unless(tag3->size == strlen(txt));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val1) + 8 + sizeof(val) + 8 + sizeof(val) + 8 + sizeof(txt));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val) + 4 + strlen(txt));
    fail_unless(msg->curr_page->next == NULL);
 
    fix_parser_free(parser);
@@ -118,7 +118,7 @@ START_TEST(DelTagTest)
    fail_unless(*(long*)tag->data == val);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 8 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 4 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
    long val1 = 2000;
@@ -130,7 +130,7 @@ START_TEST(DelTagTest)
    fail_unless(*(long*)tag1->data == val1);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 2 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val1));
+   fail_unless(msg->curr_page->offset == 2 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val1));
    fail_unless(msg->curr_page->next == NULL);
 
    long val2 = 3000;
@@ -142,7 +142,7 @@ START_TEST(DelTagTest)
    fail_unless(*(long*)tag2->data == val2);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val1) + 8 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
    long val3 = 4000;
@@ -155,7 +155,7 @@ START_TEST(DelTagTest)
    fail_unless(*(long*)tag3->data == val3);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val) + 8 + sizeof(val1) + 8 + sizeof(val3));
+   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val3));
    fail_unless(msg->curr_page->next == NULL);
 
    int res = fix_tag_del(msg, NULL, 1);
@@ -166,7 +166,7 @@ START_TEST(DelTagTest)
    fail_unless(msg->tags->tags[1]->next->next->next == NULL);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 8 + sizeof(val) + 8 + sizeof(val) + 8 + sizeof(val1) + 8 + sizeof(val3));
+   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val3));
    fail_unless(msg->curr_page->next == NULL);
 
    res = fix_tag_del(msg, msg->tags, 129);
@@ -281,10 +281,10 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(parser->err_code == FIX_ERROR_TAG_HAS_WRONG_TYPE);
 
    FIXTag* tag11 = NULL;
-   FIXGroup* grp1 = fix_group_add(msg, NULL, 1, &tag1);
+   FIXGroup* grp1 = fix_group_add(msg, NULL, 1, &tag11);
    fail_unless(tag11 != NULL);
    fail_unless(grp1 != NULL);
-   fail_unless(tag1->size, 2);
+   fail_unless(tag11->size, 2);
    fail_unless(msg->used_groups == grp1);
    fail_unless(msg->used_groups->next == grp);
    fail_unless(parser->used_groups == 3);
