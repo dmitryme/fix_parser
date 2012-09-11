@@ -107,7 +107,7 @@ void msg_to_string(FIXParser* parser)
 
 int main()
 {
-   FIXParser* parser = fix_parser_create(1024, 0, 2, 0, 1000, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(4096, 0, 2, 0, 1000, 0, FIXParserFlag_Validate);
 
    int res = fix_protocol_init(parser, "fix44.xml");
    if (res == FIX_FAILED)
