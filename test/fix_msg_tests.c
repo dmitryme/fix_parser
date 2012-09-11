@@ -22,7 +22,7 @@ START_TEST(CreateMsgTest)
    FIXMsg* msg = fix_msg_create(p, FIX44, "8");
    fail_unless(msg != NULL);
    fail_unless(msg->used_groups == group);
-   fail_unless(msg->body_len == HEADER_LENGTH);
+   fail_unless(msg->body_len == 15);
 
    char buff[10];
    fail_unless(fix_msg_get_string(msg, NULL, 8, buff, sizeof(buff)) == 7);
