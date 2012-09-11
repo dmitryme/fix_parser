@@ -20,7 +20,7 @@
 struct FIXParser_
 {
    FIXProtocolDescr* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT];
-   int err_code;
+   int32_t err_code;
    char err_text[ERROR_TXT_SIZE];
    FIXParserFlagEnum flags;
    FIXPage* page;
@@ -37,8 +37,8 @@ FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize);
 FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
 FIXGroup* fix_parser_alloc_group(FIXParser* parser);
 FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
-void fix_parser_set_va_error(FIXParser* parser, int code, char const* text, va_list ap);
-void fix_parser_set_error(FIXParser* parser, int code, char const* text, ...);
+void fix_parser_set_va_error(FIXParser* parser, int32_t code, char const* text, va_list ap);
+void fix_parser_set_error(FIXParser* parser, int32_t code, char const* text, ...);
 void fix_parser_reset_error(FIXParser* parser);
 FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ver);
 
