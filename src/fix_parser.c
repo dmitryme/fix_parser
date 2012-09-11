@@ -52,7 +52,7 @@ void fix_parser_free(FIXParser* parser)
 {
    if (parser)
    {
-      for(int i = 0; i < FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT; ++i)
+      for(int32_t i = 0; i < FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT; ++i)
       {
          if (parser->protocols[i])
          {
@@ -78,7 +78,7 @@ void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int get_fix_error_code(FIXParser* parser)
+int32_t get_fix_error_code(FIXParser* parser)
 {
    if (parser)
    {
@@ -98,7 +98,7 @@ char const* get_fix_error_text(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_protocol_init(FIXParser* parser, char const* protFile)
+int32_t fix_protocol_init(FIXParser* parser, char const* protFile)
 {
    if(!parser)
    {
@@ -201,15 +201,15 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_parser_set_va_error(FIXParser* parser, int code, char const* text, va_list ap)
+void fix_parser_set_va_error(FIXParser* parser, int32_t code, char const* text, va_list ap)
 {
    parser->err_code = code;
-   int n = vsnprintf(parser->err_text, ERROR_TXT_SIZE, text, ap);
+   int32_t n = vsnprintf(parser->err_text, ERROR_TXT_SIZE, text, ap);
    parser->err_text[n] = 0;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_parser_set_error(FIXParser* parser, int code, char const* text, ...)
+void fix_parser_set_error(FIXParser* parser, int32_t code, char const* text, ...)
 {
    va_list ap;
    va_start(ap, text);
@@ -242,7 +242,7 @@ FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ve
 /*   ParserState_Value*/
 /*} ParserStateEnum;*/
 
-int parse_fix(FIXParser* parser, FIXMsg** msg, char const* data, uint32_t len)
+int32_t parse_fix(FIXParser* parser, FIXMsg** msg, char const* data, uint32_t len)
 {
    /*if (!data)*/
    /*{*/
