@@ -6,6 +6,8 @@
 #ifndef FIX_PARSER_FIX_PAGE_H
 #define FIX_PARSER_FIX_PAGE_H
 
+#include <stdint.h>
+
 typedef struct FIXPage_
 {
    uint32_t size;
