@@ -480,6 +480,7 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
    fix_parser_reset_error(msg->parser);
    FIXMsgDescr* descr = msg->descr;
    uint32_t crc = 0;
+   int32_t buffLenBefore = buffLen;
    for(uint32_t i = 0; i < descr->field_count; ++i)
    {
       char* prev = buff;
@@ -494,9 +495,10 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
       {
          res = int32_to_fix_msg(msg->parser, fdescr->field_type->num, crc % 256, delimiter, &buff, &buffLen);
       }
-      else if (!tag && fdescr->flags & FIELD_FLAG_REQUIRED)
+      else if ((msg->parser->flags & FIXParserFlag_Validate) && !tag && (fdescr->flags & FIELD_FLAG_REQUIRED))
       {
          fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", fdescr->field_type->num);
+         return FIX_FAILED;
       }
       if (tag && tag->type == FIXTagType_Group)
       {
@@ -510,12 +512,12 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
       {
          return FIX_FAILED;
       }
-      for(;tag && fdescr->field_type->num != FIXTagNum_CheckSum && prev != buff; ++prev)
+      for(;(tag || fdescr->field_type->num == FIXTagNum_BodyLength) && prev != buff; ++prev)
       {
          crc += *prev;
       }
    }
-   return FIX_SUCCESS;
+   return buffLenBefore - buffLen;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
