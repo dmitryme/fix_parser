@@ -45,20 +45,20 @@ FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char c
       group->tags[idx] = fix_tag;
       fix_tag->size = len;
       fix_tag->data = fix_msg_alloc(msg, len);
+      fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + len + 1;
    }
    else
    {
       fix_tag->size = len;
       fix_tag->data = fix_msg_realloc(msg, fix_tag->data, len);
+      msg->body_len -= fix_tag->body_len;
+      fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + len + 1;
    }
    if (!fix_tag->data)
    {
       return NULL;
    }
-   fix_tag->size = len;
    memcpy(fix_tag->data, data, len);
-   msg->body_len -= fix_tag->body_len;
-   fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + len + 1;
    msg->body_len += fix_tag->body_len;
    return fix_tag;
 }
