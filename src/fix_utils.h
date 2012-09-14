@@ -12,11 +12,10 @@
 #define UNLIKE(x)  __builtin_expect(!!(x), 0)
 
 uint32_t fix_utils_hash_string(char const* s);
-int32_t fix_utils_numdigits(long val);
+int32_t fix_utils_numdigits(int64_t val);
 long fix_utils_lpow10(int n);
-int32_t fix_utils_ltoa(long val, char* buff, uint32_t buffLen);
+int32_t fix_utils_i64toa(int64_t val, char* buff, uint32_t buffLen, char padSym);
 int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen);
-int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, int32_t* val);
 int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val);
 int32_t fix_utils_atod(char const* buff, uint32_t buffLen, double* val);
 
