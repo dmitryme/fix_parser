@@ -156,7 +156,7 @@ FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum)
    }
    fix_parser_reset_error(msg->parser);
    FIXFieldDescr* fdescr = NULL;
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
       if (!fdescr)
@@ -183,7 +183,7 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_
       return NULL;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
       if (!fdescr)
@@ -207,7 +207,7 @@ int32_t fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, uint32_t 
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
       if (!fdescr)
@@ -231,7 +231,7 @@ int32_t fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char con
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tagNum) :
          fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
@@ -257,7 +257,7 @@ int32_t fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t v
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tagNum) :
          fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
@@ -285,7 +285,7 @@ int32_t fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t v
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tagNum) :
          fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
@@ -313,7 +313,7 @@ int32_t fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char val)
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tagNum) :
          fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
@@ -339,7 +339,7 @@ int32_t fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double v
       return FIX_FAILED;
    }
    fix_parser_reset_error(msg->parser);
-   if (msg->parser->flags & FIXParserFlag_Validate)
+   if (msg->parser->flags & PARSER_FLAG_CHECK_EXISTING)
    {
       FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tagNum) :
          fix_protocol_get_field_descr(msg->parser, msg->descr, tagNum);
@@ -383,7 +383,7 @@ int32_t fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* 
       fix_parser_set_error(msg->parser, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", tag->size);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64(tag->data, tag->size, (int64_t*)val);
+   return fix_utils_atoi64(tag->data, tag->size, 0, (int64_t*)val);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -405,7 +405,7 @@ int32_t fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* 
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64(tag->data, tag->size, val);
+   return fix_utils_atoi64(tag->data, tag->size, 0, val);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -427,7 +427,7 @@ int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* 
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   return fix_utils_atod(tag->data, tag->size, val);
+   return fix_utils_atod(tag->data, tag->size, 0, val);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -506,7 +506,7 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
       {
          res = int32_to_fix_msg(msg->parser, fdescr->field_type->num, crc % 256, delimiter, 3, '0', &buff, &buffLen);
       }
-      else if ((msg->parser->flags & FIXParserFlag_Validate) && !tag && (fdescr->flags & FIELD_FLAG_REQUIRED))
+      else if ((msg->parser->flags & PARSER_FLAG_CHECK_REQUIRED) && !tag && (fdescr->flags & FIELD_FLAG_REQUIRED))
       {
          fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", fdescr->field_type->num);
          return FIX_FAILED;
@@ -672,7 +672,7 @@ int32_t fix_groups_to_string(FIXMsg* msg, FIXTag* tag, FIXFieldDescr* fdescr, ch
       {
          FIXFieldDescr* child_fdescr = &fdescr->group[i];
          FIXTag* child_tag = fix_tag_get(msg, group, child_fdescr->field_type->num);
-         if ((msg->parser->flags & FIXParserFlag_Validate) && !child_tag && (child_fdescr->flags & FIELD_FLAG_REQUIRED))
+         if ((msg->parser->flags & PARSER_FLAG_CHECK_REQUIRED) && !child_tag && (child_fdescr->flags & FIELD_FLAG_REQUIRED))
          {
             fix_parser_set_error(msg->parser, FIX_ERROR_TAG_NOT_FOUND, "Tag '%d' is required", child_fdescr->field_type->num);
             return FIX_FAILED;
