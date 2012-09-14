@@ -22,7 +22,7 @@ FIXMsg* new_fake_message(FIXParser* parser)
 
 START_TEST(SetTagTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -103,7 +103,7 @@ END_TEST
 
 START_TEST(DelTagTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -191,7 +191,7 @@ END_TEST
 
 START_TEST(GetTagTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -261,7 +261,7 @@ END_TEST
 
 START_TEST(AddGetDelGroupTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -387,7 +387,7 @@ END_TEST
 
 START_TEST(NestedGroupsTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
