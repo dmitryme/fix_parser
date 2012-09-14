@@ -592,7 +592,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tagNum, int32_t val, char d
       fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
-   int res = fix_utils_i64toa(tagNum, *buff, *buffLen, 0);
+   int32_t res = fix_utils_i64toa(tagNum, *buff, *buffLen, 0);
    *buff += res;
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
@@ -630,7 +630,7 @@ int32_t fix_tag_to_fix_msg(FIXParser* parser, FIXTag* tag, char delimiter, char*
       fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
-   int res = fix_utils_i64toa(tag->num, *buff, *buffLen, 0);
+   int32_t res = fix_utils_i64toa(tag->num, *buff, *buffLen, 0);
    *buff += res;
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
