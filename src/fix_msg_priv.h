@@ -35,6 +35,7 @@ FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
 void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
 
 int32_t fix_tag_to_fix_msg(FIXParser* parser, FIXTag* tag, char delimiter, char** buff, uint32_t* buffLen);
-int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tagNum, int32_t val, char delimiter, char** buff, uint32_t* buffLen);
+int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tagNum, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen);
+int32_t fix_groups_to_string(FIXMsg* msg, FIXTag* tag, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen);
 
 #endif /* FIX_PARSER_FIX_MSG_PRIV_H */
