@@ -12,7 +12,7 @@
 
 START_TEST(CreateMsgTest)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(p != NULL);
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix44.xml") == FIX_SUCCESS);
@@ -131,7 +131,7 @@ END_TEST
 
 START_TEST(CreateMsg2Test)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(p != NULL);
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix44.xml") == FIX_SUCCESS);
@@ -189,7 +189,7 @@ END_TEST
 
 START_TEST(ToStringTest)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(p != NULL);
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix44.xml") == FIX_SUCCESS);
@@ -238,7 +238,7 @@ END_TEST
 
 START_TEST(ToStringGroupTest)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(p != NULL);
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix44.xml") == FIX_SUCCESS);
