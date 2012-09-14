@@ -238,9 +238,39 @@ FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ve
 /*------------------------------------------------------------------------------------------------------------------------*/
 int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, FIXMsg** msg)
 {
+   if (!parser || !data || !*msg)
+   {
+      // TODO:
+      return FIX_FAILED;
+   }
+   FIXProtocolDescr* pdescr = parser->protocols[ver];
+   /*
    for(;;)
    {
+      int64_t num = 0;
+      int32_t res = fix_utils_atoi64(bata, len, '=', &num);
+      if (res == FIX_FAILED)
+      {
+         return FIX_FAILED;
+      }
+      data += res;
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(pdescr);
+      if (fdescr)
+      {
 
-   }
+      }
+      if (num == FIXTagNum_MsgType)
+      {
+         fix_msg_create(parser, ver, );
+      }
+      if (fdescr && fdescr->field_type->) // value
+      {
+         fix_tag_set(*msg, NULL, num, data, len);
+      }
+      else if (fdescr && fdescr->field_type) // group
+      {
+         fix_group_add(*msg, NULL, num, NULL);
+      }
+   }  */
    return 0;
 }
