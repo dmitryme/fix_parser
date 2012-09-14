@@ -13,7 +13,7 @@
 
 FIXParser* fix_parser_create(
       uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, FIXParserFlagEnum flags);
+      uint32_t numGroups, uint32_t maxGroups, int32_t flags);
 void fix_parser_free(FIXParser* parser);
 
 int32_t get_fix_error_code(FIXParser* parser);
@@ -21,6 +21,6 @@ char const* get_fix_error_text(FIXParser* parser);
 int32_t get_fix_parser_flags(FIXParser* parser);
 
 int32_t fix_protocol_init(FIXParser*, char const* protFile);
-int32_t parse_fix(FIXParser* parser, FIXMsg** msg, char const* data, uint32_t len);
+int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, FIXMsg** msg);
 
 #endif /* FIX_PARSER_FIX_PARSER_H */
