@@ -21,6 +21,6 @@ char const* get_fix_error_text(FIXParser* parser);
 int32_t get_fix_parser_flags(FIXParser* parser);
 
 int32_t fix_protocol_init(FIXParser*, char const* protFile);
-int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, FIXMsg** msg);
+int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, char delimiter, FIXMsg** msg);
 
 #endif /* FIX_PARSER_FIX_PARSER_H */
