@@ -22,7 +22,7 @@ struct FIXParser_
    FIXProtocolDescr* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT];
    int32_t err_code;
    char err_text[ERROR_TXT_SIZE];
-   FIXParserFlagEnum flags;
+   int32_t  flags;
    FIXPage* page;
    uint32_t used_pages;
    uint32_t max_pages;
