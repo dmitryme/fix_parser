@@ -45,18 +45,21 @@ FIXTag* fix_tag_set(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, unsigned char c
       group->tags[idx] = fix_tag;
       fix_tag->size = len;
       fix_tag->data = fix_msg_alloc(msg, len);
-      fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + len + 1;
+      fix_tag->body_len = 0;
    }
    else
    {
       fix_tag->size = len;
       fix_tag->data = fix_msg_realloc(msg, fix_tag->data, len);
       msg->body_len -= fix_tag->body_len;
-      fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + len + 1;
    }
    if (!fix_tag->data)
    {
       return NULL;
+   }
+   if (LIKE(fix_tag->num != FIXTagNum_BeginString && fix_tag->num != FIXTagNum_BodyLength && fix_tag->num != FIXTagNum_CheckSum))
+   {
+      fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + len + 1;
    }
    memcpy(fix_tag->data, data, len);
    msg->body_len += fix_tag->body_len;
@@ -116,6 +119,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, FIXTag** ta
       }
       FIXGroups* grps = (FIXGroups*)fix_tag->data;
       fix_tag->size = 1;
+      fix_tag->body_len = 0;
       grps->group[0] = fix_msg_alloc_group(msg);
       if (!grps->group[0])
       {
@@ -134,7 +138,13 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, FIXTag** ta
       }
       ++fix_tag->size;
       fix_tag->data = new_grps;
+      msg->body_len -= fix_tag->body_len;
    }
+   if (LIKE(fix_tag->num != FIXTagNum_BeginString && fix_tag->num != FIXTagNum_BodyLength && fix_tag->num != FIXTagNum_CheckSum))
+   {
+      fix_tag->body_len = fix_utils_numdigits(tagNum) + 1 + fix_utils_numdigits(fix_tag->size) + 1;
+   }
+   msg->body_len += fix_tag->body_len;
    FIXGroups* grps = (FIXGroups*)fix_tag->data;
    FIXGroup* new_grp = grps->group[fix_tag->size - 1];
    *tag = fix_tag;
