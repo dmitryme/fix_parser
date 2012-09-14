@@ -125,7 +125,7 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
    return i;
 }
 
-int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val)
+int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val)
 {
    *val = 0;
    int32_t i = 0;
@@ -137,6 +137,10 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val)
    }
    for(;i < buffLen; ++i)
    {
+      if (stopChar && stopChar == buff[i])
+      {
+         break;
+      }
       if (buff[i] < '0' || buff[i] > '9')
       {
          return FIX_FAILED;
@@ -147,7 +151,7 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, int64_t* val)
    return FIX_SUCCESS;
 }
 
-int32_t fix_utils_atod(char const* buff, uint32_t buffLen, double* val)
+int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val)
 {
    *val = 0.0;
    int32_t i = 0;
@@ -159,6 +163,10 @@ int32_t fix_utils_atod(char const* buff, uint32_t buffLen, double* val)
    }
    for(; i < buffLen; ++i)
    {
+      if (stopChar && stopChar == buff[i])
+      {
+         break;
+      }
       if (buff[i] == '.')
       {
          ++i;
@@ -173,6 +181,10 @@ int32_t fix_utils_atod(char const* buff, uint32_t buffLen, double* val)
    double exp = 0.0;
    for(int32_t j = 1;i < buffLen; ++i, ++j)
    {
+      if (stopChar && stopChar == buff[i])
+      {
+         break;
+      }
       if ((buff[i] < '0' || buff[i] > '9'))
       {
          return FIX_FAILED;
