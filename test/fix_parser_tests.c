@@ -214,6 +214,16 @@ START_TEST(MaxPageSizeTest)
 }
 END_TEST
 
+START_TEST(ParseFixTest)
+{
+   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   fail_unless(parser != NULL);
+   fail_unless(parser->err_code == 0);
+
+   fail_unless(fix_protocol_init(parser, "fix44.xml") == FIX_SUCCESS);
+}
+END_TEST
+
 Suite* make_fix_parser_tests_suite()
 {
    Suite* s = suite_create("fix_parser");
@@ -224,6 +234,7 @@ Suite* make_fix_parser_tests_suite()
    tcase_add_test(tc_core, MaxPagesTest);
    tcase_add_test(tc_core, MaxGroupsTest);
    tcase_add_test(tc_core, MaxPageSizeTest);
+   tcase_add_test(tc_core, ParseFixTest);
    suite_add_tcase(s, tc_core);
    return s;
 }
