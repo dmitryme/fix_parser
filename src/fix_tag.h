@@ -32,6 +32,7 @@ struct FIXTag_
 struct FIXGroup_
 {
    FIXTag* tags[GROUP_SIZE];
+   FIXFieldDescr* parent_fdescr;
    struct FIXGroup_* next;
 } __attribute__((packed));
 
