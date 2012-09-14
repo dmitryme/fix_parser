@@ -34,19 +34,18 @@ typedef struct FIXTag_ FIXTag;
 typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
 
-typedef enum FixParserFlagEnum_
-{
-   FixParserFlag_CheckCRC = 0x01,
-   FIXParserFlag_Validate = 0x02
-} FIXParserFlagEnum;
+#define PARSER_FLAG_CHECK_CRC 0x01
+#define PARSER_FLAG_CHECK_REQUIRED 0x02
+#define PARSER_FLAG_CHECK_EXISTING 0x04
+#define PARSER_FLAG_CHECK_ALL (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_EXISTING)
 
-typedef enum FIXTagTypeEnum_
+typedef enum FIXTagTypeEnum
 {
    FIXTagType_Value = 1,
    FIXTagType_Group = 2
 } FIXTagTypeEnum;
 
-typedef enum FIXProtocolVerEnum_
+typedef enum FIXProtocolVerEnum
 {
    FIX42,
    FIX44,
@@ -57,7 +56,7 @@ typedef enum FIXProtocolVerEnum_
    FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT
 } FIXProtocolVerEnum;
 
-typedef enum FIXFieldTypeEnum_
+typedef enum FIXFieldTypeEnum
 {
    FIXFieldType_Unknown              = -1,
    FIXFieldType_Int                  = 0x01,
