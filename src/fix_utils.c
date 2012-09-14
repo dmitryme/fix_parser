@@ -38,9 +38,9 @@ int32_t fix_utils_numdigits(int64_t val)
    return cnt;
 }
 
-long fix_utils_lpow10(int32_t n)
+int64_t fix_utils_lpow10(int32_t n)
 {
-   static long arr[19] =
+   static int64_t arr[19] =
    {
       1,
       10,
@@ -81,8 +81,8 @@ int32_t fix_utils_i64toa(int64_t val, char* buff, uint32_t buffLen, char padSym)
    }
    for(; buffLen && nd; ++i, --nd, --buffLen)
    {
-      long pow = fix_utils_lpow10(nd - 1);
-      long digit = val/pow;
+      int64_t pow = fix_utils_lpow10(nd - 1);
+      int64_t digit = val/pow;
       buff[i] = digit + 48;
       val -= (pow * digit);
    }
