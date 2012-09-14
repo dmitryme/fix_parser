@@ -9,12 +9,14 @@
 extern Suite* make_fix_tag_tests_suite();
 extern Suite* make_fix_parser_tests_suite();
 extern Suite* make_fix_msg_tests_suite();
+extern Suite* make_fix_utils_tests_suite();
 
 int main()
 {
    SRunner* sr = srunner_create(make_fix_parser_tests_suite());
    srunner_add_suite(sr, make_fix_tag_tests_suite());
    srunner_add_suite(sr, make_fix_msg_tests_suite());
+   srunner_add_suite(sr, make_fix_utils_tests_suite());
    srunner_run_all(sr, CK_NORMAL);
    int number_failed = srunner_ntests_failed(sr);
    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
