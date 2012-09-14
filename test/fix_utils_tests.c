@@ -55,23 +55,38 @@ START_TEST(atoi64_Test)
 {
    char str[] = "1000";
    int64_t val = 0;
-   fail_unless(fix_utils_atoi64(str, strlen(str), &val) == FIX_SUCCESS);
+   fail_unless(fix_utils_atoi64(str, strlen(str), 0, &val) == FIX_SUCCESS);
    fail_unless(val == 1000);
 
    char str1[] = "-123456";
    int64_t val1 = 0;
-   fail_unless(fix_utils_atoi64(str1, strlen(str1), &val1) == FIX_SUCCESS);
+   fail_unless(fix_utils_atoi64(str1, strlen(str1), 0, &val1) == FIX_SUCCESS);
    fail_unless(val1 == -123456);
 
    char str2[] = "00123";
    int64_t val2 = 0;
-   fail_unless(fix_utils_atoi64(str2, strlen(str2), &val2) == FIX_SUCCESS);
+   fail_unless(fix_utils_atoi64(str2, strlen(str2), 0, &val2) == FIX_SUCCESS);
    fail_unless(val2 == 123);
 
    char str3[] = "-00123";
    int64_t val3 = 0;
-   fail_unless(fix_utils_atoi64(str3, strlen(str3), &val3) == FIX_SUCCESS);
+   fail_unless(fix_utils_atoi64(str3, strlen(str3), 0, &val3) == FIX_SUCCESS);
    fail_unless(val3 == -123);
+
+   char str4[] = "1000=";
+   int64_t val4 = 0;
+   fail_unless(fix_utils_atoi64(str4, strlen(str4), '=', &val4) == FIX_SUCCESS);
+   fail_unless(val4 == 1000);
+
+   char str5[] = "1000=";
+   int64_t val5 = 0;
+   fail_unless(fix_utils_atoi64(str5, 3, '=', &val5) == FIX_SUCCESS);
+   fail_unless(val5 == 100);
+
+   char str6[] = "1000\00134=";
+   int64_t val6 = 0;
+   fail_unless(fix_utils_atoi64(str5, strlen(str6), '=', &val6) == FIX_SUCCESS);
+   fail_unless(val6 == 1000);
 }
 END_TEST
 
@@ -79,23 +94,28 @@ START_TEST(atod_Test)
 {
    char str[] = "1000.12";
    double val = 0;
-   fail_unless(fix_utils_atod(str, strlen(str), &val) == FIX_SUCCESS);
+   fail_unless(fix_utils_atod(str, strlen(str), 0, &val) == FIX_SUCCESS);
    fail_unless(val == 1000.12);
 
    char str1[] = "-123456.345";
    double val1 = 0;
-   fail_unless(fix_utils_atod(str1, strlen(str1), &val1) == FIX_SUCCESS);
+   fail_unless(fix_utils_atod(str1, strlen(str1), 0, &val1) == FIX_SUCCESS);
    fail_unless(val1 == -123456.345);
 
    char str2[] = "00123.987";
    double val2 = 0;
-   fail_unless(fix_utils_atod(str2, strlen(str2), &val2) == FIX_SUCCESS);
+   fail_unless(fix_utils_atod(str2, strlen(str2), 0, &val2) == FIX_SUCCESS);
    fail_unless(val2 == 123.987);
 
    char str3[] = "-00123.456";
    double val3 = 0;
-   fail_unless(fix_utils_atod(str3, strlen(str3), &val3) == FIX_SUCCESS);
+   fail_unless(fix_utils_atod(str3, strlen(str3), 0, &val3) == FIX_SUCCESS);
    fail_unless(val3 == -123.456);
+
+   char str4[] = "123.456\00134=";
+   double val4 = 0;
+   fail_unless(fix_utils_atod(str4, strlen(str4), 1, &val4) == FIX_SUCCESS);
+   fail_unless(val4 == 123.456);
 }
 END_TEST
 
