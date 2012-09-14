@@ -8,6 +8,7 @@
 #include "fix_protocol_descr.h"
 #include "fix_msg.h"
 #include "fix_page.h"
+#include "fix_utils.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -235,42 +236,109 @@ FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ve
    return parser->protocols[ver];
 }
 
-/*------------------------------------------------------------------------------------------------------------------------*/
-int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, FIXMsg** msg)
-{
-   if (!parser || !data || !*msg)
-   {
-      // TODO:
-      return FIX_FAILED;
-   }
-   FIXProtocolDescr* pdescr = parser->protocols[ver];
-   /*
-   for(;;)
-   {
-      int64_t num = 0;
-      int32_t res = fix_utils_atoi64(bata, len, '=', &num);
-      if (res == FIX_FAILED)
-      {
-         return FIX_FAILED;
-      }
-      data += res;
-      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(pdescr);
-      if (fdescr)
-      {
+/*[>------------------------------------------------------------------------------------------------------------------------<]*/
+/*int32_t parse_field(FIXParser* parser, char const* data, uint32_t len, uint32_t* num, char* value)*/
+/*{*/
+/*   *num = 0;*/
+/*   int32_t res = fix_utils_atoi64(data, len, '=', &num);*/
+/*   if (res == FIX_FAILED)*/
+/*   {*/
+/*      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   data += res;*/
+/*   int val_len = 0;*/
+/*   for(;*data != delimiter; ++val_len, ++value, ++data)*/
+/*   {*/
+/*      *value = *data;*/
+/*   }*/
+/*   *value = 0;*/
+/*   return val_len;*/
+/*}*/
 
-      }
-      if (num == FIXTagNum_MsgType)
-      {
-         fix_msg_create(parser, ver, );
-      }
-      if (fdescr && fdescr->field_type->) // value
-      {
-         fix_tag_set(*msg, NULL, num, data, len);
-      }
-      else if (fdescr && fdescr->field_type) // group
-      {
-         fix_group_add(*msg, NULL, num, NULL);
-      }
-   }  */
-   return 0;
-}
+/*[>------------------------------------------------------------------------------------------------------------------------<]*/
+/*int32_t parser_header(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum& ver, char* msgType, size_t msgTypeLen, uint32_t* bodyLen)*/
+/*{*/
+/*   char value[len + 1];*/
+/*   uint32_t num = 0;*/
+/*   int32_t res = parse_field(parser, data, len, &num, value);*/
+/*   if (res == FIX_FAILED)*/
+/*   {*/
+/*      // TODO:*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   if (num != FIXTagNum_BeginString)*/
+/*   {*/
+/*      //TODO:*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   FIXProtocolVerEnum mver = str2FIXProtocolVerEnum(value);*/
+/*   res = parse_field(parser, data, len, &num, value);*/
+/*   if (res == FIX_FAILED)*/
+/*   {*/
+/*      //TODO:*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   id (num != FIXTagNum_MsgType)*/
+/*   {*/
+/*      //TODO:*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   *msg = fix_msg_create(parser, ver, value);*/
+/*   if (!*msg)*/
+/*   {*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   res = parse_field(parser, data, len, &num, value);*/
+/*   if (res == FIX_FAILED)*/
+/*   {*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   res = fix_utils_atoi64(value, res, 0, bodyLen);*/
+/*   if (res == FIX_FAILED)*/
+/*   {*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*}*/
+
+/*[>------------------------------------------------------------------------------------------------------------------------<]*/
+/*int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, char delimiter, FIXMsg** msg)*/
+/*{*/
+/*   if (!parser || !data || !*msg)*/
+/*   {*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   FIXProtocolDescr* pdescr = parser->protocols[ver];*/
+/*   if (!pdescr)*/
+/*   {*/
+/*      fix_parser_set_error(parser, FIX_ERROR_WRONG_PROTOCOL_VER, "Wrong FIX protocol version %d", ver);*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   FIXProtocolVerEnum mver;*/
+/*   char msgType[10];*/
+/*   uint32_t bodyLen = 0;*/
+/*   parser_header(data, len, &mver, msgType, sizeof(msgType), &bodyLen);*/
+/*   if ((mver != FIXT11 && mver != ver) ||*/
+/*         (mver == FIXT11 && ver != FIX50 && ver != FIX50SP1 && ver != FIX50SP2))*/
+/*   {*/
+/*      fix_parser_set_error(parser, FIX_ERROR_WRONG_PROTOCOL_VER, "Wrong protocol '%s' version", value);*/
+/*      return FIX_FAILED;*/
+/*   }*/
+/*   FIXMsgDescr* mdescr = NULL;*/
+/*      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(parser, mdescr, num);*/
+/*      if (!fdescr && (parser->flags & PARSER_FLAG_CHECK_EXISTING))*/
+/*      {*/
+/*         fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with tag '%d' not found in message '%s' description.", num, pdescr->name);*/
+/*         return FIX_FAILED;*/
+/*      }*/
+/*      if (fdescr && fdescr->field_type->) // value*/
+/*      {*/
+/*         fix_tag_set(*msg, NULL, num, data, len);*/
+/*      }*/
+/*      else if (fdescr && fdescr->field_type) // group*/
+/*      {*/
+/*         fix_group_add(*msg, NULL, num, NULL);*/
+/*      }  */
+/*   [>} <]*/
+/*   return 0;*/
+/*}*/
