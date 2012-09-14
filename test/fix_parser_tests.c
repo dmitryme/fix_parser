@@ -10,10 +10,10 @@
 
 START_TEST(CreateParserTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
-   fail_unless(parser->flags == FIXParserFlag_Validate);
+   fail_unless(parser->flags == PARSER_FLAG_CHECK_ALL);
    fail_unless(parser->page != NULL);
    fail_unless(parser->page->next != NULL);
    fail_unless(parser->page->next->next == NULL);
@@ -30,7 +30,7 @@ END_TEST
 
 START_TEST(SetErrorParserTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 5, 2, 5, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
 
    fix_parser_set_error(parser, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
@@ -49,7 +49,7 @@ END_TEST
 
 START_TEST(GetFreePageTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -91,7 +91,7 @@ END_TEST
 
 START_TEST(MaxPagesTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 2, 2, 0, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 2, 2, 0, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -131,7 +131,7 @@ END_TEST
 
 START_TEST(MaxGroupsTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 2, FIXParserFlag_Validate);
+   FIXParser* parser = fix_parser_create(512, 0, 2, 0, 2, 2, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -168,7 +168,7 @@ END_TEST
 START_TEST(MaxPageSizeTest)
 {
    {
-      FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, FIXParserFlag_Validate);
+      FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
       fail_unless(parser != NULL);
       fail_unless(parser->err_code == 0);
 
@@ -190,7 +190,7 @@ START_TEST(MaxPageSizeTest)
       fix_parser_free(parser);
    }
    {
-      FIXParser* parser = fix_parser_create(512, 512, 1, 0, 2, 0, FIXParserFlag_Validate);
+      FIXParser* parser = fix_parser_create(512, 512, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
       fail_unless(parser != NULL);
       fail_unless(parser->err_code == 0);
 
