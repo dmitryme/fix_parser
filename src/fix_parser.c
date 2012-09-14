@@ -21,7 +21,7 @@
 
 FIXParser* fix_parser_create(
       uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, FIXParserFlagEnum flags)
+      uint32_t numGroups, uint32_t maxGroups, int32_t flags)
 {
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    parser->flags = flags;
@@ -235,94 +235,12 @@ FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ve
    return parser->protocols[ver];
 }
 
-//------------------------------------------------------------------------------------------------------------------------//
-/*typedef enum ParserStateEnum_*/
-/*{*/
-/*   ParserState_Tag,*/
-/*   ParserState_Value*/
-/*} ParserStateEnum;*/
-
-int32_t parse_fix(FIXParser* parser, FIXMsg** msg, char const* data, uint32_t len)
+/*------------------------------------------------------------------------------------------------------------------------*/
+int32_t parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, FIXMsg** msg)
 {
-   /*if (!data)*/
-   /*{*/
-   /*   fix_parser_set_error(FIX_ERROR_INVALID_ARGUMENT, "Data is empty");*/
-   /*   return FIX_FAILED;*/
-   /*}*/
-   /*if (!msg)*/
-   /*{*/
-   /*   fix_parser_set_error(FIX_ERROR_INVALID_ARGUMENT, "Message storage is empty");*/
-   /*   return FIX_FAILED;*/
-   /*}*/
-   /*uint32_t idx = 0;*/
-   /*char tag[32] = {0};*/
-   /*uint32_t tag_idx = 0;*/
-   /*uint32_t value_size = 128;*/
-   /*char* value = calloc(value_size, sizeof(char));*/
-   /*uint32_t value_idx = 0;*/
-   /*ParserStateEnum state = ParserState_Tag;*/
-   /*FIXProtocolDescr* prot = NULL;*/
-   /*while(idx < len)*/
-   /*{*/
-   /*   char ch = data[idx];*/
-   /*   if (state == ParserState_Tag)*/
-   /*   {*/
-   /*      if (ch != '=')*/
-   /*      {*/
-   /*         if (tag_idx == sizeof(tag))*/
-   /*         {*/
-   /*            tag[sizeof(tag) - 1] = 0;*/
-   /*            fix_parser_set_error(FIX_ERROR_INVALID_ARGUMENT, "Tag '%d' value is too long", tag);*/
-   /*            return FIX_FAILED;*/
-   /*         }*/
-   /*         tag[tag_idx++] = ch;*/
-   /*      }*/
-   /*      else*/
-   /*      {*/
-   /*         state = ParserState_Value;*/
-   /*      }*/
-   /*   }*/
-   /*   else if (state == ParserState_Value)*/
-   /*   {*/
-   /*      if (ch != SOH)*/
-   /*      {*/
-   /*         if (value_idx == value_size)*/
-   /*         {*/
-   /*            value = realloc(value, value_size *= 2);*/
-   /*         }*/
-   /*         else*/
-   /*         {*/
-   /*            value[value_idx] = ch;*/
-   /*         }*/
-   /*      }*/
-   /*      else*/
-   /*      {*/
-   /*         if (strcmp(tag, "8")) // BeginString*/
-   /*         {*/
-   /*            FIXProtocolVerEnum ver = str2FIXProtocolVerEnum(value);*/
-   /*            prot = get_fix_protocol_descr(ver);*/
-   /*            if (!prot)*/
-   /*            {*/
-   /*               return FIX_FAILED;*/
-   /*            }*/
-   /*            state = ParserState_Tag;*/
-   /*         }*/
-   /*         else if (!strcmp(tag, "9")) // BodyLength*/
-   /*         {*/
-   /*            state = ParserState_Tag;*/
-   /*         }*/
-   /*         else if (!strcmp(tag, "35"))*/
-   /*         {*/
-   /*            *msg = create_fix_message(prot, value);*/
-   /*            state = ParserState_Tag;*/
-   /*         }*/
-   /*         else*/
-   /*         {*/
-   /*            get_fix_tag_*/
-   /*            set_fix_tag(*msg, tag, value);*/
-   /*         }*/
-   /*      }*/
-   /*   }*/
-   /*}*/
+   for(;;)
+   {
+
+   }
    return 0;
 }
