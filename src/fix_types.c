@@ -20,13 +20,16 @@ FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver)
 
 char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver)
 {
-   if (ver == FIX42) return "FIX.4.2";
-   if (ver == FIX44) return "FIX.4.4";
-   if (ver == FIX50) return "FIXT.1.1";
-   if (ver == FIX50SP1) return "FIXT.1.1";
-   if (ver == FIX50SP2) return "FIXT.1.1";
-   if (ver == FIXT11) return "FIXT.1.1";
-   return "";
+   switch (ver)
+   {
+      case FIX42: return "FIX.4.2";
+      case FIX44: return "FIX.4.4";
+      case FIX50:
+      case FIX50SP1:
+      case FIX50SP2:
+      case FIXT11: return "FIXT.1.1";
+      default: return "";
+   }
 }
 
 FIXFieldTypeEnum str2FIXFIXFieldType(char const* type)
