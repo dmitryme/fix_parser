@@ -236,25 +236,21 @@ FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ve
    return parser->protocols[ver];
 }
 
-/*[>------------------------------------------------------------------------------------------------------------------------<]*/
-/*int32_t parse_field(FIXParser* parser, char const* data, uint32_t len, uint32_t* num, char* value)*/
-/*{*/
-/*   *num = 0;*/
-/*   int32_t res = fix_utils_atoi64(data, len, '=', &num);*/
-/*   if (res == FIX_FAILED)*/
-/*   {*/
-/*      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");*/
-/*      return FIX_FAILED;*/
-/*   }*/
-/*   data += res;*/
-/*   int val_len = 0;*/
-/*   for(;*data != delimiter; ++val_len, ++value, ++data)*/
-/*   {*/
-/*      *value = *data;*/
-/*   }*/
-/*   *value = 0;*/
-/*   return val_len;*/
-/*}*/
+/*------------------------------------------------------------------------------------------------------------------------*/
+int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
+{
+   int64_t num = 0;
+   int32_t res = fix_utils_atoi64(data, len, '=', &num);
+   if (res == FIX_FAILED)
+   {
+      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
+      return FIX_FAILED;
+   }
+   len -= res;
+   *dend = *dbegin = data + res;
+   for(;**dend != delimiter || len > 0; --len, ++(*dend));
+   return num;
+}
 
 /*[>------------------------------------------------------------------------------------------------------------------------<]*/
 /*int32_t parser_header(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum& ver, char* msgType, size_t msgTypeLen, uint32_t* bodyLen)*/
