@@ -13,4 +13,3 @@ add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
 
 add_subdirectory(perf_test)
 add_subdirectory(test)
-

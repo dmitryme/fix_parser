@@ -214,6 +214,22 @@ START_TEST(MaxPageSizeTest)
 }
 END_TEST
 
+START_TEST(ParseFieldTest)
+{
+   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   fail_unless(parser != NULL);
+   fail_unless(parser->err_code == 0);
+
+   char buff[] = "8=FIX4.4|35=D|41=QWERTY|21=123";
+   char const* begin = NULL;
+   char const* end = NULL;
+   int64_t num = parse_field(parser, buff, strlen(buff), '|', &begin, &end);
+   fail_unless(num == 8);
+   fail_unless(*begin == 'F');
+   fail_unless(*end == '|');
+}
+END_TEST
+
 START_TEST(ParseFixTest)
 {
    FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
@@ -234,6 +250,7 @@ Suite* make_fix_parser_tests_suite()
    tcase_add_test(tc_core, MaxPagesTest);
    tcase_add_test(tc_core, MaxGroupsTest);
    tcase_add_test(tc_core, MaxPageSizeTest);
+   tcase_add_test(tc_core, ParseFieldTest);
    tcase_add_test(tc_core, ParseFixTest);
    suite_add_tcase(s, tc_core);
    return s;

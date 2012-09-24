@@ -6,6 +6,8 @@
 #include "fix_utils.h"
 #include "fix_types.h"
 
+#include <stdlib.h>
+
 #define DOUBLE_MAX_DIGITS 15
 
 uint32_t fix_utils_hash_string(char const* s)
@@ -148,7 +150,7 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int6
       *val = *val * 10 + (buff[i] - 48);
    }
    *val *= sign;
-   return FIX_SUCCESS;
+   return i;
 }
 
 int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val)
@@ -193,5 +195,5 @@ int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double
    }
    *val += exp;
    *val *= sign;
-   return FIX_SUCCESS;
+   return i;
 }

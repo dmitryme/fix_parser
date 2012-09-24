@@ -247,7 +247,7 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
       return FIX_FAILED;
    }
    len -= res;
-   *dend = *dbegin = data + res;
+   *dend = *dbegin = data + res + 1;
    for(;**dend != delimiter || len > 0; --len, ++(*dend));
    return num;
 }

@@ -40,6 +40,8 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
 void fix_parser_set_va_error(FIXParser* parser, int32_t code, char const* text, va_list ap);
 void fix_parser_set_error(FIXParser* parser, int32_t code, char const* text, ...);
 void fix_parser_reset_error(FIXParser* parser);
+int64_t parse_field(
+      FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend);
 FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ver);
 
 #endif /* FIX_PARSER_FIX_PARSER_PRIV_H */

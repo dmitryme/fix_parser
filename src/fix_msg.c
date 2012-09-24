@@ -383,7 +383,7 @@ int32_t fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int32_t* 
       fix_parser_set_error(msg->parser, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", tag->size);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64(tag->data, tag->size, 0, (int64_t*)val);
+   return fix_utils_atoi64(tag->data, tag->size, 0, (int64_t*)val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -405,7 +405,7 @@ int32_t fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, int64_t* 
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64(tag->data, tag->size, 0, val);
+   return fix_utils_atoi64(tag->data, tag->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -427,7 +427,7 @@ int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* 
       fix_parser_set_error(msg->parser, FIX_ERROR_TAG_HAS_WRONG_TYPE, "Tag %d is not a value", tagNum);
       return FIX_FAILED;
    }
-   return fix_utils_atod(tag->data, tag->size, 0, val);
+   return fix_utils_atod(tag->data, tag->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
