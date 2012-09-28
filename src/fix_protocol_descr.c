@@ -169,11 +169,11 @@ int32_t load_field_types(FIXParser* parser, FIXProtocolDescr* prot, xmlNode cons
             return FIX_FAILED;
          }
          FIXFieldType* fld = (FIXFieldType*)malloc(sizeof(FIXFieldType));
-         fld->num = atoi(get_attr(field, "number"));
+         fld->tag = atoi(get_attr(field, "number"));
          char const* name = get_attr(field, "name");
          fld->name = (char*)malloc(strlen(name) + 1);
          strcpy(fld->name, name);
-         fld->type = str2FIXFIXFieldType(get_attr(field, "type"));
+         fld->type = str2FIXFieldValueType(get_attr(field, "type"));
          int32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = prot->field_types[idx];
          prot->field_types[idx] = fld;
@@ -261,7 +261,7 @@ void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** in
    for(uint32_t i = 0; i < field_count; ++i)
    {
       FIXFieldDescr* fld = &fields[i];
-      int32_t idx = fld->field_type->num % FIELD_DESCR_CNT;
+      int32_t idx = fld->field_type->tag % FIELD_DESCR_CNT;
       fld->next = index[idx];
       index[idx] = fld;
       if (fld->group_count)
@@ -378,12 +378,12 @@ FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr cons
 
 #define FIND_DESCR_STEP \
 if (!fld) return 0; \
-if (fld->field_type->num == num) return fld; \
+if (fld->field_type->tag == tag) return fld; \
 fld = fld->next;
 
-FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t num)
+FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t tag)
 {
-   int32_t idx = num % FIELD_DESCR_CNT;
+   int32_t idx = tag % FIELD_DESCR_CNT;
    FIXFieldDescr* fld = msg->field_index[idx];
    FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
    FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
@@ -395,23 +395,23 @@ FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const
    FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
    FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
    FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;FIND_DESCR_STEP;
-   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with num %d not found in message '%s'", num, msg->name);
+   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s'", tag, msg->name);
    return 0;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t num)
+FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t tag)
 {
-   int32_t idx = num % FIELD_DESCR_CNT;
+   int32_t idx = tag % FIELD_DESCR_CNT;
    FIXFieldDescr* fld = field->group_index[idx];
    while(fld)
    {
-      if (fld->field_type->num == num)
+      if (fld->field_type->tag == tag)
       {
          return fld;
       }
       fld = fld->next;
    }
-   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with num %d not found in group '%s'", num, field->field_type->name);
+   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s'", tag, field->field_type->name);
    return NULL;
 }
