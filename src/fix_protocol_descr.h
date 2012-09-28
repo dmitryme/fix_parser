@@ -17,8 +17,8 @@
 
 typedef struct FIXFieldType_
 {
-   uint32_t num;
-   FIXFieldTypeEnum type;
+   uint32_t tag;
+   FIXFieldValueTypeEnum type;
    char* name;
    struct FIXFieldType_* next;
 } FIXFieldType;
@@ -55,7 +55,7 @@ void free_fix_protocol_descr(FIXProtocolDescr* prot);
 
 FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr const* prot, char const* name);
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type);
-FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t num);
-FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t num);
+FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t tag);
+FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t tag);
 
 #endif /* FIX_PARSER_FIX_PROTOCOL_DESCR_H */
