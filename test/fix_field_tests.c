@@ -1,4 +1,4 @@
-/* @file   fix_tag_tests.c
+/* @file   fix_field_tests.c
    @author Dmitry S. Melnikov, dmitryme@gmail.com
    @date   Created on: 08/03/2012 02:41:02 PM
 */
@@ -6,7 +6,7 @@
 #include <fix_parser.h>
 #include <fix_parser_priv.h>
 #include <fix_msg_priv.h>
-#include <fix_tag.h>
+#include <fix_field.h>
 
 #include <check.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 FIXMsg* new_fake_message(FIXParser* parser)
 {
    FIXMsg* msg = calloc(1, sizeof(FIXMsg));
-   msg->tags = fix_parser_alloc_group(parser);
+   msg->fields = fix_parser_alloc_group(parser);
    msg->parser = parser;
    msg->pages = msg->curr_page = fix_parser_alloc_page(parser, 0);
    return msg;
@@ -29,71 +29,71 @@ START_TEST(SetTagTest)
    FIXMsg* msg = new_fake_message(parser);
 
    char const val[] = {"1000"};
-   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)val, strlen(val));
-   fail_unless(msg->tags->tags[1] == tag);
-   fail_unless(tag->num == 1);
-   fail_unless(tag->type == FIXTagType_Value);
-   fail_unless(tag->next == NULL);
-   fail_unless(!strncmp(tag->data, val, strlen(val)));
-   fail_unless(tag->size == strlen(val));
+   FIXField* field = fix_field_set(msg, NULL, 1, (unsigned char const*)val, strlen(val));
+   fail_unless(msg->fields->fields[1] == field);
+   fail_unless(field->tag == 1);
+   fail_unless(field->type == FIXFieldType_Value);
+   fail_unless(field->next == NULL);
+   fail_unless(!strncmp(field->data, val, strlen(val)));
+   fail_unless(field->size == strlen(val));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 4 + strlen(val));
+   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXField) + 4 + strlen(val));
    fail_unless(msg->curr_page->next == NULL);
 
-   FIXTag* tag11 = fix_tag_set(msg, NULL, 2, (unsigned char const*)val, strlen(val));
-   fail_unless(msg->tags->tags[2] == tag11);
-   fail_unless(tag11->num == 2);
-   fail_unless(tag11->type == FIXTagType_Value);
-   fail_unless(tag11->next == NULL);
-   fail_unless(!strncmp(tag11->data, val, strlen(val)));
-   fail_unless(tag11->size == strlen(val));
+   FIXField* field11 = fix_field_set(msg, NULL, 2, (unsigned char const*)val, strlen(val));
+   fail_unless(msg->fields->fields[2] == field11);
+   fail_unless(field11->tag == 2);
+   fail_unless(field11->type == FIXFieldType_Value);
+   fail_unless(field11->next == NULL);
+   fail_unless(!strncmp(field11->data, val, strlen(val)));
+   fail_unless(field11->size == strlen(val));
 
-   FIXTag* tag12 = fix_tag_set(msg, NULL, 30, (unsigned char const*)val, strlen(val));
-   fail_unless(msg->tags->tags[30] == tag12);
-   fail_unless(tag12->num == 30);
-   fail_unless(tag12->type == FIXTagType_Value);
-   fail_unless(tag12->next == NULL);
-   fail_unless(!strncmp(tag12->data, val, strlen(val)));
-   fail_unless(tag12->size == strlen(val));
+   FIXField* field12 = fix_field_set(msg, NULL, 30, (unsigned char const*)val, strlen(val));
+   fail_unless(msg->fields->fields[30] == field12);
+   fail_unless(field12->tag == 30);
+   fail_unless(field12->type == FIXFieldType_Value);
+   fail_unless(field12->next == NULL);
+   fail_unless(!strncmp(field12->data, val, strlen(val)));
+   fail_unless(field12->size == strlen(val));
 
    char const val1[] = {"2000"};
-   FIXTag* tag1 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val1, strlen(val1));
-   fail_unless(tag == tag1);
-   fail_unless(tag1->num == 1);
-   fail_unless(tag1->type == FIXTagType_Value);
-   fail_unless(tag1->next == NULL);
-   fail_unless(!strncmp(tag1->data, val1, strlen(val1)));
-   fail_unless(tag1->size == strlen(val1));
+   FIXField* field1 = fix_field_set(msg, NULL, 1, (unsigned char const*)val1, strlen(val1));
+   fail_unless(field == field1);
+   fail_unless(field1->tag == 1);
+   fail_unless(field1->type == FIXFieldType_Value);
+   fail_unless(field1->next == NULL);
+   fail_unless(!strncmp(field1->data, val1, strlen(val1)));
+   fail_unless(field1->size == strlen(val1));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXField)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val));
    fail_unless(msg->curr_page->next == NULL);
 
    char const val2[] = {"64"};
-   FIXTag* tag2 = fix_tag_set(msg, NULL, 1, (unsigned char const*)val2, strlen(val2));
-   fail_unless(tag2 == tag);
-   fail_unless(tag2->num == 1);
-   fail_unless(tag2->type == FIXTagType_Value);
-   fail_unless(tag2->next == NULL);
-   fail_unless(!strncmp(tag2->data, val2, strlen(val2)));
-   fail_unless(tag1->size == strlen(val2));
+   FIXField* field2 = fix_field_set(msg, NULL, 1, (unsigned char const*)val2, strlen(val2));
+   fail_unless(field2 == field);
+   fail_unless(field2->tag == 1);
+   fail_unless(field2->type == FIXFieldType_Value);
+   fail_unless(field2->next == NULL);
+   fail_unless(!strncmp(field2->data, val2, strlen(val2)));
+   fail_unless(field1->size == strlen(val2));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXField)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val));
    fail_unless(msg->curr_page->next == NULL);
 
    char const txt[] = "Hello world!";
-   FIXTag* tag3 = fix_tag_set(msg, NULL, 1, (unsigned char const*)txt, strlen(txt));
-   fail_unless(tag3 == tag);
-   fail_unless(tag3->num == 1);
-   fail_unless(tag3->type == FIXTagType_Value);
-   fail_unless(tag3->next == NULL);
-   fail_unless(!strncmp(tag3->data, txt, strlen(txt)));
-   fail_unless(tag3->size == strlen(txt));
+   FIXField* field3 = fix_field_set(msg, NULL, 1, (unsigned char const*)txt, strlen(txt));
+   fail_unless(field3 == field);
+   fail_unless(field3->tag == 1);
+   fail_unless(field3->type == FIXFieldType_Value);
+   fail_unless(field3->next == NULL);
+   fail_unless(!strncmp(field3->data, txt, strlen(txt)));
+   fail_unless(field3->size == strlen(txt));
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val) + 4 + strlen(txt));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXField)) + 4 + strlen(val1) + 4 + strlen(val) + 4 + strlen(val) + 4 + strlen(txt));
    fail_unless(msg->curr_page->next == NULL);
 
    fix_parser_free(parser);
@@ -110,79 +110,79 @@ START_TEST(DelTagTest)
    FIXMsg* msg = new_fake_message(parser);
 
    long val = 1000;
-   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)&val, sizeof(val));
-   fail_unless(msg->tags->tags[1] == tag);
-   fail_unless(tag->num == 1);
-   fail_unless(tag->type == FIXTagType_Value);
-   fail_unless(tag->next == NULL);
-   fail_unless(*(long*)tag->data == val);
+   FIXField* field = fix_field_set(msg, NULL, 1, (unsigned char const*)&val, sizeof(val));
+   fail_unless(msg->fields->fields[1] == field);
+   fail_unless(field->tag == 1);
+   fail_unless(field->type == FIXFieldType_Value);
+   fail_unless(field->next == NULL);
+   fail_unless(*(long*)field->data == val);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXTag) + 4 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 4 + sizeof(FIXField) + 4 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
    long val1 = 2000;
-   FIXTag* tag1 = fix_tag_set(msg, NULL, 65, (unsigned char const*)&val1, sizeof(val1));
-   fail_unless(msg->tags->tags[1] == tag1);
-   fail_unless(tag1->num == 65);
-   fail_unless(tag1->type == FIXTagType_Value);
-   fail_unless(tag1->next == tag);
-   fail_unless(*(long*)tag1->data == val1);
+   FIXField* field1 = fix_field_set(msg, NULL, 65, (unsigned char const*)&val1, sizeof(val1));
+   fail_unless(msg->fields->fields[1] == field1);
+   fail_unless(field1->tag == 65);
+   fail_unless(field1->type == FIXFieldType_Value);
+   fail_unless(field1->next == field);
+   fail_unless(*(long*)field1->data == val1);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 2 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val1));
+   fail_unless(msg->curr_page->offset == 2 * (4 + sizeof(FIXField)) + 4 + sizeof(val) + 4 + sizeof(val1));
    fail_unless(msg->curr_page->next == NULL);
 
    long val2 = 3000;
-   FIXTag* tag2 = fix_tag_set(msg, NULL, 129, (unsigned char const*)&val2, sizeof(val2));
-   fail_unless(msg->tags->tags[1] == tag2);
-   fail_unless(tag2->num == 129);
-   fail_unless(tag2->type == FIXTagType_Value);
-   fail_unless(tag2->next == tag1);
-   fail_unless(*(long*)tag2->data == val2);
+   FIXField* field2 = fix_field_set(msg, NULL, 129, (unsigned char const*)&val2, sizeof(val2));
+   fail_unless(msg->fields->fields[1] == field2);
+   fail_unless(field2->tag == 129);
+   fail_unless(field2->type == FIXFieldType_Value);
+   fail_unless(field2->next == field1);
+   fail_unless(*(long*)field2->data == val2);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val));
+   fail_unless(msg->curr_page->offset == 3 * (4 + sizeof(FIXField)) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val));
    fail_unless(msg->curr_page->next == NULL);
 
    long val3 = 4000;
-   FIXTag* tag3 = fix_tag_set(msg, NULL, 193, (unsigned char const*)&val3, sizeof(val3));
+   FIXField* field3 = fix_field_set(msg, NULL, 193, (unsigned char const*)&val3, sizeof(val3));
 
-   fail_unless(msg->tags->tags[1] == tag3);
-   fail_unless(tag3->num == 193);
-   fail_unless(tag3->type == FIXTagType_Value);
-   fail_unless(tag3->next == tag2);
-   fail_unless(*(long*)tag3->data == val3);
-
-   fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val3));
-   fail_unless(msg->curr_page->next == NULL);
-
-   int res = fix_tag_del(msg, NULL, 1);
-   fail_unless(res == FIX_SUCCESS);
-   fail_unless(msg->tags->tags[1] == tag3);
-   fail_unless(msg->tags->tags[1]->next == tag2);
-   fail_unless(msg->tags->tags[1]->next->next == tag1);
-   fail_unless(msg->tags->tags[1]->next->next->next == NULL);
+   fail_unless(msg->fields->fields[1] == field3);
+   fail_unless(field3->tag == 193);
+   fail_unless(field3->type == FIXFieldType_Value);
+   fail_unless(field3->next == field2);
+   fail_unless(*(long*)field3->data == val3);
 
    fail_unless(msg->curr_page->size == 512);
-   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXTag)) + 4 + sizeof(val) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val3));
+   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXField)) + 4 + sizeof(val) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val3));
    fail_unless(msg->curr_page->next == NULL);
 
-   res = fix_tag_del(msg, msg->tags, 129);
+   int res = fix_field_del(msg, NULL, 1);
    fail_unless(res == FIX_SUCCESS);
-   fail_unless(msg->tags->tags[1] == tag3);
-   fail_unless(msg->tags->tags[1]->next == tag1);
-   fail_unless(msg->tags->tags[1]->next->next == NULL);
+   fail_unless(msg->fields->fields[1] == field3);
+   fail_unless(msg->fields->fields[1]->next == field2);
+   fail_unless(msg->fields->fields[1]->next->next == field1);
+   fail_unless(msg->fields->fields[1]->next->next->next == NULL);
 
-   res = fix_tag_del(msg, msg->tags, 193);
-   fail_unless(res == FIX_SUCCESS);
-   fail_unless(msg->tags->tags[1] == tag1);
-   fail_unless(msg->tags->tags[1]->next == NULL);
+   fail_unless(msg->curr_page->size == 512);
+   fail_unless(msg->curr_page->offset == 4 * (4 + sizeof(FIXField)) + 4 + sizeof(val) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val3));
+   fail_unless(msg->curr_page->next == NULL);
 
-   res = fix_tag_del(msg, msg->tags, 65);
+   res = fix_field_del(msg, msg->fields, 129);
    fail_unless(res == FIX_SUCCESS);
-   fail_unless(msg->tags->tags[1] == NULL);
+   fail_unless(msg->fields->fields[1] == field3);
+   fail_unless(msg->fields->fields[1]->next == field1);
+   fail_unless(msg->fields->fields[1]->next->next == NULL);
+
+   res = fix_field_del(msg, msg->fields, 193);
+   fail_unless(res == FIX_SUCCESS);
+   fail_unless(msg->fields->fields[1] == field1);
+   fail_unless(msg->fields->fields[1]->next == NULL);
+
+   res = fix_field_del(msg, msg->fields, 65);
+   fail_unless(res == FIX_SUCCESS);
+   fail_unless(msg->fields->fields[1] == NULL);
 
    fix_parser_free(parser);
    free(msg);
@@ -198,61 +198,61 @@ START_TEST(GetTagTest)
    FIXMsg* msg = new_fake_message(parser);
 
    long val = 1000;
-   FIXTag* tag = fix_tag_set(msg, NULL, 1, (unsigned char const*)&val, sizeof(val));
-   fail_unless(msg->tags->tags[1] == tag);
-   fail_unless(tag->num == 1);
-   fail_unless(tag->type == FIXTagType_Value);
-   fail_unless(tag->next == NULL);
-   fail_unless(*(long*)tag->data, val);
+   FIXField* field = fix_field_set(msg, NULL, 1, (unsigned char const*)&val, sizeof(val));
+   fail_unless(msg->fields->fields[1] == field);
+   fail_unless(field->tag == 1);
+   fail_unless(field->type == FIXFieldType_Value);
+   fail_unless(field->next == NULL);
+   fail_unless(*(long*)field->data, val);
 
    long val1 = 2000;
-   FIXTag* tag1 = fix_tag_set(msg, NULL, 65, (unsigned char const*)&val1, sizeof(val1));
-   fail_unless(msg->tags->tags[1] == tag1);
-   fail_unless(msg->tags->tags[1]->next == tag);
-   fail_unless(tag1->num == 65);
-   fail_unless(tag1->type == FIXTagType_Value);
-   fail_unless(tag1->next == tag);
-   fail_unless(*(long*)tag1->data, val1);
+   FIXField* field1 = fix_field_set(msg, NULL, 65, (unsigned char const*)&val1, sizeof(val1));
+   fail_unless(msg->fields->fields[1] == field1);
+   fail_unless(msg->fields->fields[1]->next == field);
+   fail_unless(field1->tag == 65);
+   fail_unless(field1->type == FIXFieldType_Value);
+   fail_unless(field1->next == field);
+   fail_unless(*(long*)field1->data, val1);
 
    long val2 = 3000;
-   FIXTag* tag2 = fix_tag_set(msg, NULL, 129, (unsigned char const*)&val2, sizeof(val2));
-   fail_unless(msg->tags->tags[1] == tag2);
-   fail_unless(msg->tags->tags[1]->next == tag1);
-   fail_unless(msg->tags->tags[1]->next->next == tag);
-   fail_unless(tag2->num == 129);
-   fail_unless(tag2->type == FIXTagType_Value);
-   fail_unless(tag2->next == tag1);
-   fail_unless(*(long*)tag2->data, val2);
+   FIXField* field2 = fix_field_set(msg, NULL, 129, (unsigned char const*)&val2, sizeof(val2));
+   fail_unless(msg->fields->fields[1] == field2);
+   fail_unless(msg->fields->fields[1]->next == field1);
+   fail_unless(msg->fields->fields[1]->next->next == field);
+   fail_unless(field2->tag == 129);
+   fail_unless(field2->type == FIXFieldType_Value);
+   fail_unless(field2->next == field1);
+   fail_unless(*(long*)field2->data, val2);
 
    long val3 = 4000;
-   FIXTag* tag3 = fix_tag_set(msg, NULL, 193, (unsigned char const*)&val3, sizeof(val3));
-   fail_unless(msg->tags->tags[1] == tag3);
-   fail_unless(msg->tags->tags[1]->next == tag2);
-   fail_unless(msg->tags->tags[1]->next->next == tag1);
-   fail_unless(msg->tags->tags[1]->next->next->next == tag);
-   fail_unless(tag3->num == 193);
-   fail_unless(tag3->type == FIXTagType_Value);
-   fail_unless(tag3->next == tag2);
-   fail_unless(*(long*)tag2->data, val3);
+   FIXField* field3 = fix_field_set(msg, NULL, 193, (unsigned char const*)&val3, sizeof(val3));
+   fail_unless(msg->fields->fields[1] == field3);
+   fail_unless(msg->fields->fields[1]->next == field2);
+   fail_unless(msg->fields->fields[1]->next->next == field1);
+   fail_unless(msg->fields->fields[1]->next->next->next == field);
+   fail_unless(field3->tag == 193);
+   fail_unless(field3->type == FIXFieldType_Value);
+   fail_unless(field3->next == field2);
+   fail_unless(*(long*)field2->data, val3);
 
    long val4 = 4000;
-   FIXTag* tag4 = fix_tag_set(msg, NULL, 2, (unsigned char const*)&val4, sizeof(val4));
-   fail_unless(msg->tags->tags[1] == tag3);
-   fail_unless(msg->tags->tags[1]->next == tag2);
-   fail_unless(msg->tags->tags[1]->next->next == tag1);
-   fail_unless(msg->tags->tags[1]->next->next->next == tag);
-   fail_unless(msg->tags->tags[2] == tag4);
-   fail_unless(tag4->num == 2);
-   fail_unless(tag4->type == FIXTagType_Value);
-   fail_unless(tag4->next == NULL);
-   fail_unless(*(long*)tag4->data, val4);
+   FIXField* field4 = fix_field_set(msg, NULL, 2, (unsigned char const*)&val4, sizeof(val4));
+   fail_unless(msg->fields->fields[1] == field3);
+   fail_unless(msg->fields->fields[1]->next == field2);
+   fail_unless(msg->fields->fields[1]->next->next == field1);
+   fail_unless(msg->fields->fields[1]->next->next->next == field);
+   fail_unless(msg->fields->fields[2] == field4);
+   fail_unless(field4->tag == 2);
+   fail_unless(field4->type == FIXFieldType_Value);
+   fail_unless(field4->next == NULL);
+   fail_unless(*(long*)field4->data, val4);
 
-   fail_unless(fix_tag_get(msg, msg->tags, 1) == tag);
-   fail_unless(fix_tag_get(msg, msg->tags, 129) == tag2);
-   fail_unless(fix_tag_get(msg, msg->tags, 193) == tag3);
-   fail_unless(fix_tag_get(msg, msg->tags, 2) == tag4);
+   fail_unless(fix_field_get(msg, msg->fields, 1) == field);
+   fail_unless(fix_field_get(msg, msg->fields, 129) == field2);
+   fail_unless(fix_field_get(msg, msg->fields, 193) == field3);
+   fail_unless(fix_field_get(msg, msg->fields, 2) == field4);
 
-   fail_unless(fix_tag_get(msg, msg->tags, 3) == NULL);
+   fail_unless(fix_field_get(msg, msg->fields, 3) == NULL);
 
    fix_parser_free(parser);
    free(msg);
@@ -267,44 +267,44 @@ START_TEST(AddGetDelGroupTest)
 
    FIXMsg* msg = new_fake_message(parser);
 
-   FIXTag* tag = NULL;
-   FIXGroup* grp = fix_group_add(msg, NULL, 1, &tag);
-   fail_unless(tag != NULL);
+   FIXField* field = NULL;
+   FIXGroup* grp = fix_group_add(msg, NULL, 1, &field);
+   fail_unless(field != NULL);
    fail_unless(grp != NULL);
-   fail_unless(tag->size, 1);
+   fail_unless(field->size, 1);
    fail_unless(msg->used_groups == grp);
    fail_unless(parser->used_groups == 2);
 
    long val = 100;
-   FIXTag* tag1 = fix_tag_set(msg, NULL, 1, (unsigned char*)&val, sizeof(val));
-   fail_unless(tag1 == NULL);
-   fail_unless(parser->err_code == FIX_ERROR_TAG_HAS_WRONG_TYPE);
+   FIXField* field1 = fix_field_set(msg, NULL, 1, (unsigned char*)&val, sizeof(val));
+   fail_unless(field1 == NULL);
+   fail_unless(parser->err_code == FIX_ERROR_FIELD_HAS_WRONG_TYPE);
 
-   FIXTag* tag11 = NULL;
-   FIXGroup* grp1 = fix_group_add(msg, NULL, 1, &tag11);
-   fail_unless(tag11 != NULL);
+   FIXField* field11 = NULL;
+   FIXGroup* grp1 = fix_group_add(msg, NULL, 1, &field11);
+   fail_unless(field11 != NULL);
    fail_unless(grp1 != NULL);
-   fail_unless(tag11->size, 2);
+   fail_unless(field11->size, 2);
    fail_unless(msg->used_groups == grp1);
    fail_unless(msg->used_groups->next == grp);
    fail_unless(parser->used_groups == 3);
    fail_unless(parser->group == NULL);
 
-   FIXTag* tag2 = NULL;
-   FIXGroup* grp2 = fix_group_add(msg, NULL, 1, &tag2);
-   fail_unless(tag2 != NULL);
+   FIXField* field2 = NULL;
+   FIXGroup* grp2 = fix_group_add(msg, NULL, 1, &field2);
+   fail_unless(field2 != NULL);
    fail_unless(grp2 != NULL);
-   fail_unless(tag2->size, 3);
+   fail_unless(field2->size, 3);
    fail_unless(msg->used_groups == grp2);
    fail_unless(msg->used_groups->next == grp1);
    fail_unless(msg->used_groups->next->next == grp);
    fail_unless(parser->used_groups == 4);
    fail_unless(parser->group == NULL);
 
-   FIXTag* tag3 = NULL;
-   FIXGroup* grp3 = fix_group_add(msg, NULL, 1, &tag3);
+   FIXField* field3 = NULL;
+   FIXGroup* grp3 = fix_group_add(msg, NULL, 1, &field3);
    fail_unless(grp3 != NULL);
-   fail_unless(*(uint32_t*)tag->data, 4);
+   fail_unless(*(uint32_t*)field->data, 4);
    fail_unless(msg->used_groups == grp3);
    fail_unless(msg->used_groups->next == grp2);
    fail_unless(msg->used_groups->next->next == grp1);
@@ -321,8 +321,8 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(fix_group_get(msg, NULL, 1, 1) == grp1);
    fail_unless(fix_group_get(msg, NULL, 1, 0) == grp);
 
-   FIXGroups* grps = (FIXGroups*)tag->data;
-   fail_unless(tag->size == 4);
+   FIXGroups* grps = (FIXGroups*)field->data;
+   fail_unless(field->size == 4);
    fail_unless(grps->group[0] == grp);
    fail_unless(grps->group[1] == grp1);
    fail_unless(grps->group[2] == grp2);
@@ -339,7 +339,7 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(msg->used_groups->next->next == grp);
    fail_unless(msg->used_groups->next->next->next == NULL);
 
-   fail_unless(tag->size == 3);
+   fail_unless(field->size == 3);
    fail_unless(grps->group[0] == grp);
    fail_unless(grps->group[1] == grp1);
    fail_unless(grps->group[2] == grp2);
@@ -353,7 +353,7 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(msg->used_groups->next == grp);
    fail_unless(msg->used_groups->next->next == NULL);
 
-   fail_unless(tag->size == 2);
+   fail_unless(field->size == 2);
    fail_unless(grps->group[0] == grp);
    fail_unless(grps->group[1] == grp2);
    fail_unless(grps->group[2] == NULL);
@@ -366,14 +366,14 @@ START_TEST(AddGetDelGroupTest)
    fail_unless(msg->used_groups == grp2);
    fail_unless(msg->used_groups->next == NULL);
 
-   fail_unless(tag->size == 1);
+   fail_unless(field->size == 1);
    fail_unless(grps->group[0] == grp2);
    fail_unless(grps->group[1] == NULL);
    fail_unless(grps->group[2] == NULL);
    fail_unless(grps->group[3] == NULL);
 
    fail_unless(fix_group_del(msg, NULL, 1, 0) == FIX_SUCCESS);
-   fail_unless(fix_tag_get(msg, NULL, 1) == NULL);
+   fail_unless(fix_field_get(msg, NULL, 1) == NULL);
    fail_unless(parser->group == grp2);
    fail_unless(parser->group->next == grp);
    fail_unless(parser->group->next->next == grp1);
@@ -393,30 +393,30 @@ START_TEST(NestedGroupsTest)
 
    FIXMsg* msg = new_fake_message(parser);
 
-   FIXTag* tag = NULL;
-   FIXGroup* grp = fix_group_add(msg, NULL, 1, &tag);
-   fail_unless(tag != NULL);
+   FIXField* field = NULL;
+   FIXGroup* grp = fix_group_add(msg, NULL, 1, &field);
+   fail_unless(field != NULL);
    fail_unless(grp != NULL);
-   fail_unless(tag->size, 1);
+   fail_unless(field->size, 1);
    fail_unless(msg->used_groups == grp);
    fail_unless(parser->used_groups == 2);
 
-   FIXTag* nested_tag = NULL;
-   FIXGroup* nested_grp = fix_group_add(msg, grp, 65, &nested_tag);
-   fail_unless(nested_tag != NULL);
+   FIXField* nested_field = NULL;
+   FIXGroup* nested_grp = fix_group_add(msg, grp, 65, &nested_field);
+   fail_unless(nested_field != NULL);
    fail_unless(nested_grp != NULL);
-   fail_unless(nested_tag->type == FIXTagType_Group);
+   fail_unless(nested_field->type == FIXFieldType_Group);
    fail_unless(parser->used_groups == 3);
 
    fail_unless(msg->used_groups == nested_grp);
    fail_unless(msg->used_groups->next == grp);
    fail_unless(msg->used_groups->next->next == NULL);
 
-   FIXTag* nested_tag1 = NULL;
-   FIXGroup* nested_grp1 = fix_group_add(msg, nested_grp, 131, &nested_tag1);
-   fail_unless(nested_tag1 != NULL);
+   FIXField* nested_field1 = NULL;
+   FIXGroup* nested_grp1 = fix_group_add(msg, nested_grp, 131, &nested_field1);
+   fail_unless(nested_field1 != NULL);
    fail_unless(nested_grp1 != NULL);
-   fail_unless(nested_tag1->type == FIXTagType_Group);
+   fail_unless(nested_field1->type == FIXFieldType_Group);
    fail_unless(parser->used_groups == 4);
 
    fail_unless(msg->used_groups == nested_grp1);
@@ -443,9 +443,9 @@ START_TEST(NestedGroupsTest)
 }
 END_TEST
 
-Suite* make_fix_tag_tests_suite()
+Suite* make_fix_field_tests_suite()
 {
-   Suite* s = suite_create("fix_tag");
+   Suite* s = suite_create("fix_field");
    TCase* tc_core = tcase_create("Core");
    tcase_add_test(tc_core, SetTagTest);
    tcase_add_test(tc_core, DelTagTest);
