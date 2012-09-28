@@ -80,12 +80,12 @@ START_TEST(atoi64_Test)
 
    char str5[] = "1000=";
    int64_t val5 = 0;
-   fail_unless(fix_utils_atoi64(str5, 3, '=', &val5) == 4);
+   fail_unless(fix_utils_atoi64(str5, 3, '=', &val5) == 3);
    fail_unless(val5 == 100);
 
    char str6[] = "1000\00134=";
    int64_t val6 = 0;
-   fail_unless(fix_utils_atoi64(str5, strlen(str6), '=', &val6) == 7);
+   fail_unless(fix_utils_atoi64(str6, strlen(str6), '=', &val6) == FIX_FAILED);
    fail_unless(val6 == 1000);
 }
 END_TEST
@@ -114,7 +114,7 @@ START_TEST(atod_Test)
 
    char str4[] = "123.456\00134=";
    double val4 = 0;
-   fail_unless(fix_utils_atod(str4, strlen(str4), 1, &val4) == 9);
+   fail_unless(fix_utils_atod(str4, strlen(str4), 1, &val4) == 7);
    fail_unless(val4 == 123.456);
 }
 END_TEST
