@@ -324,7 +324,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocol
       fix_parser_set_error(parser, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString tag.");
       return NULL;
    }
-   if (tag != FIXTagNum_BeginString)
+   if (tag != FIXFieldTag_BeginString)
    {
       fix_parser_set_error(parser, FIX_ERROR_WRONG_FIELD, "Field tag must be BeginString but actually %d", tag);
       return NULL;
