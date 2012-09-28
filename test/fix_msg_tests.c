@@ -30,98 +30,98 @@ START_TEST(CreateMsgTest)
    fail_unless(fix_msg_get_string(msg, NULL, 35, msgType, sizeof(msgType)) == 1);
    fail_unless(!strcmp(msgType, "8"));
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14);
 
-   fail_unless(fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ExecID, "FE_1_9494_1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15);
 
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_ExecType, '0') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6);
 
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_OrdStatus, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13);
 
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10);
 
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5);
 
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4);
 
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 13 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 13);
 
 
    int32_t val = 0;
-   fail_unless(fix_msg_get_int32(msg, NULL, FIXTagNum_MsgSeqNum, &val) == FIX_SUCCESS);
+   fail_unless(fix_msg_get_int32(msg, NULL, FIXFieldTag_MsgSeqNum, &val) == FIX_SUCCESS);
    fail_unless(val == 34);
 
    double price = 0.0;
-   fail_unless(fix_msg_get_double(msg, NULL, FIXTagNum_Price, &price) == FIX_SUCCESS);
+   fail_unless(fix_msg_get_double(msg, NULL, FIXFieldTag_Price, &price) == FIX_SUCCESS);
    fail_unless(price == 135155.0);
 
    char text[10] = {};
-   fail_unless(fix_msg_get_string(msg, NULL, FIXTagNum_Text, text, sizeof(text)) == 9);
+   fail_unless(fix_msg_get_string(msg, NULL, FIXFieldTag_Text, text, sizeof(text)) == 9);
    fail_unless(!strncmp(text, "COMMENT12", 9));
 
-   fail_unless(fix_msg_del_tag(msg, NULL, FIXTagNum_Symbol) == FIX_SUCCESS);
+   fail_unless(fix_msg_del_field(msg, NULL, FIXFieldTag_Symbol) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 13);
 
-   fail_unless(fix_msg_del_tag(msg, NULL, FIXTagNum_Account) == FIX_SUCCESS);
+   fail_unless(fix_msg_del_field(msg, NULL, FIXFieldTag_Account) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 5 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 13);
 
-   fail_unless(fix_msg_del_tag(msg, NULL, FIXTagNum_SenderCompID) == FIX_SUCCESS);
+   fail_unless(fix_msg_del_field(msg, NULL, FIXFieldTag_SenderCompID) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 5 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 13);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMM") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMM") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 5 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 8);
 
    fix_msg_free(msg);
@@ -145,43 +145,43 @@ START_TEST(CreateMsg2Test)
    int32_t res = fix_msg_to_string(msg, '|', buff, sizeof(buff));
    fail_unless(res == -1);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14);
-   fail_unless(fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TransactTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TransactTime, "20120716-06:00:16.230") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_OrdType, '2') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_OrdType, '2') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5);
 
-   FIXGroup* grp1 = fix_msg_add_group(msg, NULL, FIXTagNum_NoPartyIDs);
+   FIXGroup* grp1 = fix_msg_add_group(msg, NULL, FIXFieldTag_NoPartyIDs);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6);
-   fail_unless(fix_msg_set_string(msg, grp1, FIXTagNum_PartyID, "ID1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, grp1, FIXFieldTag_PartyID, "ID1") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8);
-   fail_unless(fix_msg_set_char(msg, grp1, FIXTagNum_PartyIDSource, 'A') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, grp1, FIXFieldTag_PartyIDSource, 'A') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8 + 6);
-   fail_unless(fix_msg_set_int32(msg, grp1, FIXTagNum_PartyRole, 1) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, grp1, FIXFieldTag_PartyRole, 1) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8 + 6 + 6);
 
-   FIXGroup* grp2 = fix_msg_add_group(msg, NULL, FIXTagNum_NoPartyIDs);
+   FIXGroup* grp2 = fix_msg_add_group(msg, NULL, FIXFieldTag_NoPartyIDs);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8 + 6 + 6);
-   fail_unless(fix_msg_set_string(msg, grp2, FIXTagNum_PartyID, "ID2") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, grp2, FIXFieldTag_PartyID, "ID2") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8 + 6 + 6 + 8);
-   fail_unless(fix_msg_set_char(msg, grp2, FIXTagNum_PartyIDSource, 'B') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, grp2, FIXFieldTag_PartyIDSource, 'B') == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8 + 6 + 6 + 8 + 6);
-   fail_unless(fix_msg_set_int32(msg, grp2, FIXTagNum_PartyRole, 2) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, grp2, FIXFieldTag_PartyRole, 2) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 25 + 21 + 13 + 5 + 25 + 6 + 5 + 6 + 8 + 6 + 6 + 8 + 6 + 6);
 }
 END_TEST
@@ -199,29 +199,29 @@ START_TEST(ToStringTest)
    fail_unless(msg->used_groups == group);
    fail_unless(msg->body_len == 5);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ExecID, "FE_1_9494_1") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_ExecType, '0') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_OrdStatus, '1') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12") == FIX_SUCCESS);
 
    char buff[1024];
    int32_t res = fix_msg_to_string(msg, 1, buff,sizeof(buff));
@@ -252,26 +252,26 @@ START_TEST(ToStringGroupTest)
    int32_t res = fix_msg_to_string(msg, '|', buff, sizeof(buff));
    fail_unless(res == -1);
 
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_string(msg, NULL, FIXTagNum_TransactTime, "20120716-06:00:16.230") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25) == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, NULL, FIXTagNum_OrdType, '2') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TransactTime, "20120716-06:00:16.230") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25) == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, NULL, FIXFieldTag_OrdType, '2') == FIX_SUCCESS);
 
-   FIXGroup* grp1 = fix_msg_add_group(msg, NULL, FIXTagNum_NoPartyIDs);
-   fail_unless(fix_msg_set_string(msg, grp1, FIXTagNum_PartyID, "ID1") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, grp1, FIXTagNum_PartyIDSource, 'A') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_int32(msg, grp1, FIXTagNum_PartyRole, 1) == FIX_SUCCESS);
+   FIXGroup* grp1 = fix_msg_add_group(msg, NULL, FIXFieldTag_NoPartyIDs);
+   fail_unless(fix_msg_set_string(msg, grp1, FIXFieldTag_PartyID, "ID1") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, grp1, FIXFieldTag_PartyIDSource, 'A') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, grp1, FIXFieldTag_PartyRole, 1) == FIX_SUCCESS);
 
-   FIXGroup* grp2 = fix_msg_add_group(msg, NULL, FIXTagNum_NoPartyIDs);
-   fail_unless(fix_msg_set_string(msg, grp2, FIXTagNum_PartyID, "ID2") == FIX_SUCCESS);
-   fail_unless(fix_msg_set_char(msg, grp2, FIXTagNum_PartyIDSource, 'B') == FIX_SUCCESS);
-   fail_unless(fix_msg_set_int32(msg, grp2, FIXTagNum_PartyRole, 2) == FIX_SUCCESS);
+   FIXGroup* grp2 = fix_msg_add_group(msg, NULL, FIXFieldTag_NoPartyIDs);
+   fail_unless(fix_msg_set_string(msg, grp2, FIXFieldTag_PartyID, "ID2") == FIX_SUCCESS);
+   fail_unless(fix_msg_set_char(msg, grp2, FIXFieldTag_PartyIDSource, 'B') == FIX_SUCCESS);
+   fail_unless(fix_msg_set_int32(msg, grp2, FIXFieldTag_PartyRole, 2) == FIX_SUCCESS);
 
    res = fix_msg_to_string(msg, 1, buff, sizeof(buff));
    buff[res] = 0;
@@ -280,14 +280,14 @@ START_TEST(ToStringGroupTest)
             "11=CL_ORD_ID_1234567\001453=2\001448=ID1\001447=A\001452=1\001448=ID2\001447=B\001452=2\00155=RTS-12.12\001"
             "54=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=088\001"));
 
-   fail_unless(fix_msg_del_group(msg, NULL, FIXTagNum_NoPartyIDs, 0) == FIX_SUCCESS);
+   fail_unless(fix_msg_del_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0) == FIX_SUCCESS);
    res = fix_msg_to_string(msg, 1, buff, sizeof(buff));
    buff[res] = 0;
    fail_unless(res == 193);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=170\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
             "11=CL_ORD_ID_1234567\001453=1\001448=ID2\001447=B\001452=2\00155=RTS-12.12\00154=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=145\001"));
 
-   fail_unless(fix_msg_del_group(msg, NULL, FIXTagNum_NoPartyIDs, 0) == FIX_SUCCESS);
+   fail_unless(fix_msg_del_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0) == FIX_SUCCESS);
    res = fix_msg_to_string(msg, 1, buff, sizeof(buff));
    buff[res] = 0;
    fail_unless(res == 167);
