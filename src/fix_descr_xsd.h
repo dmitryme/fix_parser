@@ -12,7 +12,7 @@ static char const* fix_xsd = {
 ""
 "   <xs:simpleType name='FIXVersion'>"
 "      <xs:restriction base='xs:string'>"
-"         <xs:pattern value='FIX42|FIX44'/>"
+"         <xs:pattern value='FIX.4.2|FIX.4.4'/>"
 "      </xs:restriction>"
 "   </xs:simpleType>"
 ""

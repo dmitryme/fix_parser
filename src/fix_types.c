@@ -7,15 +7,29 @@
 
 #include "string.h"
 
-FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver)
+FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver, uint32_t len)
 {
-   if (!strcmp(ver, "FIX42")) return FIX42;
-   if (!strcmp(ver, "FIX44")) return FIX44;
-   if (!strcmp(ver, "FIX50")) return FIX50;
-   if (!strcmp(ver, "FIX50SP1")) return FIX50SP1;
-   if (!strcmp(ver, "FIX50SP2")) return FIX50SP2;
-   if (!strcmp(ver, "FIXT11")) return FIXT11;
+   if (!strncmp("FIX.4.2", ver, len)) return FIX42;
+   if (!strncmp("FIX.4.4", ver, len)) return FIX44;
+   if (!strncmp("FIX.5.0", ver, len)) return FIX50;
+   if (!strncmp("FIX.5.0.SP1", ver, len)) return FIX50SP1;
+   if (!strncmp("FIX.5.0.SP2", ver, len)) return FIX50SP2;
+   if (!strncmp("FIXT.1.1", ver, len)) return FIXT11;
    return FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT;
+}
+
+char const* FIXProtocolVerEnum2str(FIXProtocolVerEnum ver)
+{
+   switch (ver)
+   {
+      case FIX42: return "FIX.4.2";
+      case FIX44: return "FIX.4.4";
+      case FIX50: return "FIX.5.0";
+      case FIX50SP1: return "FIX.5.0.SP1";
+      case FIX50SP2: return "FIX.5.0.SP2";
+      case FIXT11: return "FIXT.1.1";
+      default: return "";
+   }
 }
 
 char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver)

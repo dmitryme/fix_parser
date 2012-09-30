@@ -1,4 +1,4 @@
-<fix version="FIX44">
+<fix version="FIX.4.4">
    <messages>
       <message name='Heartbeat' type='0'>
          <component name='header' required='Y' />

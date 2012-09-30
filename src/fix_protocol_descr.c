@@ -91,7 +91,7 @@ xmlNode* get_first(xmlNode const* node, char const* name)
 FIXProtocolVerEnum get_version(xmlNode const* root)
 {
    char const* ver = get_attr(root, "version");
-   return str2FIXProtocolVerEnum(ver);
+   return str2FIXProtocolVerEnum(ver, strlen(ver));
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/

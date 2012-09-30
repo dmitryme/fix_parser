@@ -1,4 +1,5 @@
 /* @file   fix_parser.c
+   int64_t num = parse_field(parser, buff, strlen(buff), '|', &begin, &end);
    @author Dmitry S. Melnikov, dmitryme@gmail.com
    @date   Created on: 07/30/2012 10:26:54 AM
 */
@@ -262,23 +263,6 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
    return num;
 }
 
-/*[>------------------------------------------------------------------------------------------------------------------------<]*/
-/*int32_t parser_header(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum& ver, char* msgType, size_t msgTypeLen, uint32_t* bodyLen)*/
-/*{*/
-/*   uint32_t num = 0;*/
-/*   char* dbegin = NULL;*/
-/*   char* dend = NULL;*/
-/*   int64_t num = parse_field(parser, data, len, '|', &dbegin, &dend);*/
-/*   if (num == FIX_FAILED)*/
-/*   {*/
-/*      // TODO:*/
-/*      return FIX_FAILED;*/
-/*   }*/
-/*   if (num != FIXTagNum_BeginString)*/
-/*   {*/
-/*      //TODO:*/
-/*      return FIX_FAILED;*/
-/*   }*/
 /*   FIXProtocolVerEnum mver = str2FIXProtocolVerEnum(dbegin, dend);*/
 /*   num = parse_field(parser, dend + 1, len, &dbegin, &dend);*/
 /*   if (res == FIX_FAILED)*/
@@ -316,17 +300,31 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocol
       fix_parser_set_error(parser, FIX_ERROR_WRONG_PROTOCOL_VER, "Wrong FIX protocol version %d", ver);
       return NULL;
    }
+   uint64_t num = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   int64_t tag = parse_field(parser, data, len, '|', &dbegin, &dend);
-   if (tag == FIX_FAILED)
+   num = parse_field(parser, data, len, '|', &dbegin, &dend);
+   if (num == FIX_FAILED)
    {
-      fix_parser_set_error(parser, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString tag.");
+      fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
       return NULL;
    }
-   if (tag != FIXFieldTag_BeginString)
+   if (num != FIXFieldTag_BeginString)
    {
-      fix_parser_set_error(parser, FIX_ERROR_WRONG_FIELD, "Field tag must be BeginString but actually %d", tag);
+      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", num);
+      return NULL;
+   }
+   FIXProtocolVerEnum inVer = str2FIXProtocolVerEnum(dbegin, dend - dbegin);
+   if ((inVer == FIXT11 && (ver != FIX50 && ver != FIX50SP1 && ver != FIX50SP2)) ||
+       ((ver == FIX42 || ver == FIX44) && ver != inVer))
+   {
+      char actualVer[32] = {};
+      memcpy(actualVer, dbegin, sizeof(actualVer) - 1);
+      fix_parser_set_error(
+            parser,
+            FIX_ERROR_WRONG_PROTOCOL_VER,
+            "Wrong protocol version. Expected = '%s', Actual = '%s'",
+            FIXProtocolVerEnum2str(ver), actualVer);
       return NULL;
    }
    return NULL;

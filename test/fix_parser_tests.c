@@ -227,6 +227,11 @@ START_TEST(ParseFieldTest)
    fail_unless(num == 8);
    fail_unless(*begin == 'F');
    fail_unless(*end == '|');
+
+   char buff1[] = "A=FIX4.4|35=D|41=QWERTY|21=123";
+   num = parse_field(parser, buff1, strlen(buff1), '|', &begin, &end);
+   fail_unless(num == FIX_FAILED);
+   fail_unless(parser->err_code == FIX_ERROR_INVALID_ARGUMENT);
 }
 END_TEST
 
@@ -237,6 +242,9 @@ START_TEST(ParseFixTest)
    fail_unless(parser->err_code == 0);
 
    fail_unless(fix_protocol_init(parser, "fix44.xml") == FIX_SUCCESS);
+
+   char buff[] = "8=FIX.4.4|35=D|41=QWERTY|21=123";
+   FIXMsg* msg = parse_fix(parser, buff, strlen(buff), FIX44, '|');
 }
 END_TEST
 

@@ -8,6 +8,8 @@
 
 #include "fix_field_tag.h"
 
+#include  <stdint.h>
+
 #define FIX_FAILED                        -1
 #define FIX_SUCCESS                        0
 #define FIX_ERROR_FIELD_HAS_WRONG_TYPE     1
@@ -99,7 +101,8 @@ typedef enum FIXFieldValueTypeEnum
 #define IS_CHAR_TYPE(type)   ((type & 0xF00) > 0)
 #define IS_DATA_TYPE(type)   ((type & 0xF0000) > 0)
 
-FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver);
+FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver, uint32_t len);
+char const* FIXProtocolVerEnum2str(FIXProtocolVerEnum ver);
 char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver);
 FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
 
