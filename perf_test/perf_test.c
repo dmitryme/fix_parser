@@ -24,29 +24,29 @@ void create_msg_test(FIXParser* parser)
          return;
       }
 
-      fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678");
-      fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ");
-      fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34);
-      fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1");
-      fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230");
-      fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1");
-      fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567");
-      fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1");
-      fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0');
-      fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1');
-      fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM");
-      fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12");
-      fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1');
-      fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25);
-      fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0);
-      fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0');
-      fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0);
-      fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0);
-      fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0);
-      fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0);
-      fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0);
-      fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1');
-      fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12");
+      fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678");
+      fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ");
+      fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34);
+      fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1");
+      fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230");
+      fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1");
+      fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567");
+      fix_msg_set_string(msg, NULL, FIXTagNum_ExecID, "FE_1_9494_1");
+      fix_msg_set_char(msg, NULL, FIXTagNum_ExecType, '0');
+      fix_msg_set_char(msg, NULL, FIXTagNum_OrdStatus, '1');
+      fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM");
+      fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12");
+      fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1');
+      fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25);
+      fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0);
+      fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0');
+      fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0);
+      fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0);
+      fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1');
+      fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12");
 
       fix_msg_free(msg);
    }
@@ -66,29 +66,29 @@ void msg_to_string(FIXParser* parser)
       return;
    }
 
-   fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678");
-   fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ");
-   fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34);
-   fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1");
-   fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230");
-   fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1");
-   fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567");
-   fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1");
-   fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0');
-   fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1');
-   fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM");
-   fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12");
-   fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1');
-   fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25);
-   fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0);
-   fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0');
-   fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0);
-   fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0);
-   fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0);
-   fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0);
-   fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0);
-   fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1');
-   fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12");
+   fix_msg_set_string(msg, NULL, FIXTagNum_SenderCompID, "QWERTY_12345678");
+   fix_msg_set_string(msg, NULL, FIXTagNum_TargetCompID, "ABCQWE_XYZ");
+   fix_msg_set_int32(msg, NULL, FIXTagNum_MsgSeqNum, 34);
+   fix_msg_set_string(msg, NULL, FIXTagNum_TargetSubID, "srv-ivanov_ii1");
+   fix_msg_set_string(msg, NULL, FIXTagNum_SendingTime, "20120716-06:00:16.230");
+   fix_msg_set_string(msg, NULL, FIXTagNum_OrderID, "1");
+   fix_msg_set_string(msg, NULL, FIXTagNum_ClOrdID, "CL_ORD_ID_1234567");
+   fix_msg_set_string(msg, NULL, FIXTagNum_ExecID, "FE_1_9494_1");
+   fix_msg_set_char(msg, NULL, FIXTagNum_ExecType, '0');
+   fix_msg_set_char(msg, NULL, FIXTagNum_OrdStatus, '1');
+   fix_msg_set_string(msg, NULL, FIXTagNum_Account, "ZUM");
+   fix_msg_set_string(msg, NULL, FIXTagNum_Symbol, "RTS-12.12");
+   fix_msg_set_char(msg, NULL, FIXTagNum_Side, '1');
+   fix_msg_set_double(msg, NULL, FIXTagNum_OrderQty, 25);
+   fix_msg_set_double(msg, NULL, FIXTagNum_Price, 135155.0);
+   fix_msg_set_char(msg, NULL, FIXTagNum_TimeInForce, '0');
+   fix_msg_set_double(msg, NULL, FIXTagNum_LastQty, 0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_LastPx, 0.0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_LeavesQty, 25.0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_CumQty, 0);
+   fix_msg_set_double(msg, NULL, FIXTagNum_AvgPx, 0.0);
+   fix_msg_set_char(msg, NULL, FIXTagNum_HandlInst, '1');
+   fix_msg_set_string(msg, NULL, FIXTagNum_Text, "COMMENT12");
 
    clock_gettime(CLOCK_MONOTONIC_RAW, &start);
 
