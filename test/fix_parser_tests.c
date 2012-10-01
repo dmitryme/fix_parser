@@ -241,7 +241,7 @@ START_TEST(ParseBeginStringTest)
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
-   fail_unless(fix_protocol_init(parser, "fix44.xml") == FIX_SUCCESS);
+   fail_unless(fix_protocol_init(parser, "fix_descr/fix.4.4.xml") == FIX_SUCCESS);
 
    {
       char buff[] = "A12=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";

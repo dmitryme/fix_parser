@@ -50,8 +50,8 @@ typedef struct FIXProtocolDescr_
    FIXMsgDescr* messages[MSG_CNT];
 } FIXProtocolDescr;
 
-FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file);
-void free_fix_protocol_descr(FIXProtocolDescr* prot);
+FIXProtocolDescr* fix_protocol_descr_create(FIXParser* parser, char const* file);
+void fix_protocol_descr_free(FIXProtocolDescr* prot);
 
 FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr const* prot, char const* name);
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type);

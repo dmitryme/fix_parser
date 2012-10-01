@@ -11,8 +11,11 @@
 
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
+#include  <libxml/tree.h>
 #include <string.h>
 #include <stdint.h>
+#include  <libgen.h>
+#include <limits.h>
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATES                                                                                                              */
@@ -127,7 +130,7 @@ void free_message(FIXMsgDescr* msg)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void free_fix_protocol_descr(FIXProtocolDescr* prot)
+void fix_protocol_descr_free(FIXProtocolDescr* prot)
 {
    if (!prot)
    {
@@ -291,9 +294,113 @@ FIXMsgDescr* load_message(FIXParser* parser, xmlNode const* msg_node, xmlNode co
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
+int load_messages(FIXParser* parser, FIXProtocolDescr* prot, xmlNode const* root)
+{
+   xmlNode* msg_node = get_first(get_first(root, "messages"), "message");
+   while(msg_node)
+   {
+      if (msg_node->type == XML_ELEMENT_NODE && !strcmp((char const*)msg_node->name, "message"))
+      {
+         FIXMsgDescr* msg = load_message(parser, msg_node, root, prot);
+         if (!msg)
+         {
+            return FIX_FAILED;
+         }
+         int32_t idx = fix_utils_hash_string(msg->type) % MSG_CNT;
+         msg->next = prot->messages[idx];
+         prot->messages[idx] = msg;
+      }
+      msg_node = msg_node->next;
+   }
+   return FIX_SUCCESS;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+int load_include(FIXParser* parser, FIXProtocolDescr* prot, xmlNode* parentRoot, xmlDoc* parentDoc, char const* parentFile)
+{
+   xmlNode* include = get_first(parentRoot, "include");
+   if(!include)
+   {
+      return FIX_SUCCESS;
+   }
+   char* incFile = strdup(get_attr(include, "source"));
+   xmlDoc* doc = NULL;
+   if (!strcmp(dirname(incFile), "."))
+   {
+      char* parentFileDup = strdup(parentFile);
+      char* parentPath = dirname(parentFileDup);
+      char fullPath[PATH_MAX] = {};
+      strcat(fullPath, parentPath);
+      strcat(fullPath, "/");
+      strcat(fullPath, basename(incFile));
+      doc = xmlParseFile(fullPath);
+      free(parentFileDup);
+   }
+   else
+   {
+      doc = xmlParseFile(incFile);
+   }
+   free(incFile);
+   if (!doc)
+   {
+      fix_parser_set_error(parser, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      return FIX_FAILED;
+   }
+   if (xml_validate(parser, doc) == FIX_FAILED)
+   {
+      xmlFreeDoc(doc);
+      return FIX_FAILED;
+   }
+   xmlNode* root = xmlDocGetRootElement(doc);
+   if (!root)
+   {
+      fix_parser_set_error(parser, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      xmlFreeDoc(doc);
+      return FIX_FAILED;
+   }
+   if (load_field_types(parser, prot, root) == FIX_FAILED)
+   {
+      xmlFreeDoc(doc);
+      return FIX_FAILED;
+   }
+   if (load_messages(parser, prot, root) == FIX_FAILED)
+   {
+      xmlFreeDoc(doc);
+      return FIX_FAILED;
+   }
+   xmlNode* parentComponents = get_first(parentRoot, "components");
+   if (!parentComponents)
+   {
+      parentComponents = xmlNewChild(parentRoot, NULL, (xmlChar*)"components", NULL);
+      if (!parentComponents)
+      {
+         fix_parser_set_error(parser, FIX_ERROR_LIBXML, xmlGetLastError()->message);
+         return FIX_FAILED;
+      }
+   }
+   xmlNode* component = get_first(get_first(root, "components"), "component");
+   while(component)
+   {
+      if (component->type == XML_ELEMENT_NODE && !strcmp((char const*)component->name, "component"))
+      {
+         xmlNode* clone = NULL;
+         if (xmlDOMWrapCloneNode(NULL, NULL, component, &clone, parentDoc, parentComponents, 1, 0))
+         {
+            fix_parser_set_error(parser, FIX_ERROR_LIBXML, xmlGetLastError()->message);
+            xmlFreeDoc(doc);
+            break;
+         }
+      }
+      component = component->next;
+   }
+   xmlFreeDoc(doc);
+   return FIX_SUCCESS;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
+FIXProtocolDescr* fix_protocol_descr_create(FIXParser* parser, char const* file)
 {
    initLibXml(parser);
    xmlDoc* doc = xmlParseFile(file);
@@ -311,6 +418,7 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
    if (!root)
    {
       fix_parser_set_error(parser, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      xmlFreeDoc(doc);
       return NULL;
    }
    FIXProtocolDescr* prot = calloc(1, sizeof(FIXProtocolDescr));
@@ -318,24 +426,17 @@ FIXProtocolDescr* new_fix_protocol_descr(FIXParser* parser, char const* file)
    if (load_field_types(parser, prot, root) == FIX_FAILED)
    {
       free(prot);
-      return NULL;
+      prot = NULL;
    }
-   xmlNode* msg_node = get_first(get_first(root, "messages"), "message");
-   while(msg_node)
+   if (prot && load_include(parser, prot, root, doc, file) == FIX_FAILED)
    {
-      if (msg_node->type == XML_ELEMENT_NODE && !strcmp((char const*)msg_node->name, "message"))
-      {
-         FIXMsgDescr* msg = load_message(parser, msg_node, root, prot);
-         if (!msg)
-         {
-            free(prot);
-            return NULL;
-         }
-         int32_t idx = fix_utils_hash_string(msg->type) % MSG_CNT;
-         msg->next = prot->messages[idx];
-         prot->messages[idx] = msg;
-      }
-      msg_node = msg_node->next;
+      free(prot);
+      prot = NULL;
+   }
+   if (prot && load_messages(parser, prot, root) == FIX_FAILED)
+   {
+      free(prot);
+      prot = NULL;
    }
    xmlFreeDoc(doc);
    return prot;

@@ -58,7 +58,7 @@ void fix_parser_free(FIXParser* parser)
       {
          if (parser->protocols[i])
          {
-            free_fix_protocol_descr(parser->protocols[i]);
+            fix_protocol_descr_free(parser->protocols[i]);
          }
       }
       FIXPage* page = parser->page;
@@ -106,14 +106,14 @@ int32_t fix_protocol_init(FIXParser* parser, char const* protFile)
    {
       return FIX_FAILED;
    }
-   FIXProtocolDescr* p = new_fix_protocol_descr(parser, protFile);
+   FIXProtocolDescr* p = fix_protocol_descr_create(parser, protFile);
    if (!p)
    {
       return FIX_FAILED;
    }
    if (parser->protocols[p->version])
    {
-      free_fix_protocol_descr(parser->protocols[p->version]);
+      fix_protocol_descr_free(parser->protocols[p->version]);
    }
    parser->protocols[p->version] = p;
    return FIX_SUCCESS;
