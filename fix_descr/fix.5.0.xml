@@ -4653,7 +4653,7 @@
       <field number='15' name='Currency' type='Currency' />
       <field number='16' name='EndSeqNo' type='SeqNum' />
       <field number='17' name='ExecID' type='String' />
-      <field number='18' name='ExecInst' type='MULTIPLECharVALUE'>
+      <field number='18' name='ExecInst' type='MultipleCharValue'>
          <value enum='0' description='STAY_ON_OFFER_SIDE' />
          <value enum='1' description='NOT_HELD' />
          <value enum='2' description='WORK' />
@@ -4694,7 +4694,7 @@
          <value enum='X' description='TRADE_ALONG' />
          <value enum='Y' description='TRY_TO_STOP' />
          <value enum='Z' description='CANCEL_IF_NOT_BEST' />
-         <value enum='f' description='IntERMARKET_SWEEP' />
+         <value enum='f' description='INTERMARKET_SWEEP' />
          <value enum='j' description='SINGLE_EXECUTION_REQUESTED_FOR_BLOCK_TRADE' />
          <value enum='g' description='EXTERNAL_ROUTING_ALLOWED' />
          <value enum='h' description='EXTERNAL_ROUTING_NOT_ALLOWED' />
@@ -5394,7 +5394,7 @@
          <value enum='TD' description='TIME_DEPOSIT' />
          <value enum='TECP' description='TAX_EXEMPT_COMMERCIAL_PAPER' />
          <value enum='TERM' description='TERM_LOAN' />
-         <value enum='TInt' description='IntEREST_STRIP_FROM_ANY_BOND_OR_NOTE' />
+         <value enum='TInt' description='INTEREST_STRIP_FROM_ANY_BOND_OR_NOTE' />
          <value enum='TIPS' description='TREASURY_INFLATION_PROTECTED_SECURITIES' />
          <value enum='TNOTE' description='US_TREASURY_NOTE_TNOTE' />
          <value enum='TPRN' description='PRINCIPAL_STRIP_FROM_A_NON_CALLABLE_BOND_OR_NOTE' />
@@ -5445,13 +5445,13 @@
       <field number='186' name='CashSettlAgentContactName' type='String' />
       <field number='187' name='CashSettlAgentContactPhone' type='String' />
       <field number='188' name='BidSpotRate' type='Price' />
-      <field number='189' name='BidForwardPoints' type='PriceOFFSET' />
+      <field number='189' name='BidForwardPoints' type='PriceOffset' />
       <field number='190' name='OfferSpotRate' type='Price' />
-      <field number='191' name='OfferForwardPoints' type='PriceOFFSET' />
+      <field number='191' name='OfferForwardPoints' type='PriceOffset' />
       <field number='192' name='OrderQty2' type='Qty' />
       <field number='193' name='SettlDate2' type='LocalMktDate' />
       <field number='194' name='LastSpotRate' type='Price' />
-      <field number='195' name='LastForwardPoints' type='PriceOFFSET' />
+      <field number='195' name='LastForwardPoints' type='PriceOffset' />
       <field number='196' name='AllocLinkID' type='String' />
       <field number='197' name='AllocLinkType' type='Int'>
          <value enum='0' description='FX_NETTING' />
@@ -5498,7 +5498,7 @@
          <value enum='4' description='BLOCK_LIST' />
       </field>
       <field number='217' name='RoutingID' type='String' />
-      <field number='218' name='Spread' type='PriceOFFSET' />
+      <field number='218' name='Spread' type='PriceOffset' />
       <field number='219' name='Benchmark' type='Char'>
          <value enum='1' description='CURVE' />
          <value enum='2' description='5YR' />
@@ -5719,7 +5719,7 @@
          <value enum='3' description='ZERO_MINUS_TICK' />
       </field>
       <field number='275' name='MDMkt' type='Exchange' />
-      <field number='276' name='QuoteCondition' type='MULTIPLEStringVALUE'>
+      <field number='276' name='QuoteCondition' type='MultipleValueString'>
          <value enum='A' description='OPEN_ACTIVE' />
          <value enum='B' description='CLOSED_INACTIVE' />
          <value enum='C' description='Exchange_BEST' />
@@ -5776,13 +5776,13 @@
          <value enum='1' description='NO_ACTIVE_SAM' />
          <value enum='2' description='RESTRICTED' />
       </field>
-      <field number='277' name='TradeCondition' type='MULTIPLEStringVALUE'>
+      <field number='277' name='TradeCondition' type='MultipleValueString'>
          <value enum='A' description='CASH' />
          <value enum='B' description='AVERAGE_Price_TRADE' />
          <value enum='C' description='CASH_TRADE' />
          <value enum='D' description='NEXT_DAY' />
          <value enum='E' description='OPENING_REOPENING_TRADE_DETAIL' />
-         <value enum='F' description='IntRADAY_TRADE_DETAIL' />
+         <value enum='F' description='INTRADAY_TRADE_DETAIL' />
          <value enum='G' description='RULE_127_TRADE' />
          <value enum='H' description='RULE_155_TRADE' />
          <value enum='I' description='SOLD_LAST' />
@@ -5882,7 +5882,7 @@
          <value enum='0' description='CANCELLATION' />
          <value enum='1' description='ERROR' />
       </field>
-      <field number='286' name='OpenCloseSettlFlag' type='MULTIPLECharVALUE'>
+      <field number='286' name='OpenCloseSettlFlag' type='MultipleCharValue'>
          <value enum='0' description='DAILY_OPEN' />
          <value enum='1' description='SESSION_OPEN' />
          <value enum='2' description='DELIVERY_SETTLEMENT_ENTRY' />
@@ -5894,12 +5894,12 @@
       <field number='288' name='MDEntryBuyer' type='String' />
       <field number='289' name='MDEntrySeller' type='String' />
       <field number='290' name='MDEntryPositionNo' type='Int' />
-      <field number='291' name='FinancialStatus' type='MULTIPLECharVALUE'>
+      <field number='291' name='FinancialStatus' type='MultipleCharValue'>
          <value enum='1' description='BANKRUPT' />
          <value enum='2' description='PENDING_DELISTING' />
          <value enum='3' description='RESTRICTED' />
       </field>
-      <field number='292' name='CorporateAction' type='MULTIPLECharVALUE'>
+      <field number='292' name='CorporateAction' type='MultipleCharValue'>
          <value enum='A' description='EX_DIVIDEND' />
          <value enum='B' description='EX_DISTRIBUTION' />
          <value enum='C' description='EX_RIGHTS' />
@@ -6385,7 +6385,7 @@
       <field number='448' name='PartyID' type='String' />
       <field number='449' name='TotalVolumeTradedDate' type='UTCDateOnly' />
       <field number='450' name='TotalVolumeTradedTime' type='UTCTimeOnly' />
-      <field number='451' name='NetChgPrevDay' type='PriceOFFSET' />
+      <field number='451' name='NetChgPrevDay' type='PriceOffset' />
       <field number='452' name='PartyRole' type='Int'>
          <value enum='1' description='EXECUTING_FIRM' />
          <value enum='10' description='SETTLEMENT_LOCATION' />
@@ -6407,12 +6407,12 @@
          <value enum='26' description='CORRESPONDENT_BROKER' />
          <value enum='27' description='BUYER_SELLER' />
          <value enum='28' description='CUSTODIAN' />
-         <value enum='29' description='IntERMEDIARY' />
+         <value enum='29' description='INTERMEDIARY' />
          <value enum='3' description='CLIENT_ID' />
          <value enum='30' description='AGENT' />
          <value enum='31' description='SUB_CUSTODIAN' />
          <value enum='32' description='BENEFICIARY' />
-         <value enum='33' description='IntERESTED_PARTY' />
+         <value enum='33' description='INTERESTED_PARTY' />
          <value enum='34' description='REGULATORY_BODY' />
          <value enum='35' description='LIQUIDITY_PROVIDER' />
          <value enum='36' description='ENTERING_TRADER' />
@@ -6420,14 +6420,14 @@
          <value enum='38' description='POSITION_ACCOUNT' />
          <value enum='4' description='CLEARING_FIRM' />
          <value enum='5' description='INVESTOR_ID' />
-         <value enum='6' description='IntRODUCING_FIRM' />
+         <value enum='6' description='INTRODUCING_FIRM' />
          <value enum='7' description='ENTERING_FIRM' />
          <value enum='8' description='LOCATE' />
          <value enum='9' description='FUND_MANAGER_CLIENT_ID' />
-         <value enum='60' description='IntRODUCING_BROKER' />
+         <value enum='60' description='INTRODUCING_BROKER' />
          <value enum='41' description='CONTRA_POSITION_ACCOUNT' />
          <value enum='42' description='CONTRA_Exchange' />
-         <value enum='43' description='IntERNAL_CARRY_ACCOUNT' />
+         <value enum='43' description='INTERNAL_CARRY_ACCOUNT' />
          <value enum='44' description='ORDER_ENTRY_OPERATOR_ID' />
          <value enum='45' description='SECONDARY_ACCOUNT_NUMBER' />
          <value enum='46' description='FORIEGN_FIRM' />
@@ -6732,7 +6732,7 @@
          <value enum='R' description='RISKLESS_PRINCIPAL' />
          <value enum='W' description='AGENT_FOR_OTHER_MEMBER' />
       </field>
-      <field number='529' name='OrderRestrictions' type='MULTIPLECharVALUE'>
+      <field number='529' name='OrderRestrictions' type='MultipleCharValue'>
          <value enum='1' description='PROGRAM_TRADE' />
          <value enum='2' description='INDEX_ARBITRAGE' />
          <value enum='3' description='NON_INDEX_ARBITRAGE' />
@@ -6795,7 +6795,7 @@
          <value enum='3' description='MARGIN_CLOSE' />
       </field>
       <field number='545' name='NestedPartySubID' type='String' />
-      <field number='546' name='Scope' type='MULTIPLECharVALUE'>
+      <field number='546' name='Scope' type='MultipleCharValue'>
          <value enum='1' description='LOCAL_MARKET' />
          <value enum='2' description='NATIONAL' />
          <value enum='3' description='GLOBAL' />
@@ -7059,11 +7059,11 @@
          <value enum='0' description='PRIORITY_UNCHANGED' />
          <value enum='1' description='LOST_PRIORITY_AS_RESULT_OF_ORDER_CHANGE' />
       </field>
-      <field number='639' name='PriceImprovement' type='PriceOFFSET' />
+      <field number='639' name='PriceImprovement' type='PriceOffset' />
       <field number='640' name='Price2' type='Price' />
-      <field number='641' name='LastForwardPoints2' type='PriceOFFSET' />
-      <field number='642' name='BidForwardPoints2' type='PriceOFFSET' />
-      <field number='643' name='OfferForwardPoints2' type='PriceOFFSET' />
+      <field number='641' name='LastForwardPoints2' type='PriceOffset' />
+      <field number='642' name='BidForwardPoints2' type='PriceOffset' />
+      <field number='643' name='OfferForwardPoints2' type='PriceOffset' />
       <field number='644' name='RFQReqID' type='String' />
       <field number='645' name='MktBidPx' type='Price' />
       <field number='646' name='MktOfferPx' type='Price' />
@@ -7196,12 +7196,12 @@
          <value enum='ETR' description='ELECTRONIC_TRADE_Qty' />
          <value enum='EX' description='OPTION_EXERCISE_Qty' />
          <value enum='FIN' description='END_OF_DAY_Qty' />
-         <value enum='IAS' description='IntRA_SPREAD_Qty' />
-         <value enum='IES' description='IntER_SPREAD_Qty' />
+         <value enum='IAS' description='INTRA_SPREAD_Qty' />
+         <value enum='IES' description='INTER_SPREAD_Qty' />
          <value enum='PA' description='ADJUSTMENT_Qty' />
          <value enum='PIT' description='PIT_TRADE_Qty' />
          <value enum='SOD' description='START_OF_DAY_Qty' />
-         <value enum='SPL' description='IntEGRAL_SPLIT' />
+         <value enum='SPL' description='INTEGRAL_SPLIT' />
          <value enum='TA' description='TRANSACTION_FROM_ASSIGNMENT' />
          <value enum='TOT' description='TOTAL_TRANSACTION_Qty' />
          <value enum='TQ' description='TRANSACTION_QUANTITY' />
@@ -7252,7 +7252,7 @@
       <field number='714' name='PosMaintRptRefID' type='String' />
       <field number='715' name='ClearingBusinessDate' type='LocalMktDate' />
       <field number='716' name='SettlSessID' type='String'>
-         <value enum='ITD' description='IntRADAY' />
+         <value enum='ITD' description='INTRADAY' />
          <value enum='RTH' description='REGULAR_TRADING_HOURS' />
          <value enum='ETH' description='ELECTRONIC_TRADING_HOURS' />
          <value enum='EOD' description='END_OF_DAY' />
@@ -7613,7 +7613,7 @@
       </field>
       <field number='829' name='TrdSubType' type='Int'>
          <value enum='0' description='CMTA' />
-         <value enum='1' description='IntERNAL_TRANSFER_OR_ADJUSTMENT' />
+         <value enum='1' description='INTERNAL_TRANSFER_OR_ADJUSTMENT' />
          <value enum='2' description='EXTERNAL_TRANSFER_OR_TRANSFER_OF_ACCOUNT' />
          <value enum='3' description='REJECT_FOR_SUBMITTING_SIDE' />
          <value enum='4' description='ADVISORY_FOR_CONTRA_SIDE' />
@@ -7648,7 +7648,7 @@
       <field number='831' name='AsgnReqID' type='String' />
       <field number='832' name='TotNumAssignmentReports' type='Int' />
       <field number='833' name='AsgnRptID' type='String' />
-      <field number='834' name='ThresholdAmount' type='PriceOFFSET' />
+      <field number='834' name='ThresholdAmount' type='PriceOffset' />
       <field number='835' name='PegMoveType' type='Int'>
          <value enum='0' description='FloatING' />
          <value enum='1' description='FIXED' />
@@ -7791,7 +7791,7 @@
          <value enum='20' description='ORIGINAL_ISSUE_DISCOUNT_Price_SUPPLY_Price_IN_THE_INSTRATTRIBVALUE' />
          <value enum='21' description='CALLABLE_BELOW_MATURITY_VALUE' />
          <value enum='22' description='CALLABLE_WITHOUT_NOTICE_BY_MAIL_TO_HOLDER_UNLESS_REGISTERED' />
-         <value enum='3' description='IntEREST_BEARING' />
+         <value enum='3' description='INTEREST_BEARING' />
          <value enum='4' description='NO_PERIODIC_PAYMENTS' />
          <value enum='5' description='VARIABLE_RATE' />
          <value enum='6' description='LESS_FEE_FOR_PUT' />
@@ -8005,30 +8005,30 @@
       <field number='957' name='NoStrategyParameters' type='NumInGroup' />
       <field number='958' name='StrategyParameterName' type='String' />
       <field number='959' name='StrategyParameterType' type='Int'>
-         <value enum='1' description='Int' />
-         <value enum='2' description='Length' />
-         <value enum='3' description='NumInGroup' />
-         <value enum='4' description='SeqNum' />
+         <value enum='1' description='INT' />
+         <value enum='2' description='LENGTH' />
+         <value enum='3' description='NUMINGROUP' />
+         <value enum='4' description='SEQNUM' />
          <value enum='5' description='TAGNUM' />
-         <value enum='6' description='Float' />
-         <value enum='7' description='Qty' />
-         <value enum='8' description='Price' />
-         <value enum='9' description='PriceOFFSET' />
-         <value enum='10' description='Amt' />
-         <value enum='11' description='Percentage' />
-         <value enum='12' description='Char' />
-         <value enum='13' description='Boolean' />
-         <value enum='14' description='String' />
-         <value enum='15' description='MULTIPLECharVALUE' />
-         <value enum='16' description='Currency' />
-         <value enum='17' description='Exchange' />
+         <value enum='6' description='FLOAT' />
+         <value enum='7' description='QTY' />
+         <value enum='8' description='PRICE' />
+         <value enum='9' description='PRICEOFFSET' />
+         <value enum='10' description='AMT' />
+         <value enum='11' description='PERCENTAGE' />
+         <value enum='12' description='CHAR' />
+         <value enum='13' description='BOOLEAN' />
+         <value enum='14' description='STRING' />
+         <value enum='15' description='MULTIPLECHARVALUE' />
+         <value enum='16' description='CURRENCY' />
+         <value enum='17' description='EXCHANGE' />
          <value enum='18' description='MONTH_YEAR' />
-         <value enum='19' description='UTCTimestamp' />
+         <value enum='19' description='UTCTIMESTAMP' />
          <value enum='20' description='UTCTIMEONLY' />
          <value enum='21' description='LOCALMKTTIME' />
          <value enum='22' description='UTCDATE' />
          <value enum='23' description='DATA' />
-         <value enum='24' description='MULTIPLEStringVALUE' />
+         <value enum='24' description='MULTIPLESTRINGVALUE' />
       </field>
       <field number='960' name='StrategyParameterValue' type='String' />
       <field number='961' name='HostCrossID' type='String' />
@@ -8126,7 +8126,7 @@
       <field number='1007' name='SideReasonCd' type='String' />
       <field number='1008' name='SideTrdSubTyp' type='Int'>
          <value enum='0' description='CMTA' />
-         <value enum='1' description='IntERNAL_TRANSFER' />
+         <value enum='1' description='INTERNAL_TRANSFER' />
          <value enum='2' description='EXTERNAL_TRANSFER' />
          <value enum='3' description='REJECT_FOR_SUBMITTING_TRADE' />
          <value enum='4' description='ADVISORY_FOR_CONTRA_SIDE' />
@@ -8165,11 +8165,11 @@
       </field>
       <field number='1025' name='FirstPx' type='Price' />
       <field number='1026' name='MDEntrySpotRate' type='Float' />
-      <field number='1027' name='MDEntryForwardPoints' type='PriceOFFSET' />
+      <field number='1027' name='MDEntryForwardPoints' type='PriceOffset' />
       <field number='1028' name='ManualOrderIndicator' type='Boolean' />
       <field number='1029' name='CustDirectedOrder' type='Boolean' />
       <field number='1030' name='ReceivedDeptID' type='String' />
-      <field number='1031' name='CustOrderHandlingInst' type='MULTIPLEStringVALUE'>
+      <field number='1031' name='CustOrderHandlingInst' type='MultipleValueString'>
          <value enum='ADD' description='ADD_ON_ORDER' />
          <value enum='AON' description='ALL_OR_NONE' />
          <value enum='CNH' description='CASH_NOT_HELD' />
@@ -8202,7 +8202,7 @@
          <value enum='A' description='AGENCY' />
          <value enum='AR' description='ARBITRAGE' />
          <value enum='D' description='DERIVATIVES' />
-         <value enum='IN' description='IntERNATIONAL' />
+         <value enum='IN' description='INTERNATIONAL' />
          <value enum='IS' description='INSTITUTIONAL' />
          <value enum='O' description='OTHER' />
          <value enum='PF' description='PREFERRED_TRADING' />
@@ -8214,7 +8214,7 @@
       <field number='1034' name='DeskTypeSource' type='Int'>
          <value enum='1' description='NASD_OATS' />
       </field>
-      <field number='1035' name='DeskOrderHandlingInst' type='MULTIPLEStringVALUE'>
+      <field number='1035' name='DeskOrderHandlingInst' type='MultipleValueString'>
          <value enum='ADD' description='ADD_ON_ORDER' />
          <value enum='AON' description='ALL_OR_NONE' />
          <value enum='CNH' description='CASH_NOT_HELD' />
@@ -8267,7 +8267,7 @@
          <value enum='R' description='ROLLED' />
          <value enum='F' description='FIFO' />
       </field>
-      <field number='1048' name='DealingCapacity' type='PriceOFFSET' />
+      <field number='1048' name='DealingCapacity' type='PriceOffset' />
       <field number='1049' name='InstrmtAssignmentMethod' type='Char' />
       <field number='1050' name='InstrumentPartyIDSource' type='Char' />
       <field number='1051' name='InstrumentPartyRole' type='Int' />
@@ -8287,11 +8287,11 @@
       <field number='1062' name='NoUndlyInstrumentPartySubIDs' type='NumInGroup' />
       <field number='1063' name='UndlyInstrumentPartySubID' type='String' />
       <field number='1064' name='UndlyInstrumentPartySubIDType' type='Int' />
-      <field number='1065' name='BidSwapPoints' type='PriceOFFSET' />
-      <field number='1066' name='OfferSwapPoints' type='PriceOFFSET' />
-      <field number='1067' name='LegBidForwardPoints' type='PriceOFFSET' />
-      <field number='1068' name='LegOfferForwardPoints' type='PriceOFFSET' />
-      <field number='1069' name='SwapPoints' type='PriceOFFSET' />
+      <field number='1065' name='BidSwapPoints' type='PriceOffset' />
+      <field number='1066' name='OfferSwapPoints' type='PriceOffset' />
+      <field number='1067' name='LegBidForwardPoints' type='PriceOffset' />
+      <field number='1068' name='LegOfferForwardPoints' type='PriceOffset' />
+      <field number='1069' name='SwapPoints' type='PriceOffset' />
       <field number='1070' name='MDQuoteType' type='Int'>
          <value enum='0' description='INDICATIVE' />
          <value enum='1' description='TRADEABLE' />
@@ -8299,9 +8299,9 @@
          <value enum='3' description='COUNTER' />
          <value enum='4' description='INDICATIVE_AND_TRADEABLE' />
       </field>
-      <field number='1071' name='LastSwapPoints' type='PriceOFFSET' />
+      <field number='1071' name='LastSwapPoints' type='PriceOffset' />
       <field number='1072' name='SideGrossTradeAmt' type='Amt' />
-      <field number='1073' name='LegLastForwardPoints' type='PriceOFFSET' />
+      <field number='1073' name='LegLastForwardPoints' type='PriceOffset' />
       <field number='1074' name='LegCalculatedCcyLastQty' type='Qty' />
       <field number='1075' name='LegGrossTradeAmt' type='Amt' />
       <field number='1079' name='MaturityTime' type='TZTimeOnly' />
