@@ -21,7 +21,7 @@
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXMsg* fix_msg_create(FIXParser* parser, FIXProtocolVerEnum ver, char const* msgType)
+FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
 {
    if (!parser)
    {
@@ -33,12 +33,7 @@ FIXMsg* fix_msg_create(FIXParser* parser, FIXProtocolVerEnum ver, char const* ms
       fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "MsgType parameter is NULL");
       return NULL;
    }
-   FIXProtocolDescr* prot = fix_parser_get_pdescr(parser, ver);
-   if (!prot)
-   {
-      return NULL;
-   }
-   FIXMsgDescr* msg_descr = fix_protocol_get_msg_descr(parser, prot, msgType);
+   FIXMsgDescr* msg_descr = fix_protocol_get_msg_descr(parser, msgType);
    if (!msg_descr)
    {
       return NULL;
@@ -59,7 +54,7 @@ FIXMsg* fix_msg_create(FIXParser* parser, FIXProtocolVerEnum ver, char const* ms
       return NULL;
    }
    msg->body_len = 0;
-   fix_msg_set_string(msg, NULL, 8, FIXProtocolVerEnum2BeginString(ver));
+   fix_msg_set_string(msg, NULL, 8, parser->protocol->transportVersion);
    fix_msg_set_string(msg, NULL, 35, msgType);
    return msg;
 }
