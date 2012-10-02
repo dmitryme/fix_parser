@@ -17,7 +17,7 @@ void create_msg_test(FIXParser* parser)
 
    for(int i = 0; i < 100000; ++i)
    {
-      FIXMsg* msg = fix_msg_create(parser, FIX44, "8");
+      FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
          printf("ERROR: %s\n", get_fix_error_text(parser));
@@ -59,7 +59,7 @@ void msg_to_string(FIXParser* parser)
 {
    struct timespec start, stop;
 
-   FIXMsg* msg = fix_msg_create(parser, FIX44, "8");
+   FIXMsg* msg = fix_msg_create(parser, "8");
    if (!msg)
    {
       printf("ERROR: %s\n", get_fix_error_text(parser));
