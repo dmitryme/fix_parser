@@ -14,24 +14,25 @@
 #define FIX_SUCCESS                        0
 #define FIX_ERROR_FIELD_HAS_WRONG_TYPE     1
 #define FIX_ERROR_FIELD_NOT_FOUND          2
-#define FIX_ERROR_GROUP_WRONG_INDEX        3
-#define FIX_ERROR_XML_ATTR_NOT_FOUND       4
-#define FIX_ERROR_XML_ATTR_WRONG_VALUE     5
-#define FIX_ERROR_PROTOCOL_XML_LOAD_FAILED 6
-#define FIX_ERROR_UNKNOWN_FIELD            7
-#define FIX_ERROR_WRONG_PROTOCOL_VER       8
-#define FIX_ERROR_DUPLICATE_FIELD_DESCR    9
-#define FIX_ERROR_UNKNOWN_MSG             10
-#define FIX_ERROR_LIBXML                  11
-#define FIX_ERROR_INVALID_ARGUMENT        12
-#define FIX_ERROR_MALLOC                  13
-#define FIX_ERROR_UNKNOWN_PROTOCOL_DESCR  14
-#define FIX_ERROR_NO_MORE_PAGES           15
-#define FIX_ERROR_NO_MORE_GROUPS          16
-#define FIX_ERROR_TOO_BIG_PAGE            17
-#define FIX_ERROR_NO_MORE_SPACE           18
-#define FIX_ERROR_PARSE_MSG               19
-#define FIX_ERROR_WRONG_FIELD             20
+#define FIX_ERROR_FIELD_TYPE_EXISTS        3
+#define FIX_ERROR_GROUP_WRONG_INDEX        4
+#define FIX_ERROR_XML_ATTR_NOT_FOUND       5
+#define FIX_ERROR_XML_ATTR_WRONG_VALUE     6
+#define FIX_ERROR_PROTOCOL_XML_LOAD_FAILED 7
+#define FIX_ERROR_UNKNOWN_FIELD            8
+#define FIX_ERROR_WRONG_PROTOCOL_VER       9
+#define FIX_ERROR_DUPLICATE_FIELD_DESCR   10
+#define FIX_ERROR_UNKNOWN_MSG             11
+#define FIX_ERROR_LIBXML                  12
+#define FIX_ERROR_INVALID_ARGUMENT        13
+#define FIX_ERROR_MALLOC                  14
+#define FIX_ERROR_UNKNOWN_PROTOCOL_DESCR  15
+#define FIX_ERROR_NO_MORE_PAGES           16
+#define FIX_ERROR_NO_MORE_GROUPS          17
+#define FIX_ERROR_TOO_BIG_PAGE            18
+#define FIX_ERROR_NO_MORE_SPACE           19
+#define FIX_ERROR_PARSE_MSG               20
+#define FIX_ERROR_WRONG_FIELD             21
 
 typedef struct FIXGroup_ FIXGroup;
 typedef struct FIXField_ FIXField;
@@ -49,17 +50,6 @@ typedef enum FIXFieldTypeEnum
    FIXFieldType_Value = 1,
    FIXFieldType_Group = 2
 } FIXFieldTypeEnum;
-
-typedef enum FIXProtocolVerEnum
-{
-   FIX42,
-   FIX44,
-   FIX50,
-   FIX50SP1,
-   FIX50SP2,
-   FIXT11,
-   FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT
-} FIXProtocolVerEnum;
 
 typedef enum FIXFieldValueTypeEnum
 {
@@ -101,9 +91,6 @@ typedef enum FIXFieldValueTypeEnum
 #define IS_CHAR_TYPE(type)   ((type & 0xF00) > 0)
 #define IS_DATA_TYPE(type)   ((type & 0xF0000) > 0)
 
-FIXProtocolVerEnum str2FIXProtocolVerEnum(char const* ver, uint32_t len);
-char const* FIXProtocolVerEnum2str(FIXProtocolVerEnum ver);
-char const* FIXProtocolVerEnum2BeginString(FIXProtocolVerEnum ver);
 FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
 
 #endif /* FIX_PARSER_FIX_TYPES_H */
