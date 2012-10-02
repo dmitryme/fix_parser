@@ -45,16 +45,18 @@ typedef struct FIXMsgDescr_
 
 typedef struct FIXProtocolDescr_
 {
-   FIXProtocolVerEnum version;
+   char* version;
+   char* transportVersion;
    FIXFieldType* field_types[FIELD_TYPE_CNT];
+   FIXFieldType* transport_field_types[FIELD_TYPE_CNT];
    FIXMsgDescr* messages[MSG_CNT];
 } FIXProtocolDescr;
 
 FIXProtocolDescr* fix_protocol_descr_create(FIXParser* parser, char const* file);
 void fix_protocol_descr_free(FIXProtocolDescr* prot);
 
-FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXProtocolDescr const* prot, char const* name);
-FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, FIXProtocolDescr const* prot, char const* type);
+FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name);
+FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
 FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t tag);
 FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t tag);
 
