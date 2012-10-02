@@ -109,7 +109,7 @@ int main()
 {
    FIXParser* parser = fix_parser_create(4096, 0, 2, 0, 1000, 0, PARSER_FLAG_CHECK_ALL);
 
-   int res = fix_protocol_init(parser, "fix44.xml");
+   int res = fix_protocol_init(parser, "fix.4.4.xml");
    if (res == FIX_FAILED)
    {
       printf("ERROR: %s\n", get_fix_error_text(parser));
