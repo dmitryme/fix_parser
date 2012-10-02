@@ -19,7 +19,7 @@
 
 struct FIXParser_
 {
-   FIXProtocolDescr* protocols[FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT];
+   FIXProtocolDescr* protocol;
    int32_t err_code;
    char err_text[ERROR_TXT_SIZE];
    int32_t  flags;
@@ -42,6 +42,5 @@ void fix_parser_set_error(FIXParser* parser, int32_t code, char const* text, ...
 void fix_parser_reset_error(FIXParser* parser);
 int64_t parse_field(
       FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend);
-FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ver);
 
 #endif /* FIX_PARSER_FIX_PARSER_PRIV_H */
