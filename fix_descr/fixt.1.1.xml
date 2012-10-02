@@ -1,16 +1,23 @@
 <fix version='FIXT.1.1'>
    <messages>
       <message name='Heartbeat' type='0'>
+         <component name='header' required='Y' />
          <field name='TestReqID' required='N'/>
+         <component name='trailer' required='Y' />
       </message>
       <message name='TestRequest' type='1'>
+         <component name='header' required='Y' />
          <field name='TestReqID' required='Y'/>
+         <component name='trailer' required='Y' />
       </message>
       <message name='ResendRequest' type='2'>
+         <component name='header' required='Y' />
          <field name='BeginSeqNo' required='Y'/>
          <field name='EndSeqNo' required='Y'/>
+         <component name='trailer' required='Y' />
       </message>
       <message name='Reject' type='3'>
+         <component name='header' required='Y' />
          <field name='RefSeqNum' required='Y'/>
          <field name='RefTagID' required='N'/>
          <field name='RefMsgType' required='N'/>
@@ -18,17 +25,23 @@
          <field name='Text' required='N'/>
          <field name='EncodedTextLen' required='N'/>
          <field name='EncodedText' required='N'/>
+         <component name='trailer' required='Y' />
       </message>
       <message name='SequenceReset' type='4'>
+         <component name='header' required='Y' />
          <field name='GapFillFlag' required='N'/>
          <field name='NewSeqNo' required='Y'/>
+         <component name='trailer' required='Y' />
       </message>
       <message name='Logout' type='5'>
+         <component name='header' required='Y' />
          <field name='Text' required='N'/>
          <field name='EncodedTextLen' required='N'/>
          <field name='EncodedText' required='N'/>
+         <component name='trailer' required='Y' />
       </message>
       <message name='Logon' type='A'>
+         <component name='header' required='Y' />
          <field name='EncryptMethod' required='Y'/>
          <field name='HeartBtInt' required='Y'/>
          <field name='RawDataLength' required='N'/>
@@ -41,6 +54,7 @@
          <field name='Password' required='N'/>
          <field name='DefaultApplVerID' required='Y'/>
          <component name='MsgTypeGrp' required='N'/>
+         <component name='trailer' required='Y' />
       </message>
    </messages>
 
