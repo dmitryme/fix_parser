@@ -1,0 +1,43 @@
+<fix version='FIXT1'>
+   <messages>
+      <message name='Heartbeat' type='0'>
+         <component name='header' required='Y' />
+         <field name='TestReqID' required='N'/>
+         <component name='trailer' required='Y' />
+      </message>
+      <message name='TestRequest' type='1'>
+         <component name='header' required='Y' />
+         <field name='TestReqID' required='Y'/>
+         <component name='trailer' required='Y' />
+      </message>
+   </messages>
+
+   <components>
+      <component name='header'>
+         <field name='BeginString' required='Y'/>
+         <field name='BodyLength' required='Y'/>
+         <field name='MsgType' required='Y'/>
+      </component>
+
+      <component name='trailer'>
+         <field name='SignatureLength' required='N'/>
+         <field name='Signature' required='N'/>
+         <field name='CheckSum' required='Y'/>
+      </component>
+   </components>
+
+   <fields>
+      <field number='8' name='BeginString' type='String' />
+      <field number='35' name='MsgType' type='String' />
+      <field number='9' name='BodyLength' type='Length' />
+      <field number='10' name='CheckSum' type='String' />
+      <field number='11' name='ClOrdID' type='String' />
+      <field number='37' name='OrderID' type='String' />
+      <field number='198' name='SecondaryOrderID' type='String' />
+      <field number='526' name='SecondaryClOrdID' type='String' />
+      <field number='527' name='SecondaryExecID' type='String' />
+      <field number='89' name='Signature' type='Data' />
+      <field number='93' name='SignatureLength' type='Length' />
+      <field number='112' name='TestReqID' type='String'/>
+   </fields>
+</fix>
