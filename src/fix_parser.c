@@ -54,12 +54,9 @@ void fix_parser_free(FIXParser* parser)
 {
    if (parser)
    {
-      for(int32_t i = 0; i < FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT; ++i)
+      if (parser->protocol)
       {
-         if (parser->protocols[i])
-         {
-            fix_protocol_descr_free(parser->protocols[i]);
-         }
+         fix_protocol_descr_free(parser->protocol);
       }
       FIXPage* page = parser->page;
       while(page)
@@ -111,11 +108,11 @@ int32_t fix_protocol_init(FIXParser* parser, char const* protFile)
    {
       return FIX_FAILED;
    }
-   if (parser->protocols[p->version])
+   if (parser->protocol)
    {
-      fix_protocol_descr_free(parser->protocols[p->version]);
+      fix_protocol_descr_free(parser->protocol);
    }
-   parser->protocols[p->version] = p;
+   parser->protocol = p;
    return FIX_SUCCESS;
 }
 
@@ -227,17 +224,6 @@ void fix_parser_reset_error(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXProtocolDescr* fix_parser_get_pdescr(FIXParser* parser, FIXProtocolVerEnum ver)
-{
-   if (ver < 0 || ver >= FIX_MUST_BE_LAST_DO_NOT_USE_OR_CHANGE_IT)
-   {
-      fix_parser_set_error(parser, FIX_ERROR_WRONG_PROTOCOL_VER, "Wrong FIX protocol version %d", ver);
-      return NULL;
-   }
-   return parser->protocols[ver];
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
 int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
 {
    int64_t num = 0;
@@ -288,16 +274,11 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
 /*}*/
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocolVerEnum ver, char delimiter)
+FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter)
 {
+   /*
    if (!parser || !data)
    {
-      return NULL;
-   }
-   FIXProtocolDescr* pdescr = parser->protocols[ver];
-   if (!pdescr)
-   {
-      fix_parser_set_error(parser, FIX_ERROR_WRONG_PROTOCOL_VER, "Wrong FIX protocol version %d", ver);
       return NULL;
    }
    uint64_t num = 0;
@@ -326,6 +307,6 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, FIXProtocol
             "Wrong protocol version. Expected = '%s', Actual = '%s'",
             FIXProtocolVerEnum2str(ver), actualVer);
       return NULL;
-   }
+   } */
    return NULL;
 }
