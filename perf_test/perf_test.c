@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <time.h>
 
-void create_msg_test(FIXParser* parser)
+void create_msg(FIXParser* parser)
 {
    struct timespec start, stop;
 
@@ -55,7 +55,7 @@ void create_msg_test(FIXParser* parser)
    printf("CREATE_MSG %ld\n", (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000);
 }
 
-void msg_to_string(FIXParser* parser)
+void msg_to_fix(FIXParser* parser)
 {
    struct timespec start, stop;
 
@@ -102,7 +102,22 @@ void msg_to_string(FIXParser* parser)
 
    fix_msg_free(msg);
 
-   printf("MSG_TO_STR %ld\n", (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000);
+   printf("MSG_TO_FIX %ld\n", (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000);
+}
+
+void fix_to_msg(FIXParser* parser)
+{
+   struct timespec start, stop;
+
+   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+
+   for(int i = 0; i < 100000; ++i)
+   {
+   }
+
+   clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+
+   printf("FIX_TO_MSG %ld\n", (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000);
 }
 
 int main()
@@ -116,8 +131,9 @@ int main()
       return 1;
    }
 
-   create_msg_test(parser);
-   msg_to_string(parser);
+   create_msg(parser);
+   msg_to_fix(parser);
+   fix_to_msg(parser);
 
    return 0;
 }
