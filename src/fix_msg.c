@@ -62,6 +62,10 @@ FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
 /*------------------------------------------------------------------------------------------------------------------------*/
 void fix_msg_free(FIXMsg* msg)
 {
+   if (!msg)
+   {
+      return;
+   }
    FIXPage* page = msg->pages;
    while(page)
    {
