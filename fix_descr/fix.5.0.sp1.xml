@@ -1,5 +1,4 @@
-<fix version='FIX.5.0.SP1'>
-   <include source='fixt.1.1.xml'/>
+<fix version='FIX.5.0.SP1' transport='fixt.1.1.xml'>
    <messages>
       <message name='IOI' type='6'>
          <component name='header' required='Y' />
@@ -3184,6 +3183,42 @@
       </message>
    </messages>
    <components>
+      <component name='header'>
+         <field name='BeginString' required='Y'/>
+         <field name='BodyLength' required='Y'/>
+         <field name='MsgType' required='Y'/>
+         <field name='SenderCompID' required='Y'/>
+         <field name='TargetCompID' required='Y'/>
+         <field name='OnBehalfOfCompID' required='N'/>
+         <field name='DeliverToCompID' required='N'/>
+         <field name='SecureDataLen' required='N'/>
+         <field name='SecureData' required='N'/>
+         <field name='MsgSeqNum' required='Y'/>
+         <field name='SenderSubID' required='N'/>
+         <field name='SenderLocationID' required='N'/>
+         <field name='TargetSubID' required='N'/>
+         <field name='TargetLocationID' required='N'/>
+         <field name='OnBehalfOfSubID' required='N'/>
+         <field name='OnBehalfOfLocationID' required='N'/>
+         <field name='DeliverToSubID' required='N'/>
+         <field name='DeliverToLocationID' required='N'/>
+         <field name='PossDupFlag' required='N'/>
+         <field name='PossResend' required='N'/>
+         <field name='SendingTime' required='Y'/>
+         <field name='OrigSendingTime' required='N'/>
+         <field name='XmlDataLen' required='N'/>
+         <field name='XmlData' required='N'/>
+         <field name='MessageEncoding' required='N'/>
+         <field name='LastMsgSeqNumProcessed' required='N'/>
+         <component name='HopGrp' required='N'/>
+         <field name='ApplVerID' required='N'/>
+         <field name='CstmApplVerID' required='N'/>
+      </component>
+      <component name='trailer'>
+         <field name='SignatureLength' required='N'/>
+         <field name='Signature' required='N'/>
+         <field name='CheckSum' required='Y'/>
+      </component>
       <component name='DerivativeSecurityXML'>
          <field name='DerivativeSecurityXMLLen' required='N' />
          <field name='DerivativeSecurityXML' required='N' />
