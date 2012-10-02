@@ -10,10 +10,12 @@ extern Suite* make_fix_field_tests_suite();
 extern Suite* make_fix_parser_tests_suite();
 extern Suite* make_fix_msg_tests_suite();
 extern Suite* make_fix_utils_tests_suite();
+extern Suite* make_fix_protocol_tests_suite();
 
 int main()
 {
-   SRunner* sr = srunner_create(make_fix_parser_tests_suite());
+   SRunner* sr = srunner_create(make_fix_protocol_tests_suite());
+   srunner_add_suite(sr, make_fix_parser_tests_suite());
    srunner_add_suite(sr, make_fix_field_tests_suite());
    srunner_add_suite(sr, make_fix_msg_tests_suite());
    srunner_add_suite(sr, make_fix_utils_tests_suite());
