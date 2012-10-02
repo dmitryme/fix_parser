@@ -1,5 +1,4 @@
 /* @file   fix_parser.c
-   int64_t num = parse_field(parser, buff, strlen(buff), '|', &begin, &end);
    @author Dmitry S. Melnikov, dmitryme@gmail.com
    @date   Created on: 07/30/2012 10:26:54 AM
 */
@@ -276,7 +275,6 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter)
 {
-   /*
    if (!parser || !data)
    {
       return NULL;
@@ -284,7 +282,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
    uint64_t num = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   num = parse_field(parser, data, len, '|', &dbegin, &dend);
+   num = parse_field(parser, data, len, delimiter, &dbegin, &dend);
    if (num == FIX_FAILED)
    {
       fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
@@ -295,18 +293,33 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", num);
       return NULL;
    }
-   FIXProtocolVerEnum inVer = str2FIXProtocolVerEnum(dbegin, dend - dbegin);
-   if ((inVer == FIXT11 && (ver != FIX50 && ver != FIX50SP1 && ver != FIX50SP2)) ||
-       ((ver == FIX42 || ver == FIX44) && ver != inVer))
+   if (strncmp(parser->protocol->transportVersion, dbegin, dend - dbegin))
    {
-      char actualVer[32] = {};
-      memcpy(actualVer, dbegin, sizeof(actualVer) - 1);
+      char* actualVer = calloc(dend - dbegin + 1, 1);
+      memcpy(actualVer, dbegin, dend - dbegin);
       fix_parser_set_error(
             parser,
             FIX_ERROR_WRONG_PROTOCOL_VER,
-            "Wrong protocol version. Expected = '%s', Actual = '%s'",
-            FIXProtocolVerEnum2str(ver), actualVer);
+            "Wrong protocol. Expected '%s', actual '%s'.", parser->protocol->transportVersion, actualVer);
+      free(actualVer);
       return NULL;
-   } */
+   }
+   num = parse_field(parser, dend + 1, len - (dend - data - 1), delimiter, &dbegin, &dend);
+   if (num == FIX_FAILED)
+   {
+      fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
+      return NULL;
+   }
+   if (num != FIXFieldTag_BodyLength)
+   {
+      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", num);
+      return NULL;
+   }
+   int64_t bodyLen;
+   if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen) == FIX_FAILED)
+   {
+      fix_parser_set_error(parser, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
+      return NULL;
+   }
    return NULL;
 }
