@@ -17,7 +17,7 @@ START_TEST(CreateMsgTest)
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix_descr/fix.4.4.xml") == FIX_SUCCESS);
 
-   FIXMsg* msg = fix_msg_create(p, FIX44, "8");
+   FIXMsg* msg = fix_msg_create(p, "8");
    fail_unless(msg != NULL);
    fail_unless(msg->used_groups == group);
    fail_unless(msg->body_len == 5);
@@ -136,7 +136,7 @@ START_TEST(CreateMsg2Test)
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix_descr/fix.4.4.xml") == FIX_SUCCESS);
 
-   FIXMsg* msg = fix_msg_create(p, FIX44, "D");
+   FIXMsg* msg = fix_msg_create(p, "D");
    fail_unless(msg != NULL);
    fail_unless(msg->used_groups == group);
    fail_unless(msg->body_len == 5);
@@ -194,7 +194,7 @@ START_TEST(ToStringTest)
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix_descr/fix.4.4.xml") == FIX_SUCCESS);
 
-   FIXMsg* msg = fix_msg_create(p, FIX44, "8");
+   FIXMsg* msg = fix_msg_create(p, "8");
    fail_unless(msg != NULL);
    fail_unless(msg->used_groups == group);
    fail_unless(msg->body_len == 5);
@@ -243,7 +243,7 @@ START_TEST(ToStringGroupTest)
    FIXGroup* group = p->group;
    fail_unless(fix_protocol_init(p, "fix_descr/fix.4.4.xml") == FIX_SUCCESS);
 
-   FIXMsg* msg = fix_msg_create(p, FIX44, "D");
+   FIXMsg* msg = fix_msg_create(p, "D");
    fail_unless(msg != NULL);
    fail_unless(msg->used_groups == group);
    fail_unless(msg->body_len == 5);
