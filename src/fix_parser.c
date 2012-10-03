@@ -287,7 +287,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       return NULL;
    }
    fix_parser_reset_error(parser);
-   uint64_t tag = 0;
+   int64_t tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
    tag = parse_field(parser, data, len, delimiter, &dbegin, &dend);
@@ -367,7 +367,9 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
          return NULL;
       }
    }
-   tag = parse_field(parser, dend + 1, len - (dend - data - 1), delimiter, &dbegin, &dend);
+   data = dend + 1;
+   bodyLen -= 1;
+   tag = parse_field(parser, data, bodyLen, delimiter, &dbegin, &dend);
    if (tag == FIX_FAILED)
    {
       fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
@@ -387,7 +389,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       return NULL;
    }
    free(msgType);
-   while((len -= (dend - data - 1)) > 0)
+   while((len = bodyLen - (dend - data - 1)) > 0)
    {
       tag = parse_field(parser, dend + 1, len, delimiter, &dbegin, &dend);
       if (tag == FIX_FAILED)

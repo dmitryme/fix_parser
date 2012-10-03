@@ -139,8 +139,8 @@ int main()
       return 1;
    }
 
-   create_msg(parser);
-   msg_to_fix(parser);
+   //create_msg(parser);
+   //msg_to_fix(parser);
    fix_to_msg(parser);
 
    return 0;
