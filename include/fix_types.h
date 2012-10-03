@@ -33,6 +33,7 @@
 #define FIX_ERROR_NO_MORE_SPACE           19
 #define FIX_ERROR_PARSE_MSG               20
 #define FIX_ERROR_WRONG_FIELD             21
+#define FIX_ERROR_INTEGRITY_CHECK         22
 
 typedef struct FIXGroup_ FIXGroup;
 typedef struct FIXField_ FIXField;
