@@ -245,25 +245,29 @@ START_TEST(ParseBeginStringTest)
 
    {
       char buff[] = "A12=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
-      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|');
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
       fail_unless(msg == NULL);
       fail_unless(parser->err_code == FIX_ERROR_PARSE_MSG);
    }
    {
       char buff[] = "1=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
-      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|');
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
       fail_unless(msg == NULL);
       fail_unless(parser->err_code == FIX_ERROR_WRONG_FIELD);
    }
    {
       char buff[] = "8=FIX.4.5|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
-      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|');
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
       fail_unless(msg == NULL);
       fail_unless(parser->err_code == FIX_ERROR_WRONG_PROTOCOL_VER);
    }
    {
       char buff[] = "8=FIXT.1.1|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
-      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|');
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
       fail_unless(msg == NULL);
       fail_unless(parser->err_code == FIX_ERROR_WRONG_PROTOCOL_VER);
    }
@@ -280,15 +284,91 @@ START_TEST(ParseBodyLengthTest)
 
    {
       char buff[] = "8=FIX.4.4|10=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
-      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|');
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
       fail_unless(msg == NULL);
       fail_unless(parser->err_code == FIX_ERROR_WRONG_FIELD);
    }
    {
       char buff[] = "8=FIX.4.4|9=228A|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
-      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|');
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
       fail_unless(msg == NULL);
       fail_unless(parser->err_code == FIX_ERROR_PARSE_MSG);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == 0);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == 0);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == 0);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == FIX_ERROR_PARSE_MSG);
+   }
+}
+END_TEST
+
+START_TEST(ParseCheckSumTest)
+{
+   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   fail_unless(parser != NULL);
+   fail_unless(parser->err_code == 0);
+
+   fail_unless(fix_protocol_init(parser, "fix_descr/fix.4.4.xml") == FIX_SUCCESS);
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|A10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == FIX_ERROR_PARSE_MSG);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|11=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == FIX_ERROR_WRONG_FIELD);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=A240|";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == FIX_ERROR_PARSE_MSG);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=210|";
+      char const* stop = NULL;
+      FIXMsg* msg = parse_fix(parser, buff, strlen(buff), '|', &stop);
+      fail_unless(msg == NULL);
+      fail_unless(parser->err_code == FIX_ERROR_INTEGRITY_CHECK);
    }
 }
 END_TEST
@@ -306,6 +386,7 @@ Suite* make_fix_parser_tests_suite()
    tcase_add_test(tc_core, ParseFieldTest);
    tcase_add_test(tc_core, ParseBeginStringTest);
    tcase_add_test(tc_core, ParseBodyLengthTest);
+   tcase_add_test(tc_core, ParseCheckSumTest);
    suite_add_tcase(s, tc_core);
    return s;
 }
