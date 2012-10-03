@@ -16,6 +16,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#define CRC_FIELD_LEN 7
+
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PUBLIC                                                                                                                 */
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -245,6 +247,11 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
          ++(*dend);
       }
    }
+   if (!len)
+   {
+      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with delimiter.");
+      return FIX_FAILED;
+   }
    return num;
 }
 
@@ -273,24 +280,25 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
 /*}*/
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter)
+FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    if (!parser || !data)
    {
       return NULL;
    }
-   uint64_t num = 0;
+   fix_parser_reset_error(parser);
+   uint64_t tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   num = parse_field(parser, data, len, delimiter, &dbegin, &dend);
-   if (num == FIX_FAILED)
+   tag = parse_field(parser, data, len, delimiter, &dbegin, &dend);
+   if (tag == FIX_FAILED)
    {
       fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
       return NULL;
    }
-   if (num != FIXFieldTag_BeginString)
+   if (tag != FIXFieldTag_BeginString)
    {
-      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", num);
+      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
       return NULL;
    }
    if (strncmp(parser->protocol->transportVersion, dbegin, dend - dbegin))
@@ -304,22 +312,90 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       free(actualVer);
       return NULL;
    }
-   num = parse_field(parser, dend + 1, len - (dend - data - 1), delimiter, &dbegin, &dend);
-   if (num == FIX_FAILED)
+   tag = parse_field(parser, dend + 1, len - (dend - data - 1), delimiter, &dbegin, &dend);
+   if (tag == FIX_FAILED)
    {
       fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
       return NULL;
    }
-   if (num != FIXFieldTag_BodyLength)
+   if (tag != FIXFieldTag_BodyLength)
    {
-      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", num);
+      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
       return NULL;
    }
    int64_t bodyLen;
    if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen) == FIX_FAILED)
    {
-      fix_parser_set_error(parser, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
+      fix_parser_set_error(parser, FIX_ERROR_PARSE_MSG, "BodyLength value not a tagber.");
       return NULL;
    }
-   return NULL;
+   if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
+   {
+      return NULL;
+   }
+   char const* crcbeg = NULL;
+   tag = parse_field(parser, dend + bodyLen + 1, CRC_FIELD_LEN, delimiter, &crcbeg, stop);
+   if (tag == FIX_FAILED)
+   {
+      fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse CrcSum field.");
+      return NULL;
+   }
+   if (tag != FIXFieldTag_CheckSum)
+   {
+      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
+      return NULL;
+   }
+   if (parser->flags & PARSER_FLAG_CHECK_CRC)
+   {
+      int64_t check_sum = 0;
+      if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum) == FIX_FAILED)
+      {
+         fix_parser_set_error(parser, FIX_ERROR_PARSE_MSG, "CheckSum value not a tagber.");
+         return NULL;
+      }
+      int64_t crc = 0;
+      for(char const* it = data; it <= dend + bodyLen; ++it)
+      {
+         crc += *it;
+      }
+      crc %= 256;
+      if (crc != check_sum)
+      {
+         fix_parser_set_error(
+               parser,
+               FIX_ERROR_INTEGRITY_CHECK, "CheckSum check failed. Expected '%d', actual '%d'.", check_sum, crc);
+         return NULL;
+      }
+   }
+   tag = parse_field(parser, dend + 1, len - (dend - data - 1), delimiter, &dbegin, &dend);
+   if (tag == FIX_FAILED)
+   {
+      fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
+      return NULL;
+   }
+   if (tag != FIXFieldTag_MsgType)
+   {
+      fix_parser_set_error(parser,FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
+      return NULL;
+   }
+   char* msgType = calloc(dend - dbegin + 1, 1);
+   memcpy(msgType, dbegin, dend - dbegin);
+   FIXMsg* msg = fix_msg_create(parser, "8");
+   if (!msg)
+   {
+      free(msgType);
+      return NULL;
+   }
+   free(msgType);
+   while((len -= (dend - data - 1)) > 0)
+   {
+      tag = parse_field(parser, dend + 1, len, delimiter, &dbegin, &dend);
+      if (tag == FIX_FAILED)
+      {
+         fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
+         return NULL;
+      }
+      fix_field_set(msg, NULL, tag, dbegin, dend - dbegin);
+   }
+   return msg;
 }
