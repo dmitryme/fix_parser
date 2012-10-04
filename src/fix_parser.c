@@ -3,18 +3,19 @@
    @date   Created on: 07/30/2012 10:26:54 AM
 */
 
-#include "fix_parser.h"
-#include "fix_parser_priv.h"
-#include "fix_protocol_descr.h"
-#include "fix_msg.h"
-#include "fix_page.h"
-#include "fix_utils.h"
+#include  "fix_parser.h"
+#include  "fix_parser_priv.h"
+#include  "fix_protocol_descr.h"
+#include  "fix_msg.h"
+#include  "fix_msg_priv.h"
+#include  "fix_page.h"
+#include  "fix_utils.h"
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdio.h>
+#include  <stdint.h>
+#include  <stdlib.h>
+#include  <string.h>
+#include  <stdarg.h>
+#include  <stdio.h>
 
 #define CRC_FIELD_LEN 7
 
@@ -255,29 +256,25 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
    return num;
 }
 
-/*   FIXProtocolVerEnum mver = str2FIXProtocolVerEnum(dbegin, dend);*/
-/*   num = parse_field(parser, dend + 1, len, &dbegin, &dend);*/
-/*   if (res == FIX_FAILED)*/
-/*   {*/
-/*      //TODO:*/
-/*      return FIX_FAILED;*/
-/*   }*/
-/*   id (num != FIXTagNum_MsgType)*/
-/*   {*/
-/*      //TODO:*/
-/*      return FIX_FAILED;*/
-/*   }*/
-/*   res = parse_field(parser, data, len, &num, value);*/
-/*   if (res == FIX_FAILED)*/
-/*   {*/
-/*      return FIX_FAILED;*/
-/*   }*/
-/*   res = fix_utils_atoi64(value, res, 0, bodyLen);*/
-/*   if (res == FIX_FAILED)*/
-/*   {*/
-/*      return FIX_FAILED;*/
-/*   }*/
-/*}*/
+/*------------------------------------------------------------------------------------------------------------------------*/
+int check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter)
+{
+   if (IS_INT_TYPE(fdescr->type->valueType))
+   {
+      int64_t res = 0;
+      return fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &res);
+   }
+   else if (IS_FLOAT_TYPE(fdescr->type->valueType))
+   {
+      double res = 0.0;
+      return fix_utils_atod(dbegin, dend - dbegin, delimiter, &res);
+   }
+   else if (IS_CHAR_TYPE(fdescr->type->valueType))
+   {
+      return (dend - dbegin == 1) ? FIX_SUCCESS : FIX_FAILED;
+   }
+   return FIX_SUCCESS;
+}
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
@@ -334,7 +331,8 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       return NULL;
    }
    char const* crcbeg = NULL;
-   tag = parse_field(parser, dend + bodyLen + 1, CRC_FIELD_LEN, delimiter, &crcbeg, stop);
+   char const* bodyEnd = dend + bodyLen;
+   tag = parse_field(parser, bodyEnd + 1, CRC_FIELD_LEN, delimiter, &crcbeg, stop);
    if (tag == FIX_FAILED)
    {
       fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse CrcSum field.");
@@ -354,7 +352,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
          return NULL;
       }
       int64_t crc = 0;
-      for(char const* it = data; it <= dend + bodyLen; ++it)
+      for(char const* it = data; it <= bodyEnd; ++it)
       {
          crc += *it;
       }
@@ -367,9 +365,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
          return NULL;
       }
    }
-   data = dend + 1;
-   bodyLen -= 1;
-   tag = parse_field(parser, data, bodyLen, delimiter, &dbegin, &dend);
+   tag = parse_field(parser, dend + 1, bodyEnd - dend - 1, delimiter, &dbegin, &dend);
    if (tag == FIX_FAILED)
    {
       fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
@@ -389,15 +385,35 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       return NULL;
    }
    free(msgType);
-   while((len = bodyLen - (dend - data - 1)) > 0)
+   while(dend != bodyEnd)
    {
-      tag = parse_field(parser, dend + 1, len, delimiter, &dbegin, &dend);
+      tag = parse_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
       if (tag == FIX_FAILED)
       {
          fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
          return NULL;
       }
-      fix_field_set(msg, NULL, tag, dbegin, dend - dbegin);
+      FIXFieldDescr* fdescr = fix_protocol_get_field_descr(parser, msg->descr, tag);
+      if (!fdescr && parser->flags & PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
+      {
+         fix_msg_free(msg);
+         fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field '%d%' not found in description.", tag);
+         return NULL;
+      }
+      if (parser->flags & PARSER_FLAG_CHECK_VALUE)
+      {
+         if (check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
+         {
+            fix_msg_free(msg);
+            return NULL;
+         }
+      }
+      /*
+      if (fdescr->field_type->type == FIXFieldType_Group)
+      {
+
+      } */
+      fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin);
    }
    return msg;
 }
