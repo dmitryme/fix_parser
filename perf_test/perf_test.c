@@ -130,7 +130,7 @@ void fix_to_msg(FIXParser* parser)
 
 int main()
 {
-   FIXParser* parser = fix_parser_create(4096, 0, 2, 0, 1000, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create(4096, 0, 2, 0, 1000, 0, /*PARSER_FLAG_CHECK_ALL*/0);
 
    int res = fix_protocol_init(parser, "fix.4.4.xml");
    if (res == FIX_FAILED)
@@ -139,8 +139,8 @@ int main()
       return 1;
    }
 
-   //create_msg(parser);
-   //msg_to_fix(parser);
+   create_msg(parser);
+   msg_to_fix(parser);
    fix_to_msg(parser);
 
    return 0;
