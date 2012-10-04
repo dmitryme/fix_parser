@@ -16,13 +16,12 @@
 
 #define FIND_FIELD_STEP \
 if (!it) return NULL; \
-if (it->tag == tag) return it; \
+if (it->descr->type->tag == tag) return it; \
 it = it->next;
 
 struct FIXField_
 {
-   uint32_t tag;
-   FIXFieldTypeEnum type;
+   FIXFieldDescr const* descr;
    struct FIXField_* next;
    uint32_t body_len;
    uint32_t size;
@@ -32,7 +31,7 @@ struct FIXField_
 struct FIXGroup_
 {
    FIXField* fields[GROUP_SIZE];
-   FIXFieldDescr* parent_fdescr;
+   FIXFieldDescr const* parent_fdescr;
    struct FIXGroup_* next;
 } __attribute__((packed));
 
@@ -41,7 +40,7 @@ typedef struct FIXGroups_
    FIXGroup* group[1];
 } FIXGroups;
 
-FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, uint32_t tag, unsigned char const* data, uint32_t len);
+FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len);
 
 inline static FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 {
@@ -62,7 +61,7 @@ inline static FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 
 int32_t fix_field_del(FIXMsg* msg, FIXGroup* grp, uint32_t tag);
 
-FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, uint32_t tag, FIXField** fld);
+FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXField** fld);
 FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* tbl, uint32_t tag, uint32_t grpIdx);
 int32_t fix_group_del(FIXMsg* msg, FIXGroup* tbl, uint32_t tag, uint32_t grpIdx);
 
