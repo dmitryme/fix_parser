@@ -18,14 +18,15 @@
 typedef struct FIXFieldType_
 {
    uint32_t tag;
-   FIXFieldValueTypeEnum type;
+   FIXFieldValueTypeEnum valueType;
    char* name;
    struct FIXFieldType_* next;
 } FIXFieldType;
 
 typedef struct FIXFieldDescr_
 {
-   FIXFieldType* field_type;
+   FIXFieldType* type;
+   FIXFieldCategoryEnum category;
    uint8_t flags;
    uint32_t group_count;
    struct FIXFieldDescr_*  group;
