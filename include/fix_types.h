@@ -42,15 +42,16 @@ typedef struct FIXParser_ FIXParser;
 
 #define PARSER_FLAG_CHECK_CRC 0x01
 #define PARSER_FLAG_CHECK_REQUIRED 0x02
-#define PARSER_FLAG_CHECK_EXISTING 0x04
-#define PARSER_FLAG_CHECK_VALUE    0x08
-#define PARSER_FLAG_CHECK_ALL (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_EXISTING | PARSER_FLAG_CHECK_VALUE)
+#define PARSER_FLAG_CHECK_VALUE    0x04
+#define PARSER_FLAG_CHECK_UNKNOWN_FIELDS 0x08
+#define PARSER_FLAG_CHECK_ALL \
+   (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_VALUE | PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
 
-typedef enum FIXFieldTypeEnum
+typedef enum FIXFieldCategoryEnum
 {
-   FIXFieldType_Value = 1,
-   FIXFieldType_Group = 2
-} FIXFieldTypeEnum;
+   FIXFieldCategory_Value = 1,
+   FIXFieldCategory_Group = 2
+} FIXFieldCategoryEnum;
 
 typedef enum FIXFieldValueTypeEnum
 {
