@@ -33,45 +33,52 @@ START_TEST(FIXProtocolTest1)
 
    FIXFieldDescr* field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_BeginString);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_BeginString);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "BeginString"));
+   fail_unless(field->type->tag == FIXFieldTag_BeginString);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "BeginString"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_BodyLength);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_BodyLength);
-   fail_unless(field->field_type->type == FIXFieldValueType_Length);
-   fail_unless(!strcmp(field->field_type->name, "BodyLength"));
+   fail_unless(field->type->tag == FIXFieldTag_BodyLength);
+   fail_unless(field->type->valueType == FIXFieldValueType_Length);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "BodyLength"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_MsgType);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_MsgType);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "MsgType"));
+   fail_unless(field->type->tag == FIXFieldTag_MsgType);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "MsgType"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_OrderID);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_OrderID);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "OrderID"));
+   fail_unless(field->type->tag == FIXFieldTag_OrderID);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "OrderID"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_ClOrdID);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_ClOrdID);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "ClOrdID"));
+   fail_unless(field->type->tag == FIXFieldTag_ClOrdID);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "ClOrdID"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_SignatureLength);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_SignatureLength);
-   fail_unless(field->field_type->type == FIXFieldValueType_Length);
-   fail_unless(!strcmp(field->field_type->name, "SignatureLength"));
+   fail_unless(field->type->tag == FIXFieldTag_SignatureLength);
+   fail_unless(field->type->valueType == FIXFieldValueType_Length);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "SignatureLength"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_CheckSum);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_CheckSum);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "CheckSum"));
+   fail_unless(field->type->tag == FIXFieldTag_CheckSum);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "CheckSum"));
 
    fix_parser_free(p);
 }
@@ -97,45 +104,52 @@ START_TEST(FIXProtocolTest2)
 
    FIXFieldDescr* field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_BeginString);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_BeginString);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "BeginString"));
+   fail_unless(field->type->tag == FIXFieldTag_BeginString);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "BeginString"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_BodyLength);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_BodyLength);
-   fail_unless(field->field_type->type == FIXFieldValueType_Length);
-   fail_unless(!strcmp(field->field_type->name, "BodyLength"));
+   fail_unless(field->type->tag == FIXFieldTag_BodyLength);
+   fail_unless(field->type->valueType == FIXFieldValueType_Length);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "BodyLength"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_MsgType);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_MsgType);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "MsgType"));
+   fail_unless(field->type->tag == FIXFieldTag_MsgType);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "MsgType"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_OrderID);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_OrderID);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "OrderID"));
+   fail_unless(field->type->tag == FIXFieldTag_OrderID);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "OrderID"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_ClOrdID);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_ClOrdID);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "ClOrdID"));
+   fail_unless(field->type->tag == FIXFieldTag_ClOrdID);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "ClOrdID"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_SignatureLength);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_SignatureLength);
-   fail_unless(field->field_type->type == FIXFieldValueType_Length);
-   fail_unless(!strcmp(field->field_type->name, "SignatureLength"));
+   fail_unless(field->type->tag == FIXFieldTag_SignatureLength);
+   fail_unless(field->type->valueType == FIXFieldValueType_Length);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "SignatureLength"));
 
    field = fix_protocol_get_field_descr(p, msg, FIXFieldTag_CheckSum);
    fail_unless(field != NULL);
-   fail_unless(field->field_type->tag == FIXFieldTag_CheckSum);
-   fail_unless(field->field_type->type == FIXFieldValueType_String);
-   fail_unless(!strcmp(field->field_type->name, "CheckSum"));
+   fail_unless(field->type->tag == FIXFieldTag_CheckSum);
+   fail_unless(field->type->valueType == FIXFieldValueType_String);
+   fail_unless(field->category == FIXFieldCategory_Value);
+   fail_unless(!strcmp(field->type->name, "CheckSum"));
 
    fix_parser_free(p);
 }
