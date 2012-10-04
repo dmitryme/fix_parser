@@ -170,7 +170,7 @@ int32_t load_field_types(FIXParser* parser, FIXFieldType* (*ftypes)[FIELD_TYPE_C
          FIXFieldType* fld = (FIXFieldType*)malloc(sizeof(FIXFieldType));
          fld->tag = atoi(get_attr(field, "number", NULL));
          fld->name = strdup(get_attr(field, "name", NULL));
-         fld->type = str2FIXFieldValueType(get_attr(field, "type", NULL));
+         fld->valueType = str2FIXFieldValueType(get_attr(field, "type", NULL));
          int32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = (*ftypes)[idx];
          (*ftypes)[idx] = fld;
@@ -195,8 +195,9 @@ int32_t load_fields(
          *fields = realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
          FIXFieldDescr* fld = &(*fields)[*count - 1];
          memset(fld, 0, sizeof(FIXFieldDescr));
-         fld->field_type = fix_protocol_get_field_type(parser, ftypes, name);
-         if (!fld->field_type)
+         fld->type = fix_protocol_get_field_type(parser, ftypes, name);
+         fld->category = FIXFieldCategory_Value;
+         if (!fld->type)
          {
             fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
             return FIX_FAILED;
@@ -233,8 +234,9 @@ int32_t load_fields(
          *fields = realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
          FIXFieldDescr* fld = &(*fields)[*count - 1];
          memset(fld, 0, sizeof(FIXFieldDescr));
-         fld->field_type = fix_protocol_get_field_type(parser, ftypes, name);
-         if (!fld->field_type)
+         fld->type = fix_protocol_get_field_type(parser, ftypes, name);
+         fld->category = FIXFieldCategory_Group;
+         if (!fld->type)
          {
             fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
             return FIX_FAILED;
@@ -260,7 +262,7 @@ void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** in
    for(uint32_t i = 0; i < field_count; ++i)
    {
       FIXFieldDescr* fld = &fields[i];
-      int32_t idx = fld->field_type->tag % FIELD_DESCR_CNT;
+      int32_t idx = fld->type->tag % FIELD_DESCR_CNT;
       fld->next = index[idx];
       index[idx] = fld;
       if (fld->group_count)
@@ -454,7 +456,7 @@ FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type)
 
 #define FIND_DESCR_STEP \
 if (!fld) return 0; \
-if (fld->field_type->tag == tag) return fld; \
+if (fld->type->tag == tag) return fld; \
 fld = fld->next;
 
 FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t tag)
@@ -482,12 +484,12 @@ FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr con
    FIXFieldDescr* fld = field->group_index[idx];
    while(fld)
    {
-      if (fld->field_type->tag == tag)
+      if (fld->type->tag == tag)
       {
          return fld;
       }
       fld = fld->next;
    }
-   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s'", tag, field->field_type->name);
+   fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s'", tag, field->type->name);
    return NULL;
 }
