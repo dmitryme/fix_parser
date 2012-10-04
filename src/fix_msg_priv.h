@@ -27,7 +27,7 @@ void* fix_msg_alloc(FIXMsg* msg, uint32_t size);
 void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size);
 
 FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag);
-FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag, unsigned char const* data, uint32_t len);
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* fdescr, unsigned char const* data, uint32_t len);
 int32_t fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag);
 
 FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
