@@ -11,6 +11,7 @@ extern Suite* make_fix_parser_tests_suite();
 extern Suite* make_fix_msg_tests_suite();
 extern Suite* make_fix_utils_tests_suite();
 extern Suite* make_fix_protocol_tests_suite();
+extern Suite* make_fix_parser_tests2_suite();
 
 int main()
 {
@@ -19,6 +20,7 @@ int main()
    srunner_add_suite(sr, make_fix_field_tests_suite());
    srunner_add_suite(sr, make_fix_msg_tests_suite());
    srunner_add_suite(sr, make_fix_utils_tests_suite());
+   srunner_add_suite(sr, make_fix_parser_tests2_suite());
    srunner_run_all(sr, CK_NORMAL);
    int number_failed = srunner_ntests_failed(sr);
    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;

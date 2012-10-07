@@ -250,7 +250,7 @@ int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char deli
    }
    if (!len)
    {
-      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with delimiter.");
+      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
       return FIX_FAILED;
    }
    return num;
@@ -397,7 +397,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       if (!fdescr && parser->flags & PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
       {
          fix_msg_free(msg);
-         fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field '%d%' not found in description.", tag);
+         fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in description.", tag);
          return NULL;
       }
       if (parser->flags & PARSER_FLAG_CHECK_VALUE)
