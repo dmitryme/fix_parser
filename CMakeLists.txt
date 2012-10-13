@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(fix_parser)
 
-add_definitions(-std=gnu99 -g -Wall)
+add_definitions(-std=gnu99 -O2 -Wall)
 
 include_directories(./include)
 include_directories(/usr/include/libxml2)
