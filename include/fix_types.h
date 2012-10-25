@@ -93,6 +93,16 @@ typedef enum FIXFieldValueTypeEnum
 #define IS_CHAR_TYPE(type)   ((type & 0xF00) > 0)
 #define IS_DATA_TYPE(type)   ((type & 0xF0000) > 0)
 
+typedef struct FIXParserAttrs
+{
+   uint32_t pageSize;     /* Page size in bytes. Default 4096 */
+   uint32_t maxPageSize;  /* Maximum page size. 0 - page can be grow depends of tag value size, pageSize - page can not grow. Default 0    */
+   uint32_t numPages;     /* Pages allocated at parser creation. Default 1000 */
+   uint32_t maxPages;     /* Maximum alocated pages. 0 - not bounded, numPages - only numPages pages can be allocates. Default 0    */
+   uint32_t numGroups;    /* Groups allocated at parser creation. Default 1000 */
+   uint32_t maxGroups;    /* Maximum allocated groups. 0 - not bounded, numGroups - onlu numGroups groups can be allocated. Default 0    */
+} FIXParserAttrs;
+
 FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
 
 #endif /* FIX_PARSER_FIX_TYPES_H */
