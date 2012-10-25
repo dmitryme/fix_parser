@@ -11,9 +11,7 @@
 
 #include <stdint.h>
 
-FIXParser* fix_parser_create(
-      uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, int32_t flags);
+FIXParser* fix_parser_create(FIXParserAttrs const* attrs, int32_t flags);
 void fix_parser_free(FIXParser* parser);
 
 int32_t get_fix_error_code(FIXParser* parser);
