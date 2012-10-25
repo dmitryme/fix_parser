@@ -23,31 +23,33 @@
 /* PUBLIC                                                                                                                 */
 /*------------------------------------------------------------------------------------------------------------------------*/
 
-FIXParser* fix_parser_create(
-      uint32_t pageSize, uint32_t maxPageSize, uint32_t numPages, uint32_t maxPages,
-      uint32_t numGroups, uint32_t maxGroups, int32_t flags)
+FIXParser* fix_parser_create(FIXParserAttrs const* attrs, int32_t flags)
 {
-   FIXParser* parser = calloc(1, sizeof(FIXParser));
-   parser->flags = flags;
-   parser->page_size = pageSize;
-   parser->max_page_size = maxPageSize;
-   for(uint32_t i = 0; i < numPages; ++i)
+   FIXParserAttrs myattrs = {};
+   if (attrs)
    {
-      FIXPage* page = calloc(1, sizeof(FIXPage) + pageSize - 1);
-      page->size = pageSize;
+      memcpy(&myattrs, attrs, sizeof(myattrs));
+   }
+   if (!validate_attrs(&myattrs))
+   {
+      return NULL;
+   }
+   FIXParser* parser = calloc(1, sizeof(FIXParser));
+   memcpy(&parser->attrs, &myattrs, sizeof(parser->attrs));
+   parser->flags = flags;
+   for(uint32_t i = 0; i < parser->attrs.numPages; ++i)
+   {
+      FIXPage* page = calloc(1, sizeof(FIXPage) + parser->attrs.pageSize - 1);
+      page->size = parser->attrs.pageSize;
       page->next = parser->page;
       parser->page = page;
    }
-   parser->used_pages = 0;
-   parser->max_pages = maxPages;
-   for(uint32_t i = 0; i < numGroups; ++i)
+   for(uint32_t i = 0; i < parser->attrs.numGroups; ++i)
    {
       FIXGroup* group = calloc(1, sizeof(FIXGroup));
       group->next = parser->group;
       parser->group = group;
    }
-   parser->used_groups = 0;
-   parser->max_groups = maxGroups;
    return parser;
 }
 
@@ -121,24 +123,57 @@ int32_t fix_protocol_init(FIXParser* parser, char const* protFile)
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATE                                                                                                                */
 /*------------------------------------------------------------------------------------------------------------------------*/
+
+int validate_attrs(FIXParserAttrs* attrs)
+{
+   if (!attrs->pageSize)
+   {
+      attrs->pageSize = 4096;
+   }
+   if (!attrs->numPages)
+   {
+      attrs->numPages = 1000;
+   }
+   if (!attrs->numGroups)
+   {
+      attrs->numGroups = 1000;
+   }
+   if (attrs->maxPageSize > 0 && attrs->maxPageSize < attrs->pageSize)
+   {
+      printf("ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.\n");
+      return 0;
+   }
+   if (attrs->maxPages > 0 && attrs->maxPages < attrs->numPages)
+   {
+      printf("ERROR: Parser attbutes are invalid: MaxPages < NumPages.\n");
+      return 0;
+   }
+   if (attrs->maxGroups > 0 && attrs->maxGroups < attrs->numGroups)
+   {
+      printf("ERROR: Parser attbutes are invalid: MaxGroups < NumGroups.\n");
+      return 0;
+   }
+   return 1;
+}
+
 FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize)
 {
-   if (parser->max_pages > 0 && parser->max_pages == parser->used_pages)
+   if (parser->attrs.maxPages > 0 && parser->attrs.maxPages == parser->used_pages)
    {
       fix_parser_set_error(parser,
-         FIX_ERROR_NO_MORE_PAGES, "No more pages available. MaxPages = %d, UsedPages = %d", parser->max_pages, parser->used_pages);
+         FIX_ERROR_NO_MORE_PAGES, "No more pages available. MaxPages = %d, UsedPages = %d", parser->attrs.maxPages, parser->used_pages);
       return NULL;
    }
    FIXPage* page = NULL;
    if (parser->page == NULL) // no more free pages
    {
-      uint32_t psize = (parser->page_size > pageSize ? parser->page_size : pageSize);
-      if (parser->max_page_size > 0 && psize > parser->max_page_size)
+      uint32_t psize = (parser->attrs.pageSize > pageSize ? parser->attrs.pageSize : pageSize);
+      if (parser->attrs.maxPageSize > 0 && psize > parser->attrs.maxPageSize)
       {
          fix_parser_set_error(
                parser,
                FIX_ERROR_TOO_BIG_PAGE, "Requested new page is too big. MaxPageSize = %d, RequestedPageSize = %d",
-               parser->max_page_size, psize);
+               parser->attrs.maxPageSize, psize);
          return NULL;
       }
       page = calloc(1, sizeof(FIXPage) + psize - 1);
@@ -168,11 +203,11 @@ FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page)
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXGroup* fix_parser_alloc_group(FIXParser* parser)
 {
-   if (parser->max_groups > 0 && parser->max_groups == parser->used_groups)
+   if (parser->attrs.maxGroups > 0 && parser->attrs.maxGroups == parser->used_groups)
    {
       fix_parser_set_error(parser,
          FIX_ERROR_NO_MORE_GROUPS,
-         "No more groups available. MaxGroups = %d, UsedGroups = %d", parser->max_groups, parser->used_groups);
+         "No more groups available. MaxGroups = %d, UsedGroups = %d", parser->attrs.maxGroups, parser->used_groups);
       return NULL;
    }
    FIXGroup* group = NULL;
@@ -394,26 +429,32 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
          return NULL;
       }
       FIXFieldDescr* fdescr = fix_protocol_get_field_descr(parser, msg->descr, tag);
-      if (!fdescr && parser->flags & PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
+      if (!fdescr)
       {
-         fix_msg_free(msg);
-         fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in description.", tag);
-         return NULL;
-      }
-      if (parser->flags & PARSER_FLAG_CHECK_VALUE)
-      {
-         if (check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
+         if (parser->flags & PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
          {
             fix_msg_free(msg);
+            fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in description.", tag);
             return NULL;
          }
       }
-      /*
-      if (fdescr->field_type->type == FIXFieldType_Group)
+      else
       {
+         if (parser->flags & PARSER_FLAG_CHECK_VALUE)
+         {
+            if (check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
+            {
+               fix_msg_free(msg);
+               return NULL;
+            }
+         }
+         /*
+         if (fdescr->field_type->type == FIXFieldType_Group)
+         {
 
-      } */
-      fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin);
+         } */
+         fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin);
+      }
    }
    return msg;
 }
