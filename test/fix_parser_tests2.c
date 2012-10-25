@@ -10,7 +10,7 @@
 
 START_TEST(ParseFieldTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -31,7 +31,7 @@ END_TEST
 
 START_TEST(ParseBeginStringTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -70,7 +70,7 @@ END_TEST
 
 START_TEST(ParseBodyLengthTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
@@ -127,7 +127,7 @@ END_TEST
 
 START_TEST(ParseCheckSumTest)
 {
-   FIXParser* parser = fix_parser_create(512, 0, 1, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
    fail_unless(parser->err_code == 0);
 
