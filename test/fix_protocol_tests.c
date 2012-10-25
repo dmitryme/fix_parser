@@ -12,7 +12,7 @@
 
 START_TEST(FIXProtocolTest1)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
    fail_unless(p != NULL);
    fail_unless(fix_protocol_init(p, "./data/fix1.xml") == FIX_SUCCESS);
    fail_unless(fix_protocol_get_msg_descr(p, "8") != NULL);
@@ -86,7 +86,7 @@ END_TEST
 
 START_TEST(FIXProtocolTest2)
 {
-   FIXParser* p = fix_parser_create(512, 0, 2, 0, 2, 0, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
    fail_unless(p != NULL);
    fail_unless(fix_protocol_init(p, "./data/fix2.xml") == FIX_SUCCESS);
    fail_unless(fix_protocol_get_msg_descr(p, "8") != NULL);
