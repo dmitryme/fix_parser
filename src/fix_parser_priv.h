@@ -22,17 +22,15 @@ struct FIXParser_
    FIXProtocolDescr* protocol;
    int32_t err_code;
    char err_text[ERROR_TXT_SIZE];
+   FIXParserAttrs attrs;
    int32_t  flags;
    FIXPage* page;
    uint32_t used_pages;
-   uint32_t max_pages;
-   uint32_t page_size;
-   uint32_t max_page_size;
    FIXGroup* group;
    uint32_t used_groups;
-   uint32_t max_groups;
 };
 
+int validate_attrs(FIXParserAttrs* attrs);
 FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize);
 FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
 FIXGroup* fix_parser_alloc_group(FIXParser* parser);
