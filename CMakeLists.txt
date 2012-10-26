@@ -10,6 +10,9 @@ include_directories(/usr/include/libxml2)
 aux_source_directory(src LIB_SOURCES)
 
 add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
+add_library(${PROJECT_NAME}_S STATIC ${LIB_SOURCES})
+
+set_target_properties(${PROJECT_NAME}_S PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 add_subdirectory(perf_test)
 add_subdirectory(test)
