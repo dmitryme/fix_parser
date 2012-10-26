@@ -3,19 +3,20 @@
    @date   Created on: 07/30/2012 10:26:54 AM
 */
 
-#include  "fix_parser.h"
-#include  "fix_parser_priv.h"
-#include  "fix_protocol_descr.h"
-#include  "fix_msg.h"
-#include  "fix_msg_priv.h"
-#include  "fix_page.h"
-#include  "fix_utils.h"
+#include "fix_parser.h"
+#include "fix_parser_priv.h"
+#include "fix_protocol_descr.h"
+#include "fix_msg.h"
+#include "fix_msg_priv.h"
+#include "fix_page.h"
+#include "fix_utils.h"
 
-#include  <stdint.h>
-#include  <stdlib.h>
-#include  <string.h>
-#include  <stdarg.h>
-#include  <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <assert.h>
 
 #define CRC_FIELD_LEN 7
 
@@ -312,6 +313,12 @@ int check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, cha
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+int32_t parse_group(FIXMsg* msg, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop)
+{
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    if (!parser || !data)
@@ -425,6 +432,7 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       tag = parse_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
       if (tag == FIX_FAILED)
       {
+         fix_msg_free(msg);
          fix_parser_set_error(parser,FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
          return NULL;
       }
@@ -448,11 +456,24 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
                return NULL;
             }
          }
-         /*
-         if (fdescr->field_type->type == FIXFieldType_Group)
+         if (fdescr->category == FIXFieldCategory_Group)
          {
-
-         } */
+            assert(0);
+            int64_t num = 0;
+            int32_t res = fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &num);
+            if (res == FIX_FAILED)
+            {
+               fix_msg_free(msg);
+               fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
+               return NULL;
+            }
+            res = parse_group(msg, num, dend + 1, bodyEnd - dend, delimiter, &dend);
+            if (res == FIX_FAILED)
+            {
+               fix_msg_free(msg);
+               return NULL;
+            }
+         }
          fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin);
       }
    }
