@@ -9,29 +9,29 @@
 
 START_TEST(i64toa_Test)
 {
-   char buff[10];
+   char buff[10] = {};
    fail_unless(fix_utils_i64toa(100, buff, sizeof(buff), 0) == 3);
    fail_unless(!strcmp(buff, "100"));
 
    char buff1[4];
    fail_unless(fix_utils_i64toa(77777, buff1, sizeof(buff1), 0) == 4);
-   fail_unless(!strcmp(buff1, "7777"));
+   fail_unless(!strncmp(buff1, "7777", 4));
 
    char buff2[3];
    fail_unless(fix_utils_i64toa(99, buff2, sizeof(buff2), '0') == 3);
-   fail_unless(!strcmp(buff2, "099"));
+   fail_unless(!strncmp(buff2, "099", 3));
 
    char buff3[7];
    fail_unless(fix_utils_i64toa(-77777, buff3, sizeof(buff3), 0) == 6);
-   fail_unless(!strcmp(buff3, "-77777"));
+   fail_unless(!strncmp(buff3, "-77777", 7));
 
    char buff4[4];
    fail_unless(fix_utils_i64toa(-37, buff4, sizeof(buff4), '0') == 4);
-   fail_unless(!strcmp(buff4, "-037"));
+   fail_unless(!strncmp(buff4, "-037", 4));
 
    char buff5[7];
    fail_unless(fix_utils_i64toa(-37, buff5, sizeof(buff5), '0') == 7);
-   fail_unless(!strcmp(buff5, "-000037"));
+   fail_unless(!strncmp(buff5, "-000037", 7));
 }
 END_TEST
 
