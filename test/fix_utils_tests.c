@@ -37,17 +37,17 @@ END_TEST
 
 START_TEST(dtoa_Test)
 {
-   char buff[10];
+   char buff[10] = {};
    fail_unless(fix_utils_dtoa(100.12, buff, sizeof(buff)) == 6);
    fail_unless(!strcmp(buff, "100.12"));
 
-   char buff1[10];
+   char buff1[10] = {};
    fail_unless(fix_utils_dtoa(-3456.00, buff1, sizeof(buff1)) == 5);
    fail_unless(!strcmp(buff1, "-3456"));
 
    char buff2[3];
    fail_unless(fix_utils_dtoa(-3456.12, buff2, sizeof(buff2)) == 3);
-   fail_unless(!strcmp(buff2, "-34"));
+   fail_unless(!strncmp(buff2, "-34", 3));
 }
 END_TEST
 
