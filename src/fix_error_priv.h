@@ -21,9 +21,9 @@ void fix_error_set_va(FIXError* error, int32_t code, char const* text, va_list a
 void fix_error_set(FIXError* error, int32_t code, char const* text, ...);
 void fix_error_reset(FIXError* error);
 
-FIXError* fix_global_error_get();
-void fix_global_error_set_va(int32_t code, char const* text, va_list ap);
-void fix_global_error_set(int32_t code, char const* text, ...);
-void fix_global_error_reset();
+FIXError* fix_static_error_get();
+void fix_static_error_set_va(int32_t code, char const* text, va_list ap);
+void fix_static_error_set(int32_t code, char const* text, ...);
+void fix_static_error_reset();
 
 #endif // FIX_PARSER_FIX_ERROR_PRIV_H

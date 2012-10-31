@@ -10,10 +10,10 @@
 
 #include <stdint.h>
 
-int32_t get_fix_error_code(FIXParser* parser);
-char const* get_fix_error_text(FIXParser* parser);
+int32_t get_fix_parser_error_code(FIXParser* parser);
+char const* get_fix_parser_error_text(FIXParser* parser);
 
-int32_t get_fix_global_error_code();
-char const* get_fix_global_error_text();
+int32_t get_fix_error_code();
+char const* get_fix_error_text();
 
 #endif // FIX_PARSER_FIX_ERROR_H

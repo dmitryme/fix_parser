@@ -39,6 +39,7 @@ typedef struct FIXGroup_ FIXGroup;
 typedef struct FIXField_ FIXField;
 typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
+typedef struct FIXError FIXError;
 
 #define PARSER_FLAG_CHECK_CRC 0x01
 #define PARSER_FLAG_CHECK_REQUIRED 0x02

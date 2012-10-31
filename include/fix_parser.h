@@ -11,14 +11,11 @@
 
 #include <stdint.h>
 
-FIXParser* fix_parser_create(FIXParserAttrs const* attrs, int32_t flags);
+FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags);
 void fix_parser_free(FIXParser* parser);
 
-int32_t get_fix_error_code(FIXParser* parser);
-char const* get_fix_error_text(FIXParser* parser);
 int32_t get_fix_parser_flags(FIXParser* parser);
 
-int32_t fix_protocol_init(FIXParser*, char const* protFile);
 FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
 
 #endif /* FIX_PARSER_FIX_PARSER_H */

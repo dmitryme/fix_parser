@@ -7,6 +7,7 @@
 #define FIX_PARSER_FIX_PROTOCOL_DESCR_H
 
 #include "fix_types.h"
+#include "fix_error.h"
 
 #include <stdint.h>
 
@@ -53,12 +54,12 @@ typedef struct FIXProtocolDescr_
    FIXMsgDescr* messages[MSG_CNT];
 } FIXProtocolDescr;
 
-FIXProtocolDescr* fix_protocol_descr_create(FIXParser* parser, char const* file);
+FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file);
 void fix_protocol_descr_free(FIXProtocolDescr* prot);
 
-FIXFieldType* fix_protocol_get_field_type(FIXParser* parser, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name);
+FIXFieldType* fix_protocol_get_field_type(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name);
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
-FIXFieldDescr* fix_protocol_get_field_descr(FIXParser* parser, FIXMsgDescr const* msg, uint32_t tag);
-FIXFieldDescr* fix_protocol_get_group_descr(FIXParser* parser, FIXFieldDescr const* field, uint32_t tag);
+FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, uint32_t tag);
+FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, uint32_t tag);
 
 #endif /* FIX_PARSER_FIX_PROTOCOL_DESCR_H */

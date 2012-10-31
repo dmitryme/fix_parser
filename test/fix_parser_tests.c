@@ -11,9 +11,9 @@
 START_TEST(CreateParserTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
    fail_unless(parser->flags == PARSER_FLAG_CHECK_ALL);
    fail_unless(parser->page != NULL);
    fail_unless(parser->page->next != NULL);
@@ -32,18 +32,18 @@ END_TEST
 START_TEST(SetErrorParserTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
 
-   fix_parser_set_error(parser, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
+   fix_error_set(&parser->error, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
 
-   fail_unless(parser->err_code == FIX_ERROR_NO_MORE_PAGES);
-   fail_unless(!strcmp(parser->err_text, "No more pages available"));
+   fail_unless(parser->error.code == FIX_ERROR_NO_MORE_PAGES);
+   fail_unless(!strcmp(parser->error.text, "No more pages available"));
 
-   fix_parser_reset_error(parser);
+   fix_error_reset(&parser->error);
 
-   fail_unless(parser->err_code == 0);
-   fail_unless(!strcmp(parser->err_text, ""));
+   fail_unless(parser->error.code == 0);
+   fail_unless(!strcmp(parser->error.text, ""));
 
    fix_parser_free(parser);
 }
@@ -52,9 +52,9 @@ END_TEST
 START_TEST(GetFreePageTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXPage* nextp = parser->page->next;
    FIXPage* p = fix_parser_alloc_page(parser, 0);
@@ -95,9 +95,9 @@ END_TEST
 START_TEST(MaxPagesTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 2, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXPage* nextp = parser->page->next;
    fail_unless(parser->page != NULL);
@@ -114,7 +114,7 @@ START_TEST(MaxPagesTest)
 
    FIXPage* p2 = fix_parser_alloc_page(parser, 0);
    fail_unless(p2 == NULL);
-   fail_unless(parser->err_code == FIX_ERROR_NO_MORE_PAGES);
+   fail_unless(parser->error.code == FIX_ERROR_NO_MORE_PAGES);
    fail_unless(parser->page == NULL);
    fail_unless(parser->used_pages == 2);
 
@@ -136,9 +136,9 @@ END_TEST
 START_TEST(MaxGroupsTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 2};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXGroup* nextg = parser->group->next;
    fail_unless(parser->group != NULL);
@@ -155,7 +155,7 @@ START_TEST(MaxGroupsTest)
 
    FIXGroup* p2 = fix_parser_alloc_group(parser);
    fail_unless(p2 == NULL);
-   fail_unless(parser->err_code == FIX_ERROR_NO_MORE_GROUPS);
+   fail_unless(parser->error.code == FIX_ERROR_NO_MORE_GROUPS);
    fail_unless(parser->group == NULL);
    fail_unless(parser->used_groups == 2);
 
@@ -174,9 +174,9 @@ START_TEST(MaxPageSizeTest)
 {
    {
       FIXParserAttrs attrs = {512, 0, 1, 0, 2, 0};
-      FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
       fail_unless(parser != NULL);
-      fail_unless(parser->err_code == 0);
+      fail_unless(parser->error.code == 0);
 
       FIXPage* p = fix_parser_alloc_page(parser, 0);
       fail_unless(p->next == NULL);
@@ -197,9 +197,9 @@ START_TEST(MaxPageSizeTest)
    }
    {
       FIXParserAttrs attrs = {512, 512, 1, 0, 2, 0};
-      FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
       fail_unless(parser != NULL);
-      fail_unless(parser->err_code == 0);
+      fail_unless(parser->error.code == 0);
 
       FIXPage* p = fix_parser_alloc_page(parser, 0);
       fail_unless(p != NULL);
@@ -213,7 +213,7 @@ START_TEST(MaxPageSizeTest)
 
       FIXPage* p2 = fix_parser_alloc_page(parser, 513);
       fail_unless(p2 == NULL);
-      fail_unless(parser->err_code == FIX_ERROR_TOO_BIG_PAGE);
+      fail_unless(parser->error.code == FIX_ERROR_TOO_BIG_PAGE);
       fail_unless(parser->used_pages == 2);
 
       fix_parser_free(parser);

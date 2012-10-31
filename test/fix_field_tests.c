@@ -37,9 +37,9 @@ FIXFieldDescr* new_fdescr(int tag, FIXFieldCategoryEnum category, FIXFieldValueT
 START_TEST(SetTagTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
@@ -120,9 +120,9 @@ END_TEST
 START_TEST(DelTagTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
@@ -209,9 +209,9 @@ END_TEST
 START_TEST(GetTagTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
@@ -280,9 +280,9 @@ END_TEST
 START_TEST(AddGetDelGroupTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 
@@ -297,7 +297,7 @@ START_TEST(AddGetDelGroupTest)
    long val = 100;
    FIXField* field1 = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char*)&val, sizeof(val));
    fail_unless(field1 == NULL);
-   fail_unless(parser->err_code == FIX_ERROR_FIELD_HAS_WRONG_TYPE);
+   fail_unless(parser->error.code == FIX_ERROR_FIELD_HAS_WRONG_TYPE);
 
    FIXField* field11 = NULL;
    FIXGroup* grp1 = fix_group_add(msg, NULL, new_fdescr(1, FIXFieldCategory_Group, FIXFieldValueType_NumInGroup), &field11);
@@ -333,7 +333,7 @@ START_TEST(AddGetDelGroupTest)
 
    FIXGroup* grp4 = fix_group_get(msg, NULL, 1, 4);
    fail_unless(grp4 == NULL);
-   fail_unless(parser->err_code == FIX_ERROR_GROUP_WRONG_INDEX);
+   fail_unless(parser->error.code == FIX_ERROR_GROUP_WRONG_INDEX);
 
    fail_unless(fix_group_get(msg, NULL, 1, 3) == grp3);
    fail_unless(fix_group_get(msg, NULL, 1, 2) == grp2);
@@ -407,9 +407,9 @@ END_TEST
 START_TEST(NestedGroupsTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create(&attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
    fail_unless(parser != NULL);
-   fail_unless(parser->err_code == 0);
+   fail_unless(parser->error.code == 0);
 
    FIXMsg* msg = new_fake_message(parser);
 

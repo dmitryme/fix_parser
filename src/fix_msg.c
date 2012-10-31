@@ -12,6 +12,7 @@
 #include "fix_types.h"
 #include "fix_page.h"
 #include "fix_utils.h"
+#include "fix_error.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -27,10 +28,10 @@ FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
    {
       return NULL;
    }
-   fix_parser_reset_error(parser);
+   fix_error_reset(&parser->error);
    if (!msgType)
    {
-      fix_parser_set_error(parser, FIX_ERROR_INVALID_ARGUMENT, "MsgType parameter is NULL");
+      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "MsgType parameter is NULL");
       return NULL;
    }
    FIXMsgDescr* msg_descr = fix_protocol_get_msg_descr(parser, msgType);
@@ -124,7 +125,7 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
    {
       return NULL;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    if (grp)
    {
       return fix_field_get(msg, grp, tag);
@@ -142,7 +143,7 @@ int32_t fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    return fix_field_del(msg, grp, tag);
 }
 
@@ -153,17 +154,17 @@ FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
    {
       return NULL;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXFieldDescr* fdescr = NULL;
 
-   fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return NULL;
    }
    if (fdescr->category != FIXFieldCategory_Group)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field '%d' is not a group", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field '%d' is not a group", tag);
       return NULL;
    }
 
@@ -180,15 +181,15 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t g
    {
       return NULL;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return NULL;
    }
    if (fdescr->category != FIXFieldCategory_Group)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' is not a group tag", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' is not a group tag", tag);
       return NULL;
    }
    return fix_group_get(msg, grp, tag, grpIdx);
@@ -201,15 +202,15 @@ int32_t fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grp
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
    }
    if (fdescr->category != FIXFieldCategory_Group)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' is not a group tag", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' is not a group tag", tag);
       return FIX_FAILED;
    }
    return fix_group_del(msg, grp, tag, grpIdx);
@@ -222,16 +223,16 @@ int32_t fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const*
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tag) :
-      fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
    }
    if (!IS_STRING_TYPE(fdescr->type->valueType))
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tag, val);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tag, val);
       return FIX_FAILED;
    }
    FIXField* field = fix_msg_set_field(msg, grp, fdescr, (unsigned char*)val, strlen(val));
@@ -245,16 +246,16 @@ int32_t fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int32_t val)
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tag) :
-      fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
    }
    if (!IS_INT_TYPE(fdescr->type->valueType))
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%d'", tag, val);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%d'", tag, val);
       return FIX_FAILED;
    }
    char buff[64] = {};
@@ -270,16 +271,16 @@ int32_t fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int64_t val)
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tag) :
-      fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
    }
    if (!IS_INT_TYPE(fdescr->type->valueType))
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%ld'", tag, val);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%ld'", tag, val);
       return FIX_FAILED;
    }
    char buff[64] = {};
@@ -295,16 +296,16 @@ int32_t fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char val)
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tag) :
-      fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
    }
    if (!IS_CHAR_TYPE(fdescr->type->valueType))
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%c'", tag, val);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%c'", tag, val);
       return FIX_FAILED;
    }
    FIXField* field = fix_msg_set_field(msg, grp, fdescr, (unsigned char*)&val, 1);
@@ -318,16 +319,16 @@ int32_t fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tag, double val)
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
-   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(msg->parser, grp->parent_fdescr, tag) :
-      fix_protocol_get_field_descr(msg->parser, msg->descr, tag);
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
    }
    if (!IS_FLOAT_TYPE(fdescr->type->valueType))
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%f'", tag, val);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatrible with value '%f'", tag, val);
       return FIX_FAILED;
    }
    char buff[64] = {};
@@ -343,21 +344,21 @@ int32_t fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int32_t* val
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
       return FIX_FAILED;
    }
    if (field->size > sizeof(int32_t))
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", field->size);
+      fix_error_set(&msg->parser->error, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", field->size);
       return FIX_FAILED;
    }
    return fix_utils_atoi64(field->data, field->size, 0, (int64_t*)val) > 0 ? FIX_SUCCESS : FIX_FAILED;
@@ -370,16 +371,16 @@ int32_t fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int64_t* val
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
    return fix_utils_atoi64(field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
@@ -392,16 +393,16 @@ int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tag, double* val
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
    return fix_utils_atod(field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
@@ -414,16 +415,16 @@ int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val)
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
       return FIX_FAILED;
    }
    *val = *(char*)(field->data);
@@ -437,16 +438,16 @@ int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val, 
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
-      fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
    strncpy(val, (char const*)field->data, len);
@@ -465,7 +466,7 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
    {
       return FIX_FAILED;
    }
-   fix_parser_reset_error(msg->parser);
+   fix_error_reset(&msg->parser->error);
    FIXMsgDescr* descr = msg->descr;
    uint32_t crc = 0;
    int32_t buffLenBefore = buffLen;
@@ -485,7 +486,7 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
       }
       else if ((msg->parser->flags & PARSER_FLAG_CHECK_REQUIRED) && !field && (fdescr->flags & FIELD_FLAG_REQUIRED))
       {
-         fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Tag '%d' is required", fdescr->type->tag);
+         fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Tag '%d' is required", fdescr->type->tag);
          return FIX_FAILED;
       }
       else if (field && field->descr->category == FIXFieldCategory_Group)
@@ -566,7 +567,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char deli
 {
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    int32_t res = fix_utils_i64toa(tag, *buff, *buffLen, 0);
@@ -574,7 +575,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char deli
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = '=';
@@ -582,7 +583,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char deli
    *buffLen -= 1;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    res = fix_utils_i64toa(val, *buff, (width == 0) ? *buffLen : width, padSym);
@@ -590,7 +591,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char deli
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = delimiter;
@@ -604,7 +605,7 @@ int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter,
 {
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    int32_t res = fix_utils_i64toa(field->descr->type->tag, *buff, *buffLen, 0);
@@ -612,7 +613,7 @@ int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter,
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = '=';
@@ -620,7 +621,7 @@ int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter,
    *buffLen -= 1;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    uint32_t const len = (*buffLen > field->size) ? field->size : *buffLen;
@@ -629,7 +630,7 @@ int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter,
    *buffLen -= len;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_parser_set_error(parser, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = delimiter;
@@ -651,12 +652,12 @@ int32_t fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr
          FIXField* child_field = fix_field_get(msg, group, child_fdescr->type->tag);
          if ((msg->parser->flags & PARSER_FLAG_CHECK_REQUIRED) && !child_field && (child_fdescr->flags & FIELD_FLAG_REQUIRED))
          {
-            fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' is required", child_fdescr->type->tag);
+            fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' is required", child_fdescr->type->tag);
             return FIX_FAILED;
          }
          else if (!child_field && i == 0)
          {
-            fix_parser_set_error(msg->parser, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' must be first field in group", child_fdescr->type->tag);
+            fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' must be first field in group", child_fdescr->type->tag);
             return FIX_FAILED;
          }
          else if (child_field && child_field->descr->category == FIXFieldCategory_Group)

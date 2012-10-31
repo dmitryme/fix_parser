@@ -5,6 +5,7 @@
 
 #include "fix_parser.h"
 #include "fix_msg.h"
+#include "fix_error.h"
 
 #include <stdio.h>
 #include <time.h>
@@ -24,7 +25,7 @@ void create_msg(FIXParser* parser)
       FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_error_text(parser));
+         printf("ERROR: %s\n", get_fix_parser_error_text(parser));
          return;
       }
 
@@ -73,7 +74,7 @@ void msg_to_fix(FIXParser* parser)
       FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_error_text(parser));
+         printf("ERROR: %s\n", get_fix_parser_error_text(parser));
          return;
       }
 
@@ -149,10 +150,8 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   FIXParser* parser = fix_parser_create(NULL, PARSER_FLAG_CHECK_ALL);
-
-   int res = fix_protocol_init(parser, argv[1]);
-   if (res == FIX_FAILED)
+   FIXParser* parser = fix_parser_create(argv[1], NULL, PARSER_FLAG_CHECK_ALL);
+   if (!parser)
    {
       printf("ERROR: %s\n", get_fix_error_text(parser));
       return 1;
