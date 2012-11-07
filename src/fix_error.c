@@ -10,7 +10,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-FIXError error;
+static FIXError error;
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 int32_t get_fix_parser_error_code(FIXParser* parser)
