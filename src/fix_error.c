@@ -86,4 +86,3 @@ void fix_static_error_reset()
 {
    fix_error_reset(&error);
 }
-
