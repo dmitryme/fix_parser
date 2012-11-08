@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-FIXField* fix_field_free(FIXMsg* msg, FIXField* field);
-void fix_group_free(FIXMsg* msg, FIXGroup* group);
+static FIXField* fix_field_free(FIXMsg* msg, FIXField* field);
+static void fix_group_free(FIXMsg* msg, FIXGroup* group);
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
@@ -226,7 +226,7 @@ int32_t fix_group_del(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grpIdx)
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATES                                                                                                               */
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_field_free(FIXMsg* msg, FIXField* field)
+static FIXField* fix_field_free(FIXMsg* msg, FIXField* field)
 {
    if (field->descr->category == FIXFieldCategory_Group)
    {
@@ -241,7 +241,7 @@ FIXField* fix_field_free(FIXMsg* msg, FIXField* field)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_group_free(FIXMsg* msg, FIXGroup* group)
+static void fix_group_free(FIXMsg* msg, FIXGroup* group)
 {
    for(int32_t i = 0; i < GROUP_SIZE; ++i)
    {
