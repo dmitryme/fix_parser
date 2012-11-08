@@ -19,10 +19,13 @@
 
 #define CRC_FIELD_LEN 7
 
+static int validate_attrs(FIXParserAttrs* attrs);
+static int check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter);
+static int32_t parse_group(FIXMsg* msg, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop);
+
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PUBLIC                                                                                                                 */
 /*------------------------------------------------------------------------------------------------------------------------*/
-
 FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags)
 {
    fix_static_error_reset();
@@ -87,41 +90,6 @@ void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-/* PRIVATE                                                                                                                */
-/*------------------------------------------------------------------------------------------------------------------------*/
-
-int validate_attrs(FIXParserAttrs* attrs)
-{
-   if (!attrs->pageSize)
-   {
-      attrs->pageSize = 4096;
-   }
-   if (!attrs->numPages)
-   {
-      attrs->numPages = 1000;
-   }
-   if (!attrs->numGroups)
-   {
-      attrs->numGroups = 1000;
-   }
-   if (attrs->maxPageSize > 0 && attrs->maxPageSize < attrs->pageSize)
-   {
-      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
-      return 0;
-   }
-   if (attrs->maxPages > 0 && attrs->maxPages < attrs->numPages)
-   {
-      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
-      return 0;
-   }
-   if (attrs->maxGroups > 0 && attrs->maxGroups < attrs->numGroups)
-   {
-      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
-      return 0;
-   }
-   return 1;
-}
-
 FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize)
 {
    if (parser->attrs.maxPages > 0 && parser->attrs.maxPages == parser->used_pages)
@@ -200,63 +168,6 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group)
    parser->group = group;
    --parser->used_groups;
    return next;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
-{
-   int64_t num = 0;
-   int32_t res = fix_utils_atoi64(data, len, '=', &num);
-   if (res == FIX_FAILED)
-   {
-      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
-      return FIX_FAILED;
-   }
-   len -= res;
-   *dend = *dbegin = data + res + 1;
-   for(;len > 0; --len)
-   {
-      if (**dend == delimiter)
-      {
-         break;
-      }
-      else
-      {
-         ++(*dend);
-      }
-   }
-   if (!len)
-   {
-      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
-      return FIX_FAILED;
-   }
-   return num;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter)
-{
-   if (IS_INT_TYPE(fdescr->type->valueType))
-   {
-      int64_t res = 0;
-      return fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &res);
-   }
-   else if (IS_FLOAT_TYPE(fdescr->type->valueType))
-   {
-      double res = 0.0;
-      return fix_utils_atod(dbegin, dend - dbegin, delimiter, &res);
-   }
-   else if (IS_CHAR_TYPE(fdescr->type->valueType))
-   {
-      return (dend - dbegin == 1) ? FIX_SUCCESS : FIX_FAILED;
-   }
-   return FIX_SUCCESS;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int32_t parse_group(FIXMsg* msg, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop)
-{
-   return FIX_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -419,4 +330,96 @@ FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimi
       }
    }
    return msg;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+/* PRIVATE                                                                                                                */
+/*------------------------------------------------------------------------------------------------------------------------*/
+static int validate_attrs(FIXParserAttrs* attrs)
+{
+   if (!attrs->pageSize)
+   {
+      attrs->pageSize = 4096;
+   }
+   if (!attrs->numPages)
+   {
+      attrs->numPages = 1000;
+   }
+   if (!attrs->numGroups)
+   {
+      attrs->numGroups = 1000;
+   }
+   if (attrs->maxPageSize > 0 && attrs->maxPageSize < attrs->pageSize)
+   {
+      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
+      return 0;
+   }
+   if (attrs->maxPages > 0 && attrs->maxPages < attrs->numPages)
+   {
+      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
+      return 0;
+   }
+   if (attrs->maxGroups > 0 && attrs->maxGroups < attrs->numGroups)
+   {
+      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
+      return 0;
+   }
+   return 1;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+static int check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter)
+{
+   if (IS_INT_TYPE(fdescr->type->valueType))
+   {
+      int64_t res = 0;
+      return fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &res);
+   }
+   else if (IS_FLOAT_TYPE(fdescr->type->valueType))
+   {
+      double res = 0.0;
+      return fix_utils_atod(dbegin, dend - dbegin, delimiter, &res);
+   }
+   else if (IS_CHAR_TYPE(fdescr->type->valueType))
+   {
+      return (dend - dbegin == 1) ? FIX_SUCCESS : FIX_FAILED;
+   }
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
+{
+   int64_t num = 0;
+   int32_t res = fix_utils_atoi64(data, len, '=', &num);
+   if (res == FIX_FAILED)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
+      return FIX_FAILED;
+   }
+   len -= res;
+   *dend = *dbegin = data + res + 1;
+   for(;len > 0; --len)
+   {
+      if (**dend == delimiter)
+      {
+         break;
+      }
+      else
+      {
+         ++(*dend);
+      }
+   }
+   if (!len)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
+      return FIX_FAILED;
+   }
+   return num;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+static int32_t parse_group(FIXMsg* msg, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop)
+{
+   return FIX_SUCCESS;
 }
