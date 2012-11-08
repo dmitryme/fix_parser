@@ -10,6 +10,7 @@
 
 #define DOUBLE_MAX_DIGITS 15
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 uint32_t fix_utils_hash_string(char const* s)
 {
     uint32_t hash = 0;
@@ -28,6 +29,7 @@ uint32_t fix_utils_hash_string(char const* s)
     return hash;
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_numdigits(int64_t val)
 {
    int32_t cnt = 0;
@@ -40,6 +42,7 @@ int32_t fix_utils_numdigits(int64_t val)
    return cnt;
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int64_t fix_utils_lpow10(int32_t n)
 {
    static int64_t arr[19] =
@@ -67,6 +70,7 @@ int64_t fix_utils_lpow10(int32_t n)
    return arr[n];
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_i64toa(int64_t val, char* buff, uint32_t buffLen, char padSym)
 {
    int32_t i = 0;
@@ -91,6 +95,7 @@ int32_t fix_utils_i64toa(int64_t val, char* buff, uint32_t buffLen, char padSym)
    return i;
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
 {
    int32_t i = 0;
@@ -127,6 +132,7 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
    return i;
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val)
 {
    *val = 0;
@@ -153,6 +159,7 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int6
    return i;
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val)
 {
    *val = 0.0;
