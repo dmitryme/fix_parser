@@ -20,7 +20,7 @@
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATES                                                                                                              */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void xmlErrorHandler(void* ctx, char const* msg, ...)
+static void xmlErrorHandler(void* ctx, char const* msg, ...)
 {
    va_list ap;
    va_start(ap, msg);
@@ -29,14 +29,14 @@ void xmlErrorHandler(void* ctx, char const* msg, ...)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t initLibXml(FIXError* error)
+static int32_t initLibXml(FIXError* error)
 {
    xmlSetGenericErrorFunc(error, xmlErrorHandler);
    return 0;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t xml_validate(FIXError* error, xmlDoc* doc)
+static int32_t xml_validate(FIXError* error, xmlDoc* doc)
 {
    xmlSchemaParserCtxtPtr pctx = xmlSchemaNewMemParserCtxt(fix_xsd, strlen(fix_xsd));
    xmlSchemaPtr schema = xmlSchemaParse(pctx);
@@ -57,7 +57,7 @@ int32_t xml_validate(FIXError* error, xmlDoc* doc)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-char const* get_attr(xmlNode const* node, char const* attrName, char const* defVal)
+static char const* get_attr(xmlNode const* node, char const* attrName, char const* defVal)
 {
    if (!node)
    {
@@ -76,7 +76,7 @@ char const* get_attr(xmlNode const* node, char const* attrName, char const* defV
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-xmlNode* get_first(xmlNode const* node, char const* name)
+static xmlNode* get_first(xmlNode const* node, char const* name)
 {
    xmlNode* child = node->children;
    while(child)
@@ -91,7 +91,7 @@ xmlNode* get_first(xmlNode const* node, char const* name)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void free_field_descr(FIXFieldDescr* fd)
+static void free_field_descr(FIXFieldDescr* fd)
 {
    for(uint32_t i = 0; i < fd->group_count; ++i)
    {
@@ -102,14 +102,14 @@ void free_field_descr(FIXFieldDescr* fd)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void free_field_type(FIXFieldType* ft)
+static void free_field_type(FIXFieldType* ft)
 {
    free(ft->name);
    free(ft);
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void free_message(FIXMsgDescr* msg)
+static void free_message(FIXMsgDescr* msg)
 {
    free(msg->name);
    free(msg->type);
@@ -123,38 +123,7 @@ void free_message(FIXMsgDescr* msg)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void fix_protocol_descr_free(FIXProtocolDescr* prot)
-{
-   if (!prot)
-   {
-      return;
-   }
-   for(int32_t i = 0; i < FIELD_TYPE_CNT; ++i)
-   {
-      FIXFieldType* ft = prot->field_types[i];
-      while(ft)
-      {
-         FIXFieldType* next_ft = ft->next;
-         free_field_type(ft);
-         ft = next_ft;
-      }
-   }
-   for(int32_t i = 0; i < MSG_CNT; ++i)
-   {
-      FIXMsgDescr* msg = prot->messages[i];
-      while(msg)
-      {
-         FIXMsgDescr* next_msg = msg->next;
-         free_message(msg);
-         msg = next_msg;
-      }
-   }
-   free(prot->version);
-   free(prot->transportVersion);
-}
-
-/*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root)
+static int32_t load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root)
 {
    xmlNode const* field = get_first(get_first(root, "fields"), "field");
    while(field)
@@ -181,7 +150,7 @@ int32_t load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t load_fields(
+static int32_t load_fields(
       FIXError* error, FIXFieldDescr** fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* root,
       FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
 {
@@ -257,7 +226,7 @@ int32_t load_fields(
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** index)
+static void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** index)
 {
    for(uint32_t i = 0; i < field_count; ++i)
    {
@@ -273,7 +242,7 @@ void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDescr** in
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNode const* root,
+static FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNode const* root,
       FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
 {
    FIXMsgDescr* msg = (FIXMsgDescr*)calloc(1, sizeof(FIXMsgDescr));
@@ -289,7 +258,7 @@ FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNode cons
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root)
+static int load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root)
 {
    xmlNode* msg_node = get_first(get_first(root, "messages"), "message");
    while(msg_node)
@@ -311,7 +280,7 @@ int load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldType* (*ftype
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, xmlNode* parentRoot, char const* parentFile)
+static int load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, xmlNode* parentRoot, char const* parentFile)
 {
    char* transpFile = strdup(get_attr(parentRoot, "transport", parentFile));
    if(!strcmp(transpFile, parentFile)) // transport is the same as protocol
@@ -418,6 +387,38 @@ FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file)
    xmlFreeDoc(doc);
    return prot;
 }
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
+void fix_protocol_descr_free(FIXProtocolDescr* prot)
+{
+   if (!prot)
+   {
+      return;
+   }
+   for(int32_t i = 0; i < FIELD_TYPE_CNT; ++i)
+   {
+      FIXFieldType* ft = prot->field_types[i];
+      while(ft)
+      {
+         FIXFieldType* next_ft = ft->next;
+         free_field_type(ft);
+         ft = next_ft;
+      }
+   }
+   for(int32_t i = 0; i < MSG_CNT; ++i)
+   {
+      FIXMsgDescr* msg = prot->messages[i];
+      while(msg)
+      {
+         FIXMsgDescr* next_msg = msg->next;
+         free_message(msg);
+         msg = next_msg;
+      }
+   }
+   free(prot->version);
+   free(prot->transportVersion);
+}
+
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXFieldType* fix_protocol_get_field_type(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name)
