@@ -7,6 +7,7 @@
 
 #include "string.h"
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type)
 {
    if (!strcmp(type, "Int"))           { return FIXFieldValueType_Int; }
