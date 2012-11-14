@@ -17,18 +17,18 @@ START_TEST(FIXProtocolTest1)
    fail_unless(fix_protocol_get_msg_descr(p, "8") != NULL);
    fail_unless(fix_protocol_get_msg_descr(p, "0") != NULL);
    fail_unless(fix_protocol_get_msg_descr(p, "1") != NULL);
-   fail_unless(fix_protocol_get_msg_descr(p, "A") == NULL);
-   fail_unless(fix_protocol_get_msg_descr(p, "D") == NULL);
-   fail_unless(fix_protocol_get_msg_descr(p, "AE") == NULL);
+   fail_unless(fix_protocol_get_msg_descr(p, "A") != NULL);
+   fail_unless(fix_protocol_get_msg_descr(p, "D") != NULL);
+   fail_unless(fix_protocol_get_msg_descr(p, "AE") != NULL);
 
-   fail_unless(!strcmp("FIX1", p->protocol->version));
-   fail_unless(!strcmp("FIXT1", p->protocol->transportVersion));
+   fail_unless(!strcmp("FIX.4.4", p->protocol->version));
+   fail_unless(!strcmp("FIX.4.4", p->protocol->transportVersion));
 
    FIXMsgDescr* msg = fix_protocol_get_msg_descr(p, "8");
    fail_unless(msg != NULL);
    fail_unless(!strcmp(msg->type, "8"));
    fail_unless(!strcmp(msg->name, "ExecutionReport"));
-   fail_unless(msg->field_count == 11);
+   fail_unless(msg->field_count == 247);
 
    FIXFieldDescr* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
    fail_unless(field != NULL);
