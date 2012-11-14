@@ -432,7 +432,7 @@ int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val, uint32_t len)
+int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const** val, uint32_t* len)
 {
    if (!msg)
    {
@@ -450,13 +450,9 @@ int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val, 
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
-   strncpy(val, (char const*)field->data, len);
-   int32_t copied = field->size > len ? len : field->size;
-   if (copied < len)
-   {
-      val[copied] = 0;
-   }
-   return copied;
+   *val = (char const*)field->data;
+   *len = field->size;
+   return FIX_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
