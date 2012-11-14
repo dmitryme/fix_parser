@@ -22,13 +22,14 @@ START_TEST(CreateMsgTest)
    fail_unless(msg->used_groups == group);
    fail_unless(msg->body_len == 5);
 
-   char buff[10];
-   fail_unless(fix_msg_get_string(msg, NULL, 8, buff, sizeof(buff)) == 7);
-   fail_unless(!strcmp(buff, "FIX.4.4"));
+   char const* buff = NULL;
+   uint32_t len = 0;
+   fail_unless(fix_msg_get_string(msg, NULL, 8, &buff, &len) == FIX_SUCCESS);
+   fail_unless(!strncmp(buff, "FIX.4.4", len));
 
-   char msgType[10];
-   fail_unless(fix_msg_get_string(msg, NULL, 35, msgType, sizeof(msgType)) == 1);
-   fail_unless(!strcmp(msgType, "8"));
+   char const* msgType = NULL;
+   fail_unless(fix_msg_get_string(msg, NULL, 35, &msgType, &len) == FIX_SUCCESS);
+   fail_unless(!strncmp(msgType, "8", len));
 
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19);
@@ -108,9 +109,9 @@ START_TEST(CreateMsgTest)
    fail_unless(fix_msg_get_double(msg, NULL, FIXFieldTag_Price, &price) == FIX_SUCCESS);
    fail_unless(price == 135155.0);
 
-   char text[10] = {};
-   fail_unless(fix_msg_get_string(msg, NULL, FIXFieldTag_Text, text, sizeof(text)) == 9);
-   fail_unless(!strncmp(text, "COMMENT12", 9));
+   char const* text = NULL;
+   fail_unless(fix_msg_get_string(msg, NULL, FIXFieldTag_Text, &text, &len) == FIX_SUCCESS);
+   fail_unless(!strncmp(text, "COMMENT12", len));
 
    fail_unless(fix_msg_del_field(msg, NULL, FIXFieldTag_Symbol) == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19 + 14 + 6 + 18 + 25 + 5 + 21 + 15 + 6 + 5 + 6 + 5 + 6 + 10 + 5 + 5 + 5 + 7 + 5 + 4 + 5 + 13);
