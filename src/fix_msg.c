@@ -19,9 +19,63 @@
 #include <stdio.h>
 #include <string.h>
 
+static int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen);
+static int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tagNum, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen);
+static int32_t fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen);
+
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
+void* fix_msg_alloc(FIXMsg* msg, uint32_t size)
+{
+   FIXPage* curr_page = msg->curr_page;
+   if (sizeof(uint32_t) + curr_page->size - curr_page->offset >= size)
+   {
+      uint32_t old_offset = curr_page->offset;
+      *(uint32_t*)(&curr_page->data + curr_page->offset) = size;
+      curr_page->offset += (size + sizeof(uint32_t));
+      return &curr_page->data + old_offset + sizeof(uint32_t);
+   }
+   else
+   {
+      FIXPage* new_page = fix_parser_alloc_page(msg->parser, size);
+      if (!new_page)
+      {
+         return NULL;
+      }
+      curr_page->next = new_page;
+      msg->curr_page = new_page;
+      return fix_msg_alloc(msg, size);
+   }
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size)
+{
+   if (*(uint32_t*)(ptr - sizeof(uint32_t)) >= size)
+   {
+      return ptr;
+   }
+   else
+   {
+      return fix_msg_alloc(msg, size);
+   }
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* fdescr, unsigned char const* data, uint32_t len)
+{
+   if (grp)
+   {
+      return fix_field_set(msg, grp, fdescr, data, len);
+   }
+   else
+   {
+      return fix_field_set(msg, msg->fields, fdescr, data, len);
+   }
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
 {
    if (!parser)
@@ -456,9 +510,9 @@ int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const*
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen)
+int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
 {
-   if(!msg)
+   if(!msg || !msg || !reqBuffLen)
    {
       return FIX_FAILED;
    }
@@ -475,6 +529,11 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
       if (fdescr->type->tag == FIXFieldTag_BodyLength)
       {
          res = int32_to_fix_msg(msg->parser, fdescr->type->tag, msg->body_len, delimiter, 0, 0, &buff, &buffLen);
+         *reqBuffLen = buffLenBefore - buffLen + msg->body_len + 7;
+         if (*reqBuffLen > buffLenBefore)
+         {
+            return FIX_FAILED;
+         }
       }
       else if(fdescr->type->tag == FIXFieldTag_CheckSum)
       {
@@ -502,64 +561,13 @@ int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
          crc += *prev;
       }
    }
-   return buffLenBefore - buffLen;
+   return FIX_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATES                                                                                                               */
 /*------------------------------------------------------------------------------------------------------------------------*/
-
-void* fix_msg_alloc(FIXMsg* msg, uint32_t size)
-{
-   FIXPage* curr_page = msg->curr_page;
-   if (sizeof(uint32_t) + curr_page->size - curr_page->offset >= size)
-   {
-      uint32_t old_offset = curr_page->offset;
-      *(uint32_t*)(&curr_page->data + curr_page->offset) = size;
-      curr_page->offset += (size + sizeof(uint32_t));
-      return &curr_page->data + old_offset + sizeof(uint32_t);
-   }
-   else
-   {
-      FIXPage* new_page = fix_parser_alloc_page(msg->parser, size);
-      if (!new_page)
-      {
-         return NULL;
-      }
-      curr_page->next = new_page;
-      msg->curr_page = new_page;
-      return fix_msg_alloc(msg, size);
-   }
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size)
-{
-   if (*(uint32_t*)(ptr - sizeof(uint32_t)) >= size)
-   {
-      return ptr;
-   }
-   else
-   {
-      return fix_msg_alloc(msg, size);
-   }
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* fdescr, unsigned char const* data, uint32_t len)
-{
-   if (grp)
-   {
-      return fix_field_set(msg, grp, fdescr, data, len);
-   }
-   else
-   {
-      return fix_field_set(msg, msg->fields, fdescr, data, len);
-   }
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
+static int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -597,7 +605,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char deli
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen)
+static int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -636,7 +644,7 @@ int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter,
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen)
+static int32_t fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen)
 {
    int32_t res = int32_to_fix_msg(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
    for(uint32_t i = 0; i < field->size && res != FIX_FAILED; ++i)
