@@ -29,6 +29,6 @@ int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, double* 
 int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val);
 int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const** val, uint32_t* len);
 
-int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen);
+int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen);
 
 #endif /* FIX_PARSER_FIX_MSG_H */
