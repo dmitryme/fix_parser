@@ -103,7 +103,8 @@ void msg_to_fix(FIXParser* parser)
       assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12"));
 
       char buff[1024];
-      fix_msg_to_string(msg, '|', buff, sizeof(buff));
+      uint32_t reqBuffLen = 0;
+      fix_msg_to_string(msg, '|', buff, sizeof(buff), &reqBuffLen);
 
       fix_msg_free(msg);
    }
