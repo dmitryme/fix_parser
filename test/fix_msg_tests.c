@@ -142,8 +142,8 @@ START_TEST(CreateMsg2Test)
    fail_unless(msg->body_len == 5);
 
    char buff[1024];
-   int32_t res = fix_msg_to_string(msg, '|', buff, sizeof(buff));
-   fail_unless(res == -1);
+   uint32_t reqBuffLen = 0;
+   fail_unless(FIX_FAILED == fix_msg_to_string(msg, '|', buff, sizeof(buff), &reqBuffLen));
 
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19);
@@ -223,9 +223,10 @@ START_TEST(ToStringTest)
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12") == FIX_SUCCESS);
 
    char buff[1024];
-   int32_t res = fix_msg_to_string(msg, 1, buff,sizeof(buff));
-   fail_unless(res == 251);
-   buff[res] = 0;
+   uint32_t reqBuffLen = 0;
+   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff,sizeof(buff), &reqBuffLen));
+   fail_unless(reqBuffLen == 251);
+   buff[reqBuffLen] = 0;
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=228\00135=8\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00157=srv-ivanov_ii1\00152=20120716-06:00:16.230\001"
             "37=1\00111=CL_ORD_ID_1234567\00117=FE_1_9494_1\001150=0\00139=1\0011=ZUM\00155=RTS-12.12\00154=1\00138=25\00144=135155\00159=0\00132=0\00131=0\001"
             "151=25\00114=0\0016=0\00121=1\00158=COMMENT12\00110=240\001"));
@@ -247,8 +248,8 @@ START_TEST(ToStringGroupTest)
    fail_unless(msg->body_len == 5);
 
    char buff[1024];
-   int32_t res = fix_msg_to_string(msg, '|', buff, sizeof(buff));
-   fail_unless(res == -1);
+   uint32_t reqBuffLen = 0;
+   fail_unless(FIX_FAILED == fix_msg_to_string(msg, '|', buff, sizeof(buff), &reqBuffLen));
 
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
@@ -271,24 +272,24 @@ START_TEST(ToStringGroupTest)
    fail_unless(fix_msg_set_char(msg, grp2, FIXFieldTag_PartyIDSource, 'B') == FIX_SUCCESS);
    fail_unless(fix_msg_set_int32(msg, grp2, FIXFieldTag_PartyRole, 2) == FIX_SUCCESS);
 
-   res = fix_msg_to_string(msg, 1, buff, sizeof(buff));
-   buff[res] = 0;
-   fail_unless(res == 213);
+   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff, sizeof(buff), &reqBuffLen));
+   buff[reqBuffLen] = 0;
+   fail_unless(reqBuffLen == 213);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=190\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
             "11=CL_ORD_ID_1234567\001453=2\001448=ID1\001447=A\001452=1\001448=ID2\001447=B\001452=2\00155=RTS-12.12\001"
             "54=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=088\001"));
 
    fail_unless(fix_msg_del_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0) == FIX_SUCCESS);
-   res = fix_msg_to_string(msg, 1, buff, sizeof(buff));
-   buff[res] = 0;
-   fail_unless(res == 193);
+   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff, sizeof(buff), &reqBuffLen));
+   buff[reqBuffLen] = 0;
+   fail_unless(reqBuffLen == 193);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=170\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
             "11=CL_ORD_ID_1234567\001453=1\001448=ID2\001447=B\001452=2\00155=RTS-12.12\00154=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=145\001"));
 
    fail_unless(fix_msg_del_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0) == FIX_SUCCESS);
-   res = fix_msg_to_string(msg, 1, buff, sizeof(buff));
-   buff[res] = 0;
-   fail_unless(res == 167);
+   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff, sizeof(buff), &reqBuffLen));
+   buff[reqBuffLen] = 0;
+   fail_unless(reqBuffLen == 167);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=144\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
             "11=CL_ORD_ID_1234567\00155=RTS-12.12\00154=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=192\001"));
 }
