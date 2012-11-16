@@ -143,7 +143,7 @@ START_TEST(CreateMsg2Test)
 
    char buff[1024];
    uint32_t reqBuffLen = 0;
-   fail_unless(FIX_FAILED == fix_msg_to_string(msg, '|', buff, sizeof(buff), &reqBuffLen));
+   fail_unless(FIX_FAILED == fix_msg_to_fix(msg, '|', buff, sizeof(buff), &reqBuffLen));
 
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(msg->body_len == 5 + 19);
@@ -224,7 +224,7 @@ START_TEST(ToStringTest)
 
    char buff[1024];
    uint32_t reqBuffLen = 0;
-   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff,sizeof(buff), &reqBuffLen));
+   fail_unless(FIX_SUCCESS == fix_msg_to_fix(msg, 1, buff,sizeof(buff), &reqBuffLen));
    fail_unless(reqBuffLen == 251);
    buff[reqBuffLen] = 0;
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=228\00135=8\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00157=srv-ivanov_ii1\00152=20120716-06:00:16.230\001"
@@ -249,7 +249,7 @@ START_TEST(ToStringGroupTest)
 
    char buff[1024];
    uint32_t reqBuffLen = 0;
-   fail_unless(FIX_FAILED == fix_msg_to_string(msg, '|', buff, sizeof(buff), &reqBuffLen));
+   fail_unless(FIX_FAILED == fix_msg_to_fix(msg, '|', buff, sizeof(buff), &reqBuffLen));
 
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678") == FIX_SUCCESS);
    fail_unless(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ") == FIX_SUCCESS);
@@ -272,7 +272,7 @@ START_TEST(ToStringGroupTest)
    fail_unless(fix_msg_set_char(msg, grp2, FIXFieldTag_PartyIDSource, 'B') == FIX_SUCCESS);
    fail_unless(fix_msg_set_int32(msg, grp2, FIXFieldTag_PartyRole, 2) == FIX_SUCCESS);
 
-   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff, sizeof(buff), &reqBuffLen));
+   fail_unless(FIX_SUCCESS == fix_msg_to_fix(msg, 1, buff, sizeof(buff), &reqBuffLen));
    buff[reqBuffLen] = 0;
    fail_unless(reqBuffLen == 213);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=190\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
@@ -280,14 +280,14 @@ START_TEST(ToStringGroupTest)
             "54=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=088\001"));
 
    fail_unless(fix_msg_del_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0) == FIX_SUCCESS);
-   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff, sizeof(buff), &reqBuffLen));
+   fail_unless(FIX_SUCCESS == fix_msg_to_fix(msg, 1, buff, sizeof(buff), &reqBuffLen));
    buff[reqBuffLen] = 0;
    fail_unless(reqBuffLen == 193);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=170\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
             "11=CL_ORD_ID_1234567\001453=1\001448=ID2\001447=B\001452=2\00155=RTS-12.12\00154=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=145\001"));
 
    fail_unless(fix_msg_del_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0) == FIX_SUCCESS);
-   fail_unless(FIX_SUCCESS == fix_msg_to_string(msg, 1, buff, sizeof(buff), &reqBuffLen));
+   fail_unless(FIX_SUCCESS == fix_msg_to_fix(msg, 1, buff, sizeof(buff), &reqBuffLen));
    buff[reqBuffLen] = 0;
    fail_unless(reqBuffLen == 167);
    fail_unless(!strcmp(buff, "8=FIX.4.4\0019=144\00135=D\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00152=20120716-06:00:16.230\001"
