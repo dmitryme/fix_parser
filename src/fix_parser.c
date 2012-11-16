@@ -171,7 +171,7 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXMsg* parse_fix(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
+FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    if (!parser || !data)
    {
