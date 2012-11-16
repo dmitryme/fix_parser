@@ -510,7 +510,7 @@ int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const*
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_to_string(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
+int32_t fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
 {
    if(!msg || !msg || !reqBuffLen)
    {
