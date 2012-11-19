@@ -209,9 +209,8 @@ FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
       return NULL;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = NULL;
-
-   fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+                                 fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return NULL;
@@ -236,7 +235,9 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t g
       return NULL;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+                                 fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+
    if (!fdescr)
    {
       return NULL;
@@ -257,7 +258,8 @@ int32_t fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grp
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+                                 fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
