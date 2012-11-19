@@ -118,7 +118,7 @@
    <fields>
       <field number='7' name='BeginSeqNo' type='SeqNum'/>
       <field number='8' name='BeginString' type='String'/>
-      <field number='9' name='BodyLength' type='Lenght'/>
+      <field number='9' name='BodyLength' type='Length'/>
       <field number='10' name='CheckSum' type='String'/>
       <field number='16' name='EndSeqNo' type='SeqNum'/>
       <field number='34' name='MsgSeqNum' type='SeqNum'/>
@@ -234,12 +234,12 @@
       <field number='56' name='TargetCompID' type='String'/>
       <field number='57' name='TargetSubID' type='String'/>
       <field number='58' name='Text' type='String'/>
-      <field number='89' name='Signature' type='DATA'/>
-      <field number='90' name='SecureDataLen' type='Lenght'/>
-      <field number='91' name='SecureData' type='DATA'/>
-      <field number='93' name='SignatureLength' type='Lenght'/>
-      <field number='95' name='RawDataLength' type='Lenght'/>
-      <field number='96' name='RawData' type='DATA'/>
+      <field number='89' name='Signature' type='Data'/>
+      <field number='90' name='SecureDataLen' type='Length'/>
+      <field number='91' name='SecureData' type='Data'/>
+      <field number='93' name='SignatureLength' type='Length'/>
+      <field number='95' name='RawDataLength' type='Length'/>
+      <field number='96' name='RawData' type='Data'/>
       <field number='97' name='PossResend' type='Boolean'/>
       <field number='98' name='EncryptMethod' type='Int'>
          <value description='NONE_OTHER' enum='0'/>
@@ -263,16 +263,16 @@
       <field number='143' name='TargetLocationID' type='String'/>
       <field number='144' name='OnBehalfOfLocationID' type='String'/>
       <field number='145' name='DeliverToLocationID' type='String'/>
-      <field number='212' name='XmlDataLen' type='Lenght'/>
-      <field number='213' name='XmlData' type='DATA'/>
+      <field number='212' name='XmlDataLen' type='Length'/>
+      <field number='213' name='XmlData' type='Data'/>
       <field number='347' name='MessageEncoding' type='String'>
          <value enum='ISO-2022-JP' description='ISO_2022_JP'/>
          <value enum='EUC-JP' description='EUC_JP'/>
          <value enum='SHIFT_JIS' description='SHIFT_JIS'/>
          <value enum='UTF-8' description='UTF_8'/>
       </field>
-      <field number='354' name='EncodedTextLen' type='Lenght'/>
-      <field number='355' name='EncodedText' type='DATA'/>
+      <field number='354' name='EncodedTextLen' type='Length'/>
+      <field number='355' name='EncodedText' type='Data'/>
       <field number='369' name='LastMsgSeqNumProcessed' type='SeqNum'/>
       <field number='371' name='RefTagID' type='Int'/>
       <field number='372' name='RefMsgType' type='String'/>
@@ -297,7 +297,7 @@
          <value description='COMPID_PROBLEM' enum='9'/>
          <value description='OTHER' enum='99'/>
       </field>
-      <field number='383' name='MaxMessageSize' type='Lenght'/>
+      <field number='383' name='MaxMessageSize' type='Length'/>
       <field number='384' name='NoMsgTypes' type='NumInGroup'/>
       <field number='385' name='MsgDirection' type='Char'>
          <value description='RECEIVE' enum='R'/>
