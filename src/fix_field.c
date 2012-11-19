@@ -68,6 +68,22 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
+{
+   uint32_t const idx = tag % GROUP_SIZE;
+   FIXField* it = (grp ? grp : msg->fields)->fields[idx];
+   while(it)
+   {
+      if (it->descr->type->tag == tag)
+      {
+         return it;
+      }
+      it = it->next;
+   }
+   return it;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_field_del(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 {
    uint32_t const idx = tag % GROUP_SIZE;
