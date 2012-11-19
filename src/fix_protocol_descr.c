@@ -130,7 +130,7 @@ static int32_t load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIELD_T
    {
       if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "field"))
       {
-         if (fix_protocol_get_field_type(error, ftypes, (char const*)field->name))
+         if (fix_protocol_get_field_type(error, ftypes, get_attr(field, "name", NULL)))
          {
             fix_error_set(
                   error, FIX_ERROR_FIELD_TYPE_EXISTS, "FIXFieldType '%s' already exists", (char const*)field->name);
@@ -374,12 +374,12 @@ FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file)
       free(prot);
       prot = NULL;
    }
-   if (load_field_types(error, &prot->field_types, root) == FIX_FAILED)
+   else if (load_field_types(error, &prot->field_types, root) == FIX_FAILED)
    {
       free(prot);
       prot = NULL;
    }
-   if (prot && load_messages(error, prot, &prot->field_types, root) == FIX_FAILED)
+   else if (load_messages(error, prot, &prot->field_types, root) == FIX_FAILED)
    {
       free(prot);
       prot = NULL;
