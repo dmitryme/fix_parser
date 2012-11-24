@@ -21,9 +21,6 @@ ExternalProject_Get_Property(googletest BINARY_DIR)
 include_directories(${SOURCE_DIR}/include)
 link_directories(${BINARY_DIR})
 
-include_directories(../include ../src ${LIBXML2_INCLUDE_DIR})
-include_directories(../src)
-
 aux_source_directory(. TEST_SOURCES)
 
 add_executable(${PROJECT_NAME} ${TEST_SOURCES})

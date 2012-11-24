@@ -12,7 +12,7 @@ else(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -O2 -Wall")
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
-include_directories(./include ${LIBXML2_INCLUDE_DIR})
+include_directories(./include ./src ${LIBXML2_INCLUDE_DIR})
 
 aux_source_directory(src LIB_SOURCES)
 
