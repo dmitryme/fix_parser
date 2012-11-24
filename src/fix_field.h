@@ -12,6 +12,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#pragma pack(push, 1)
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -52,5 +54,7 @@ int32_t fix_group_del(FIXMsg* msg, FIXGroup* tbl, uint32_t tag, uint32_t grpIdx)
 #ifdef __cplusplus
 }
 #endif
+
+#pragma pack(pop)
 
 #endif /* FIX_PARSER_FIX_FIELD_H */

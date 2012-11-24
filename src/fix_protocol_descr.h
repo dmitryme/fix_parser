@@ -11,6 +11,8 @@
 
 #include <stdint.h>
 
+#pragma pack(push, 1)
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -70,5 +72,7 @@ FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const
 #ifdef __cplusplus
 }
 #endif
+
+#pragma pack(pop)
 
 #endif /* FIX_PARSER_FIX_PROTOCOL_DESCR_H */

@@ -12,6 +12,8 @@
 
 #include <stdint.h>
 
+#pragma pack(push, 1)
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -41,5 +43,7 @@ void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
 #ifdef __cplusplus
 }
 #endif
+
+#pragma pack(pop)
 
 #endif /* FIX_PARSER_FIX_MSG_PRIV_H */
