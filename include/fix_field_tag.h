@@ -6,6 +6,11 @@
 #ifndef FIX_PARSER_FIX_FIELD_TAG_H
 #define FIX_PARSER_FIX_FIELD_TAG_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 typedef enum FIXFieldTagEnum_
 {
    FIXFieldTag_Account=1,
@@ -1580,5 +1585,9 @@ typedef enum FIXFieldTagEnum_
    FIXFieldTag_RelationshipRiskEncodedSecurityDesc=1619,
    FIXFieldTag_RiskEncodedSecurityDescLen=1620
 } FIXFieldTagEnum;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_FIELD_TAG_H */

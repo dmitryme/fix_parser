@@ -12,6 +12,11 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 struct FIXMsg_
 {
    FIXParser* parser;
@@ -32,5 +37,9 @@ int32_t fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag);
 
 FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
 void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_MSG_PRIV_H */

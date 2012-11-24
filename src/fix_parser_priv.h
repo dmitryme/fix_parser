@@ -14,6 +14,11 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define SOH 0x01
 
 struct FIXParser_
@@ -33,5 +38,9 @@ FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
 FIXGroup* fix_parser_alloc_group(FIXParser* parser);
 FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
 int64_t parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_PARSER_PRIV_H */

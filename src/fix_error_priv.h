@@ -9,6 +9,11 @@
 #include <stdint.h>
 #include <stdarg.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define ERROR_TXT_SIZE 1024
 
 struct FIXError
@@ -25,5 +30,9 @@ FIXError* fix_static_error_get();
 void fix_static_error_set_va(int32_t code, char const* text, va_list ap);
 void fix_static_error_set(int32_t code, char const* text, ...);
 void fix_static_error_reset();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // FIX_PARSER_FIX_ERROR_PRIV_H

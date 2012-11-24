@@ -10,6 +10,11 @@
 
 #include  <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define FIX_FAILED                        -1
 #define FIX_SUCCESS                        0
 #define FIX_ERROR_FIELD_HAS_WRONG_TYPE     1
@@ -105,5 +110,9 @@ typedef struct FIXParserAttrs
 } FIXParserAttrs;
 
 FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_TYPES_H */

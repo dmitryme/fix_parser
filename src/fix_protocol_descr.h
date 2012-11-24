@@ -11,6 +11,11 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define FIELD_TYPE_CNT 1000
 #define FIELD_DESCR_CNT 100
 #define MSG_CNT   100
@@ -61,5 +66,9 @@ FIXFieldType* fix_protocol_get_field_type(FIXError* error, FIXFieldType* (*ftype
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
 FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, uint32_t tag);
 FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, uint32_t tag);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_PROTOCOL_DESCR_H */

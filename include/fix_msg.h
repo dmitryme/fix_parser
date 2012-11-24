@@ -10,6 +10,11 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType);
 void fix_msg_free(FIXMsg* msg);
 
@@ -30,5 +35,9 @@ int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char* val)
 int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tagNum, char const** val, uint32_t* len);
 
 int32_t fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_MSG_H */
