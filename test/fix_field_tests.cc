@@ -249,7 +249,7 @@ TEST(FixFieldTests, GetTagTest)
    ASSERT_EQ(field3->descr->type->tag, 193U);
    ASSERT_EQ(field3->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field3->next, field2);
-   ASSERT_EQ(*(uint64_t*)field2->data, val3);
+   ASSERT_EQ(*(uint64_t*)field3->data, val3);
 
    long val4 = 4000;
    FIXField* field4 = fix_field_set(msg, NULL, new_fdescr(2, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val4, sizeof(val4));
@@ -320,7 +320,7 @@ TEST(FixFieldTests, AddGetDelGroupTest)
    FIXField* field3 = NULL;
    FIXGroup* grp3 = fix_group_add(msg, NULL, new_fdescr(1, FIXFieldCategory_Group, FIXFieldValueType_NumInGroup), &field3);
    ASSERT_TRUE(grp3 != NULL);
-   ASSERT_EQ(*(uint32_t*)field->data, 4U);
+   ASSERT_EQ(field3->size, 4U);
    ASSERT_EQ(msg->used_groups, grp3);
    ASSERT_EQ(msg->used_groups->next, grp2);
    ASSERT_EQ(msg->used_groups->next->next, grp1);
