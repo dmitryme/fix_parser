@@ -15,11 +15,8 @@ extern "C"
 {
 #endif
 
-int32_t get_fix_parser_error_code(FIXParser* parser);
-char const* get_fix_parser_error_text(FIXParser* parser);
-
-int32_t get_fix_error_code();
-char const* get_fix_error_text();
+int32_t fix_error_get_code();
+char const* fix_error_get_text();
 
 #ifdef __cplusplus
 }

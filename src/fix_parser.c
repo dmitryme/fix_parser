@@ -22,7 +22,7 @@
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags)
 {
-   fix_static_error_reset();
+   fix_error_static_reset();
    FIXParserAttrs myattrs = {};
    if (attrs)
    {
@@ -35,7 +35,7 @@ FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, 
    FIXParser* parser = calloc(1, sizeof(FIXParser));
    memcpy(&parser->attrs, &myattrs, sizeof(parser->attrs));
    parser->flags = flags;
-   parser->protocol = fix_protocol_descr_create(fix_static_error_get(), protFile);
+   parser->protocol = fix_protocol_descr_create(fix_error_static_get(), protFile);
    if (!parser->protocol)
    {
       return NULL;

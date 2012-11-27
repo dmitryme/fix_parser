@@ -19,6 +19,8 @@ extern "C"
 FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags);
 void fix_parser_free(FIXParser* parser);
 FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
+int32_t fix_parser_get_error_code(FIXParser* parser);
+char const* fix_parser_get_error_text(FIXParser* parser);
 
 #ifdef __cplusplus
 }

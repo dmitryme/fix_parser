@@ -106,17 +106,17 @@ int fix_parser_validate_attrs(FIXParserAttrs* attrs)
    }
    if (attrs->maxPageSize > 0 && attrs->maxPageSize < attrs->pageSize)
    {
-      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
+      fix_error_static_set(FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
       return 0;
    }
    if (attrs->maxPages > 0 && attrs->maxPages < attrs->numPages)
    {
-      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
+      fix_error_static_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
       return 0;
    }
    if (attrs->maxGroups > 0 && attrs->maxGroups < attrs->numGroups)
    {
-      fix_static_error_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
+      fix_error_static_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
       return 0;
    }
    return 1;

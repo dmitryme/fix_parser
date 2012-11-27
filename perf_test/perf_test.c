@@ -25,7 +25,7 @@ void create_msg(FIXParser* parser)
       FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_parser_error_text(parser));
+         printf("ERROR: %s\n", fix_parser_get_error_text(parser));
          return;
       }
 
@@ -74,7 +74,7 @@ void msg_to_fix(FIXParser* parser)
       FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_parser_error_text(parser));
+         printf("ERROR: %s\n", fix_parser_get_error_text(parser));
          return;
       }
 
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
    FIXParser* parser = fix_parser_create(argv[1], NULL, PARSER_FLAG_CHECK_ALL);
    if (!parser)
    {
-      printf("ERROR: %s\n", get_fix_error_text(parser));
+      printf("ERROR: %s\n", fix_error_get_text(parser));
       return 1;
    }
 

@@ -21,7 +21,7 @@ static void fix_group_free(FIXMsg* msg, FIXGroup* group);
 FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len)
 {
    FIXField* field = fix_field_get(msg, grp, descr->type->tag);
-   if (!field && get_fix_parser_error_code(msg->parser))
+   if (!field && fix_parser_get_error_code(msg->parser))
    {
       return NULL;
    }
