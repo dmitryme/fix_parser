@@ -5,20 +5,22 @@ include(ExternalProject)
 project(fix_parser)
 
 if (WIN32)
-   set(LIBXML2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/deps/libxml2/include) 
+   set(LIBXML2_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/deps/libxml2/include)
    include_directories(${CMAKE_SOURCE_DIR}/deps/iconv/include)
    link_directories(${CMAKE_SOURCE_DIR}/deps/libxml2/lib ${CMAKE_SOURCE_DIR}/deps/iconv/lib)
 else(WIN32)
    find_package(LibXml2 REQUIRED)
+   include_directories(${LIBXML2_INCLUDE_DIR})
+   link_directories(${LIBXML2_LIBRARIES})
 endif(WIN32)
+
+include_directories(./include ./src)
 
 if (WIN32)
    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Wall")
 else(WIN32)
    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -O2 -Wall")
 endif(WIN32)
-
-include_directories(./include ./src ${LIBXML2_INCLUDE_DIR})
 
 aux_source_directory(src LIB_SOURCES)
 
@@ -29,7 +31,7 @@ endif(WIN32)
 add_library(${PROJECT_NAME}_S STATIC ${LIB_SOURCES})
 add_library(${PROJECT_NAME} SHARED ${LIB_SOURCES})
 set_target_properties(${PROJECT_NAME}_S PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} libxml2)
+target_link_libraries(${PROJECT_NAME} xml2)
 
 if ("${WITH_TESTS}" STREQUAL "YES")
    add_subdirectory(perf_test)
