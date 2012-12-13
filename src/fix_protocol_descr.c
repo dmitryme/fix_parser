@@ -155,6 +155,7 @@ static int32_t load_fields(
       FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
 {
    xmlNode const* field = msg_node->children;
+   FIXFieldDescr* prevFld = NULL;
    while(field)
    {
       if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "field"))
@@ -175,6 +176,16 @@ static int32_t load_fields(
          {
             fld->flags |= FIELD_FLAG_REQUIRED;
          }
+         if (fld->type->valueType == FIXFieldValueType_Data)
+         {
+            if (prevFld->type->valueType != FIXFieldValueType_Length)
+            {
+               fix_error_set(error, FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
+               return FIX_FAILED;
+            }
+            fld->dataLenField = prevFld;
+         }
+         prevFld = fld;
       }
       else if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "component"))
       {
