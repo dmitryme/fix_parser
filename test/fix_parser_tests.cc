@@ -8,209 +8,160 @@
 
 #include <gtest/gtest.h>
 
-TEST(FixParserTests, CreateParserTest)
+TEST(FixParserTests2, ParseFieldTest)
 {
-   FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
-   ASSERT_TRUE(parser != NULL);
-   ASSERT_EQ(parser->error.code, 0);
-   ASSERT_EQ(parser->flags, PARSER_FLAG_CHECK_ALL);
-   ASSERT_TRUE(parser->page != NULL);
-   ASSERT_TRUE(parser->page->next != NULL);
-   ASSERT_TRUE(parser->page->next->next == NULL);
-   ASSERT_EQ(parser->used_pages, 0U);
-   ASSERT_EQ(parser->attrs.maxPages, 5U);
-   ASSERT_EQ(parser->attrs.pageSize, 512U);
-   ASSERT_TRUE(parser->group != NULL);
-   ASSERT_EQ(parser->used_groups, 0U);
-   ASSERT_EQ(parser->attrs.maxGroups, 5U);
-
-   fix_parser_free(parser);
-}
-
-TEST(FixParserTests, SetErrorParserTest)
-{
-   FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
-   ASSERT_TRUE(parser != NULL);
-
-   fix_error_set(&parser->error, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
-
-   ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_PAGES);
-   ASSERT_STREQ(parser->error.text, "No more pages available");
-
-   fix_error_reset(&parser->error);
-
-   ASSERT_EQ(parser->error.code, 0);
-   ASSERT_STREQ(parser->error.text, "");
-
-   fix_parser_free(parser);
-}
-
-TEST(FixParserTests, GetFreePageTest)
-{
-   FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
-   FIXPage* nextp = parser->page->next;
-   FIXPage* p = fix_parser_alloc_page(parser, 0);
+   char buff[] = "8=FIX4.4|35=D|41=QWERTY|21=123";
+   char const* begin = NULL;
+   char const* end = NULL;
+   int64_t num = fix_parser_parse_field(parser, buff, strlen(buff), '|', &begin, &end);
+   ASSERT_EQ(num, 8);
+   ASSERT_EQ(*begin, 'F');
+   ASSERT_EQ(*end, '|');
 
-   ASSERT_TRUE(p->next == NULL);
-   ASSERT_EQ(parser->page, nextp);
-   ASSERT_EQ(parser->used_pages, 1U);
-
-   FIXPage* p1 = fix_parser_alloc_page(parser, 0);
-   ASSERT_EQ(p1, nextp);
-   ASSERT_TRUE(p1->next == NULL);
-   ASSERT_EQ(parser->used_pages, 2U);
-
-   FIXPage* p2 = fix_parser_alloc_page(parser, 0);
-   ASSERT_TRUE(parser->page == NULL);
-   ASSERT_NE(p2, nextp);
-   ASSERT_TRUE(p1->next == NULL);
-   ASSERT_EQ(parser->used_pages, 3U);
-
-   fix_parser_free_page(parser, p);
-
-   ASSERT_EQ(parser->page, p);
-
-   fix_parser_free_page(parser, p2);
-   ASSERT_EQ(parser->page, p2);
-   ASSERT_EQ(parser->page->next, p);
-
-   fix_parser_free_page(parser, p1);
-   ASSERT_EQ(parser->page, p1);
-   ASSERT_EQ(parser->page->next, p2);
-
-   ASSERT_EQ(parser->used_pages, 0U);
-
-   fix_parser_free(parser);
+   char buff1[] = "A=FIX4.4|35=D|41=QWERTY|21=123";
+   num = fix_parser_parse_field(parser, buff1, strlen(buff1), '|', &begin, &end);
+   ASSERT_EQ(num, FIX_FAILED);
+   ASSERT_EQ(parser->error.code, FIX_ERROR_INVALID_ARGUMENT);
 }
 
-TEST(FixParserTests, MaxPagesTest)
+TEST(FixParserTests2, ParseBeginStringTest)
 {
-   FIXParserAttrs attrs = {512, 0, 2, 2, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
-   FIXPage* nextp = parser->page->next;
-   ASSERT_TRUE(parser->page != NULL);
-
-   FIXPage* p = fix_parser_alloc_page(parser, 0);
-   ASSERT_TRUE(p->next == NULL);
-   ASSERT_EQ(parser->page, nextp);
-   ASSERT_EQ(parser->used_pages, 1U);
-
-   FIXPage* p1 = fix_parser_alloc_page(parser, 0);
-   ASSERT_EQ(p1, nextp);
-   ASSERT_TRUE(p1->next == NULL);
-   ASSERT_EQ(parser->used_pages, 2U);
-
-   FIXPage* p2 = fix_parser_alloc_page(parser, 0);
-   ASSERT_TRUE(p2 == NULL);
-   ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_PAGES);
-   ASSERT_TRUE(parser->page == NULL);
-   ASSERT_EQ(parser->used_pages, 2U);
-
-   fix_parser_free_page(parser, p);
-
-   ASSERT_EQ(parser->page, p);
-   ASSERT_EQ(parser->used_pages, 1U);
-
-   p = fix_parser_alloc_page(parser, 0);
-
-   ASSERT_TRUE(p->next == NULL);
-   ASSERT_TRUE(parser->page == NULL);
-   ASSERT_EQ(parser->used_pages, 2U);
-
-   fix_parser_free(parser);
-}
-
-TEST(FixParserTests, MaxGroupsTest)
-{
-   FIXParserAttrs attrs = {512, 0, 2, 0, 2, 2};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
-   ASSERT_TRUE(parser != NULL);
-   ASSERT_EQ(parser->error.code, 0);
-
-   FIXGroup* nextg = parser->group->next;
-   ASSERT_TRUE(parser->group != NULL);
-
-   FIXGroup* g = fix_parser_alloc_group(parser);
-   ASSERT_TRUE(g->next == NULL);
-   ASSERT_EQ(parser->group, nextg);
-   ASSERT_EQ(parser->used_groups, 1U);
-
-   FIXGroup* g1 = fix_parser_alloc_group(parser);
-   ASSERT_EQ(g1, nextg);
-   ASSERT_TRUE(g1->next == NULL);
-   ASSERT_EQ(parser->used_groups, 2U);
-
-   FIXGroup* p2 = fix_parser_alloc_group(parser);
-   ASSERT_TRUE(p2 == NULL);
-   ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_GROUPS);
-   ASSERT_TRUE(parser->group == NULL);
-   ASSERT_EQ(parser->used_groups, 2U);
-
-   fix_parser_free_group(parser, g);
-
-   g = fix_parser_alloc_group(parser);
-   ASSERT_TRUE(g->next == NULL);
-   ASSERT_TRUE(parser->group == NULL);
-   ASSERT_EQ(parser->used_groups, 2U);
-
-   fix_parser_free(parser);
-}
-
-TEST(FixParserTests, MaxPageSizeTest)
-{
    {
-      FIXParserAttrs attrs = {512, 0, 1, 0, 2, 0};
-      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
-      ASSERT_TRUE(parser != NULL);
-      ASSERT_EQ(parser->error.code, 0);
-
-      FIXPage* p = fix_parser_alloc_page(parser, 0);
-      ASSERT_TRUE(p->next == NULL);
-      ASSERT_EQ(parser->used_pages, 1U);
-      ASSERT_EQ(p->size, 512U);
-
-      FIXPage* p1 = fix_parser_alloc_page(parser, 1024);
-      ASSERT_TRUE(p1->next == NULL);
-      ASSERT_EQ(parser->used_pages, 2U);
-      ASSERT_EQ(p1->size, 1024U);
-
-      FIXPage* p2 = fix_parser_alloc_page(parser, 10240);
-      ASSERT_TRUE(p2->next == NULL);
-      ASSERT_EQ(parser->used_pages, 3U);
-      ASSERT_EQ(p2->size, 10240U);
-
-      fix_parser_free(parser);
+      char buff[] = "A12=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
    }
    {
-      FIXParserAttrs attrs = {512, 512, 1, 0, 2, 0};
-      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
-      ASSERT_TRUE(parser != NULL);
+      char buff[] = "1=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+   }
+   {
+      char buff[] = "8=FIX.4.5|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_PROTOCOL_VER);
+   }
+   {
+      char buff[] = "8=FIXT.1.1|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_PROTOCOL_VER);
+   }
+}
+
+TEST(FixParserTests2, ParseBodyLengthTest)
+{
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   ASSERT_TRUE(parser != NULL);
+   ASSERT_EQ(parser->error.code, 0);
+
+   {
+      char buff[] = "8=FIX.4.4|10=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+   }
+   {
+      char buff[] = "8=FIX.4.4|9=228A|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
       ASSERT_EQ(parser->error.code, 0);
+   }
 
-      FIXPage* p = fix_parser_alloc_page(parser, 0);
-      ASSERT_TRUE(p != NULL);
-      ASSERT_EQ(parser->used_pages, 1U);
-      ASSERT_EQ(p->size, 512U);
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, 0);
+   }
 
-      FIXPage* p1 = fix_parser_alloc_page(parser, 500);
-      ASSERT_TRUE(p1 != NULL);
-      ASSERT_EQ(parser->used_pages, 2U);
-      ASSERT_EQ(p->size, 512U);
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, 0);
+   }
 
-      FIXPage* p2 = fix_parser_alloc_page(parser, 513);
-      ASSERT_TRUE(p2 == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_TOO_BIG_PAGE);
-      ASSERT_EQ(parser->used_pages, 2U);
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+   }
+}
 
-      fix_parser_free(parser);
+TEST(FixParserTests2, ParseCheckSumTest)
+{
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   ASSERT_TRUE(parser != NULL);
+   ASSERT_EQ(parser->error.code, 0);
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|A10=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|11=240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=A240|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=210|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_INTEGRITY_CHECK);
+   }
+
+   {
+      char buff[] = "8=FIX.4.4|9=230|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|4552=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=208|";
+      char const* stop = NULL;
+      FIXMsg* msg = fix_parser_fix_to_msg(parser, buff, strlen(buff), '|', &stop);
+      ASSERT_TRUE(msg == NULL);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_UNKNOWN_FIELD);
+      ASSERT_STREQ(parser->error.text, "Field '4552' not found in description.");
    }
 }
