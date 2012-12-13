@@ -40,6 +40,7 @@ typedef struct FIXFieldDescr_
    struct FIXFieldDescr_*  group;
    struct FIXFieldDescr_** group_index;
    struct FIXFieldDescr_*  next;
+   struct FIXFieldDescr_*  dataLenField;
 } FIXFieldDescr;
 
 typedef struct FIXMsgDescr_
