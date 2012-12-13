@@ -37,12 +37,12 @@ TEST(FixParserTests, SetErrorParserTest)
    fix_error_set(&parser->error, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
 
    ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_PAGES);
-   ASSERT_TRUE(!strcmp(parser->error.text, "No more pages available"));
+   ASSERT_STREQ(parser->error.text, "No more pages available");
 
    fix_error_reset(&parser->error);
 
    ASSERT_EQ(parser->error.code, 0);
-   ASSERT_TRUE(!strcmp(parser->error.text, ""));
+   ASSERT_STREQ(parser->error.text, "");
 
    fix_parser_free(parser);
 }
