@@ -185,7 +185,7 @@ FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len,
    }
    char* msgType = calloc(dend - dbegin + 1, 1);
    memcpy(msgType, dbegin, dend - dbegin);
-   FIXMsg* msg = fix_msg_create(parser, "8");
+   FIXMsg* msg = fix_msg_create(parser, msgType);
    if (!msg)
    {
       free(msgType);

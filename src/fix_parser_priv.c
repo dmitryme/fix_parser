@@ -143,7 +143,7 @@ int fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int64_t fix_parser_parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
+int64_t fix_parser_parse_tag(FIXParser* parser, char const* data, uint32_t len, char const** dbegin)
 {
    int64_t num = 0;
    int32_t res = fix_utils_atoi64(data, len, '=', &num);
@@ -153,7 +153,14 @@ int64_t fix_parser_parse_field(FIXParser* parser, char const* data, uint32_t len
       return FIX_FAILED;
    }
    len -= res;
-   *dend = *dbegin = data + res + 1;
+   *dbegin = data + res + 1;
+   return num;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int32_t fix_parser_parse_value(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dend)
+{
+   *dend = data;
    for(;len > 0; --len)
    {
       if (**dend == delimiter)
@@ -170,7 +177,35 @@ int64_t fix_parser_parse_field(FIXParser* parser, char const* data, uint32_t len
       fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
       return FIX_FAILED;
    }
-   return num;
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int32_t fix_parser_parse_value_by_len(FIXParser* parser, char const* data, uint32_t len, uint32_t fieldLen, char const** dend)
+{
+   if (fieldLen >= len)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get field by length. Field length '%1%' is too big", fieldLen);
+      return FIX_FAILED;
+   }
+   *dend = data + fieldLen;
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+int64_t fix_parser_parse_field(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
+{
+   int64_t tag = fix_parser_parse_tag(parser, data, len, dbegin);
+   if (tag == FIX_FAILED)
+   {
+      return FIX_FAILED;
+   }
+   len -= (*dbegin - data);
+   if (fix_parser_parse_value(parser, *dbegin, len, delimiter, dend) == FIX_FAILED)
+   {
+      return FIX_FAILED;
+   }
+   return tag;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
