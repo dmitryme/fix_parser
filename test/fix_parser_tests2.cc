@@ -17,13 +17,13 @@ TEST(FixParserTests2, ParseFieldTest)
    char buff[] = "8=FIX4.4|35=D|41=QWERTY|21=123";
    char const* begin = NULL;
    char const* end = NULL;
-   int64_t num = fix_parser_parse_field(parser, buff, strlen(buff), '|', &begin, &end);
+   int64_t num = fix_parser_parse_mandatory_field(parser, buff, strlen(buff), '|', &begin, &end);
    ASSERT_EQ(num, 8);
    ASSERT_EQ(*begin, 'F');
    ASSERT_EQ(*end, '|');
 
    char buff1[] = "A=FIX4.4|35=D|41=QWERTY|21=123";
-   num = fix_parser_parse_field(parser, buff1, strlen(buff1), '|', &begin, &end);
+   num = fix_parser_parse_mandatory_field(parser, buff1, strlen(buff1), '|', &begin, &end);
    ASSERT_EQ(num, FIX_FAILED);
    ASSERT_EQ(parser->error.code, FIX_ERROR_INVALID_ARGUMENT);
 }
