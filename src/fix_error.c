@@ -13,7 +13,7 @@
 static FIXError error;
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_parser_get_error_code(FIXParser* parser)
+FIXErrCode fix_parser_get_error_code(FIXParser* parser)
 {
    return parser->error.code;
 }
@@ -25,7 +25,7 @@ char const* fix_parser_get_error_text(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_error_get_code()
+FIXErrCode fix_error_get_code()
 {
    return error.code;
 }
