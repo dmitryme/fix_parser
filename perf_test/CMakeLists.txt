@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 2.6)
 
 project(perf_test)
 
-add_executable(${PROJECT_NAME} perf_test.c)
+aux_source_directory(. PERF_TEST_SOURCES)
 
-target_link_libraries(${PROJECT_NAME} fix_parser xml2 rt)
+add_executable(${PROJECT_NAME} ${PERF_TEST_SOURCES})
+
+if (WIN32)
+   set_source_files_properties(${PERF_TEST_SOURCES} PROPERTIES LANGUAGE CXX)
+endif(WIN32)
+
+if (WIN32)
+   target_link_libraries(${PROJECT_NAME} fix_parser_s libxml2)
+else(WIN32)
+   target_link_libraries(${PROJECT_NAME} fix_parser_s xml2 rt)
+endif(WIN32)
