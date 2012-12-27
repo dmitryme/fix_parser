@@ -37,13 +37,14 @@ FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize);
 FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
 FIXGroup* fix_parser_alloc_group(FIXParser* parser);
 FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
-int64_t fix_parser_parse_mandatory_field(
+FIXTagNum fix_parser_parse_mandatory_field(
       FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend);
-int64_t fix_parser_parse_field(
+FIXTagNum fix_parser_parse_field(
       FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr, char const** dbegin, char const** dend);
-int fix_parser_validate_attrs(FIXParserAttrs* attrs);
-int fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter);
-int32_t fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, int64_t groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop);
+FIXErrCode fix_parser_validate_attrs(FIXParserAttrs* attrs);
+FIXErrCode fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len, char delimiter, char const** dend);
+FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter);
+FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXTagNum groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop);
 
 #ifdef __cplusplus
 }
