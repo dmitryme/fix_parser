@@ -11,7 +11,7 @@
 static FIXError error;
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_set_va(FIXError* error, int32_t code, char const* text, va_list ap)
+void fix_error_set_va(FIXError* error, FIXErrCode code, char const* text, va_list ap)
 {
    error->code = code;
    int32_t n = vsnprintf(error->text, ERROR_TXT_SIZE, text, ap);
@@ -19,7 +19,7 @@ void fix_error_set_va(FIXError* error, int32_t code, char const* text, va_list a
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_set(FIXError* error, int32_t code, char const* text, ...)
+void fix_error_set(FIXError* error, FIXErrCode code, char const* text, ...)
 {
    va_list ap;
    va_start(ap, text);
@@ -41,13 +41,13 @@ FIXError* fix_error_static_get()
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_static_set_va(int32_t code, char const* text, va_list ap)
+void fix_error_static_set_va(FIXErrCode code, char const* text, va_list ap)
 {
    fix_error_set_va(&error, code, text, ap);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_static_set(int32_t code, char const* text, ...)
+void fix_error_static_set(FIXErrCode code, char const* text, ...)
 {
    va_list ap;
    va_start(ap, text);
