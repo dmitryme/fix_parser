@@ -27,7 +27,7 @@ FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, 
    {
       memcpy(&myattrs, attrs, sizeof(myattrs));
    }
-   if (!fix_parser_validate_attrs(&myattrs))
+   if (fix_parser_validate_attrs(&myattrs) == FIX_FAILED)
    {
       return NULL;
    }
@@ -90,7 +90,7 @@ FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len,
       return NULL;
    }
    fix_error_reset(&parser->error);
-   int64_t tag = 0;
+   FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
    tag = fix_parser_parse_mandatory_field(parser, data, len, delimiter, &dbegin, &dend);
