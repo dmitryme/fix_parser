@@ -15,7 +15,7 @@ extern "C"
 {
 #endif
 
-int32_t fix_error_get_code();
+FIXErrCode fix_error_get_code();
 char const* fix_error_get_text();
 
 #ifdef __cplusplus
