@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
    FIXParser* parser = fix_parser_create(argv[1], NULL, PARSER_FLAG_CHECK_ALL);
    if (!parser)
    {
-      printf("ERROR: %s\n", fix_error_get_text(parser));
+      printf("ERROR: %s\n", fix_error_get_text());
       return 1;
    }
 
