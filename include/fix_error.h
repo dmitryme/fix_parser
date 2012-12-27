@@ -7,6 +7,7 @@
 #define FIX_PARSER_FIX_ERROR_H
 
 #include "fix_types.h"
+#include "fix_parser_dll.h"
 
 #include <stdint.h>
 
@@ -15,8 +16,8 @@ extern "C"
 {
 #endif
 
-FIXErrCode fix_error_get_code();
-char const* fix_error_get_text();
+FIX_PARSER_API FIXErrCode fix_error_get_code();
+FIX_PARSER_API char const* fix_error_get_text();
 
 #ifdef __cplusplus
 }
