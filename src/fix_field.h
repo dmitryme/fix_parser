@@ -44,12 +44,12 @@ typedef struct FIXGroups_
 
 FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len);
 
-FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag);
-int32_t fix_field_del(FIXMsg* msg, FIXGroup* grp, uint32_t tag);
+FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
+FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
 
-FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXField** fld);
-FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* tbl, uint32_t tag, uint32_t grpIdx);
-int32_t fix_group_del(FIXMsg* msg, FIXGroup* tbl, uint32_t tag, uint32_t grpIdx);
+FIXGroup*  fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXField** fld);
+FIXGroup*  fix_group_get(FIXMsg* msg, FIXGroup* tbl, FIXTagNum tag, uint32_t grpIdx);
+FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* tbl, FIXTagNum tag, uint32_t grpIdx);
 
 #ifdef __cplusplus
 }
