@@ -47,7 +47,7 @@ TEST(FixFieldTests, SetTagTest)
    FIXField* field = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)val, strlen(val));
    ASSERT_EQ(msg->fields->fields[1], field);
    ASSERT_TRUE(field->descr != NULL);
-   ASSERT_EQ(field->descr->type->tag, 1U);
+   ASSERT_EQ(field->descr->type->tag, 1);
    ASSERT_EQ(field->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field->next == NULL);
    ASSERT_TRUE(!strncmp((char const*)field->data, val, strlen(val)));
@@ -59,7 +59,7 @@ TEST(FixFieldTests, SetTagTest)
 
    FIXField* field11 = fix_field_set(msg, NULL, new_fdescr(2, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)val, strlen(val));
    ASSERT_EQ(msg->fields->fields[2], field11);
-   ASSERT_EQ(field11->descr->type->tag, 2U);
+   ASSERT_EQ(field11->descr->type->tag, 2);
    ASSERT_EQ(field11->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field11->next == NULL);
    ASSERT_TRUE(!strncmp((char const*)field11->data, val, strlen(val)));
@@ -67,7 +67,7 @@ TEST(FixFieldTests, SetTagTest)
 
    FIXField* field12 = fix_field_set(msg, NULL, new_fdescr(30, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)val, strlen(val));
    ASSERT_EQ(msg->fields->fields[30], field12);
-   ASSERT_EQ(field12->descr->type->tag, 30U);
+   ASSERT_EQ(field12->descr->type->tag, 30);
    ASSERT_EQ(field12->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field12->next == NULL);
    ASSERT_TRUE(!strncmp((char const*)field12->data, val, strlen(val)));
@@ -76,7 +76,7 @@ TEST(FixFieldTests, SetTagTest)
    char const val1[] = {"2000"};
    FIXField* field1 = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)val1, strlen(val1));
    ASSERT_EQ(field, field1);
-   ASSERT_EQ(field1->descr->type->tag, 1U);
+   ASSERT_EQ(field1->descr->type->tag, 1);
    ASSERT_EQ(field1->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field1->next == NULL);
    ASSERT_TRUE(!strncmp((char const*)field1->data, val1, strlen(val1)));
@@ -89,7 +89,7 @@ TEST(FixFieldTests, SetTagTest)
    char const val2[] = {"64"};
    FIXField* field2 = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)val2, strlen(val2));
    ASSERT_EQ(field2, field);
-   ASSERT_EQ(field2->descr->type->tag, 1U);
+   ASSERT_EQ(field2->descr->type->tag, 1);
    ASSERT_EQ(field2->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field2->next == NULL);
    ASSERT_TRUE(!strncmp((char const*)field2->data, val2, strlen(val2)));
@@ -102,7 +102,7 @@ TEST(FixFieldTests, SetTagTest)
    char const txt[] = "Hello world!";
    FIXField* field3 = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)txt, strlen(txt));
    ASSERT_EQ(field3, field);
-   ASSERT_EQ(field3->descr->type->tag, 1U);
+   ASSERT_EQ(field3->descr->type->tag, 1);
    ASSERT_EQ(field3->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field3->next == NULL);
    ASSERT_TRUE(!strncmp((char const*)field3->data, txt, strlen(txt)));
@@ -128,7 +128,7 @@ TEST(FixFieldTests, DelTagTest)
    long val = 1000;
    FIXField* field = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val, sizeof(val));
    ASSERT_EQ(msg->fields->fields[1], field);
-   ASSERT_EQ(field->descr->type->tag, 1U);
+   ASSERT_EQ(field->descr->type->tag, 1);
    ASSERT_EQ(field->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field->next == NULL);
    ASSERT_EQ(*(long*)field->data, val);
@@ -140,7 +140,7 @@ TEST(FixFieldTests, DelTagTest)
    uint64_t val1 = 2000;
    FIXField* field1 = fix_field_set(msg, NULL, new_fdescr(65, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val1, sizeof(val1));
    ASSERT_EQ(msg->fields->fields[1], field1);
-   ASSERT_EQ(field1->descr->type->tag, 65U);
+   ASSERT_EQ(field1->descr->type->tag, 65);
    ASSERT_EQ(field1->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field1->next, field);
    ASSERT_EQ(*(uint64_t*)field1->data, val1);
@@ -152,7 +152,7 @@ TEST(FixFieldTests, DelTagTest)
    uint64_t val2 = 3000;
    FIXField* field2 = fix_field_set(msg, NULL, new_fdescr(129, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val2, sizeof(val2));
    ASSERT_EQ(msg->fields->fields[1], field2);
-   ASSERT_EQ(field2->descr->type->tag, 129U);
+   ASSERT_EQ(field2->descr->type->tag, 129);
    ASSERT_EQ(field2->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field2->next, field1);
    ASSERT_EQ(*(uint64_t*)field2->data, val2);
@@ -165,7 +165,7 @@ TEST(FixFieldTests, DelTagTest)
    FIXField* field3 = fix_field_set(msg, NULL, new_fdescr(193, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val3, sizeof(val3));
 
    ASSERT_EQ(msg->fields->fields[1], field3);
-   ASSERT_EQ(field3->descr->type->tag, 193U);
+   ASSERT_EQ(field3->descr->type->tag, 193);
    ASSERT_EQ(field3->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field3->next, field2);
    ASSERT_EQ(*(long*)field3->data, val3);
@@ -216,7 +216,7 @@ TEST(FixFieldTests, GetTagTest)
    long val = 1000;
    FIXField* field = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val, sizeof(val));
    ASSERT_EQ(msg->fields->fields[1], field);
-   ASSERT_EQ(field->descr->type->tag, 1U);
+   ASSERT_EQ(field->descr->type->tag, 1);
    ASSERT_EQ(field->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field->next == NULL);
    ASSERT_EQ(*(long*)field->data, val);
@@ -225,7 +225,7 @@ TEST(FixFieldTests, GetTagTest)
    FIXField* field1 = fix_field_set(msg, NULL, new_fdescr(65, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val1, sizeof(val1));
    ASSERT_EQ(msg->fields->fields[1], field1);
    ASSERT_EQ(msg->fields->fields[1]->next, field);
-   ASSERT_EQ(field1->descr->type->tag, 65U);
+   ASSERT_EQ(field1->descr->type->tag, 65);
    ASSERT_EQ(field1->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field1->next, field);
    ASSERT_EQ(*(long*)field1->data, val1);
@@ -235,7 +235,7 @@ TEST(FixFieldTests, GetTagTest)
    ASSERT_EQ(msg->fields->fields[1], field2);
    ASSERT_EQ(msg->fields->fields[1]->next, field1);
    ASSERT_EQ(msg->fields->fields[1]->next->next, field);
-   ASSERT_EQ(field2->descr->type->tag, 129U);
+   ASSERT_EQ(field2->descr->type->tag, 129);
    ASSERT_EQ(field2->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field2->next, field1);
    ASSERT_EQ(*(long*)field2->data, val2);
@@ -246,7 +246,7 @@ TEST(FixFieldTests, GetTagTest)
    ASSERT_EQ(msg->fields->fields[1]->next, field2);
    ASSERT_EQ(msg->fields->fields[1]->next->next, field1);
    ASSERT_EQ(msg->fields->fields[1]->next->next->next, field);
-   ASSERT_EQ(field3->descr->type->tag, 193U);
+   ASSERT_EQ(field3->descr->type->tag, 193);
    ASSERT_EQ(field3->descr->category, FIXFieldCategory_Value);
    ASSERT_EQ(field3->next, field2);
    ASSERT_EQ(*(uint64_t*)field3->data, val3);
@@ -258,7 +258,7 @@ TEST(FixFieldTests, GetTagTest)
    ASSERT_EQ(msg->fields->fields[1]->next->next, field1);
    ASSERT_EQ(msg->fields->fields[1]->next->next->next, field);
    ASSERT_EQ(msg->fields->fields[2], field4);
-   ASSERT_EQ(field4->descr->type->tag, 2U);
+   ASSERT_EQ(field4->descr->type->tag, 2);
    ASSERT_EQ(field4->descr->category, FIXFieldCategory_Value);
    ASSERT_TRUE(field4->next == NULL);
    ASSERT_EQ(*(long*)field4->data, val4);
