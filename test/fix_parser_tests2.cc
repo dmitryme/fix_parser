@@ -17,7 +17,7 @@ TEST(FixParserTests2, ParseFieldTest)
    char buff[] = "8=FIX4.4|35=D|41=QWERTY|21=123";
    char const* begin = NULL;
    char const* end = NULL;
-   int64_t num = fix_parser_parse_mandatory_field(parser, buff, strlen(buff), '|', &begin, &end);
+   FIXTagNum num = fix_parser_parse_mandatory_field(parser, buff, strlen(buff), '|', &begin, &end);
    ASSERT_EQ(num, 8);
    ASSERT_EQ(*begin, 'F');
    ASSERT_EQ(*end, '|');
