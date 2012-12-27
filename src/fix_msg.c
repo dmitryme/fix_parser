@@ -79,7 +79,7 @@ void fix_msg_free(FIXMsg* msg)
    free(msg);
 }
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
+FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    if (!msg)
    {
@@ -105,7 +105,7 @@ FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grpIdx)
+FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -128,7 +128,7 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t g
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grpIdx)
+FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -150,7 +150,7 @@ int32_t fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grp
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const* val)
+FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* val)
 {
    if (!msg)
    {
@@ -173,7 +173,7 @@ int32_t fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const*
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int32_t val)
+FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t val)
 {
    if (!msg)
    {
@@ -198,7 +198,7 @@ int32_t fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int32_t val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int64_t val)
+FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t val)
 {
    if (!msg)
    {
@@ -223,7 +223,7 @@ int32_t fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int64_t val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char val)
+FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char val)
 {
    if (!msg)
    {
@@ -246,7 +246,7 @@ int32_t fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tag, double val)
+FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double val)
 {
    if (!msg)
    {
@@ -271,7 +271,7 @@ int32_t fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, uint32_t tag, double val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int32_t* val)
+FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val)
 {
    if (!msg)
    {
@@ -298,7 +298,7 @@ int32_t fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int32_t* val
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int64_t* val)
+FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val)
 {
    if (!msg)
    {
@@ -320,7 +320,7 @@ int32_t fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, uint32_t tag, int64_t* val
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tag, double* val)
+FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val)
 {
    if(!msg)
    {
@@ -342,7 +342,7 @@ int32_t fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, uint32_t tag, double* val
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val)
+FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val)
 {
    if (!msg)
    {
@@ -365,7 +365,7 @@ int32_t fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char* val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const** val, uint32_t* len)
+FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len)
 {
    if (!msg)
    {
@@ -389,7 +389,7 @@ int32_t fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, uint32_t tag, char const*
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
+FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
 {
    if(!msg || !msg || !reqBuffLen)
    {
@@ -404,7 +404,7 @@ int32_t fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen
       char* prev = buff;
       FIXFieldDescr* fdescr = &descr->fields[i];
       FIXField* field = fix_field_get(msg, NULL, fdescr->type->tag);
-      int32_t res = FIX_SUCCESS;
+      FIXErrCode res = FIX_SUCCESS;
       if (fdescr->type->tag == FIXFieldTag_BodyLength)
       {
          res = int32_to_fix_msg(msg->parser, fdescr->type->tag, msg->body_len, delimiter, 0, 0, &buff, &buffLen);
