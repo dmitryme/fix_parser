@@ -133,6 +133,13 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
+int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val)
+{
+   int64_t* tmp = (int64_t*)val;
+   return fix_utils_atoi64(buff, buffLen, stopChar, tmp);
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val)
 {
    *val = 0;
