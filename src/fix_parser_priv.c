@@ -91,7 +91,7 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_parser_validate_attrs(FIXParserAttrs* attrs)
+int32_t fix_parser_validate_attrs(FIXParserAttrs* attrs)
 {
    if (!attrs->pageSize)
    {
@@ -108,23 +108,23 @@ int fix_parser_validate_attrs(FIXParserAttrs* attrs)
    if (attrs->maxPageSize > 0 && attrs->maxPageSize < attrs->pageSize)
    {
       fix_error_static_set(FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
-      return 0;
+      return FIX_FAILED;
    }
    if (attrs->maxPages > 0 && attrs->maxPages < attrs->numPages)
    {
       fix_error_static_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
-      return 0;
+      return FIX_FAILED;
    }
    if (attrs->maxGroups > 0 && attrs->maxGroups < attrs->numGroups)
    {
       fix_error_static_set(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
-      return 0;
+      return FIX_FAILED;
    }
-   return 1;
+   return FIX_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter)
+FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter)
 {
    if (IS_INT_TYPE(fdescr->type->valueType))
    {
@@ -144,7 +144,7 @@ int fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len, char delimiter, char const** dend)
+FIXErrCode fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len, char delimiter, char const** dend)
 {
    *dend = dbegin;
    for(;len > 0; --len)
@@ -167,11 +167,11 @@ int32_t fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int64_t fix_parser_parse_mandatory_field(
+FIXTagNum fix_parser_parse_mandatory_field(
       FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
 {
-   int64_t tag = 0;
-   int32_t res = fix_utils_atoi64(data, len, '=', &tag);
+   FIXTagNum tag = 0;
+   int32_t res = fix_utils_atoi32(data, len, '=', &tag);
    if (res == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
@@ -199,11 +199,11 @@ int64_t fix_parser_parse_mandatory_field(
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int64_t fix_parser_parse_field(
+FIXTagNum fix_parser_parse_field(
       FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr, char const** dbegin, char const** dend)
 {
-   int64_t tag = 0;
-   int32_t res = fix_utils_atoi64(data, len, '=', &tag);
+   FIXTagNum tag = 0;
+   FIXErrCode res = fix_utils_atoi32(data, len, '=', &tag);
    if (res == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
@@ -249,8 +249,8 @@ int64_t fix_parser_parse_field(
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_parser_parse_group(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, int64_t groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop)
+FIXErrCode fix_parser_parse_group(
+      FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXTagNum groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    char const* dbegin = data;
    char const* dend = NULL;
@@ -262,7 +262,7 @@ int32_t fix_parser_parse_group(
          return FIX_FAILED;
       }
       FIXFieldDescr* fdescr = NULL;
-      int64_t tag = fix_parser_parse_field(parser, msg, group, dend + 1, data + len - dend, delimiter, &fdescr, &dbegin, stop);
+      FIXTagNum tag = fix_parser_parse_field(parser, msg, group, dend + 1, data + len - dend, delimiter, &fdescr, &dbegin, stop);
       if (tag == FIX_FAILED)
       {
          return FIX_FAILED;
@@ -285,14 +285,14 @@ int32_t fix_parser_parse_group(
          }
          else if (fdescr->category == FIXFieldCategory_Group)
          {
-            int64_t num = 0;
-            int32_t res = fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &num);
+            int32_t numGroups = 0;
+            FIXErrCode res = fix_utils_atoi32(dbegin, dend - dbegin, delimiter, &numGroups);
             if (res == FIX_FAILED)
             {
                fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
                return FIX_FAILED;
             }
-            res = fix_parser_parse_group(parser, msg, group, tag, num, dend + 1, data + len - dend, delimiter, &dend);
+            res = fix_parser_parse_group(parser, msg, group, tag, numGroups, dend + 1, data + len - dend, delimiter, &dend);
             if (res == FIX_FAILED)
             {
                return FIX_FAILED;
