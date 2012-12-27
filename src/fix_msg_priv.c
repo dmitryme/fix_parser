@@ -97,7 +97,7 @@ void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
+FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    if (!msg)
    {
@@ -115,7 +115,7 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
+FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    if (!msg)
    {
@@ -126,7 +126,7 @@ int32_t fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
+FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -164,7 +164,7 @@ int32_t int32_to_fix_msg(FIXParser* parser, uint32_t tag, int32_t val, char deli
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen)
+FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -203,9 +203,9 @@ int32_t fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter,
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen)
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen)
 {
-   int32_t res = int32_to_fix_msg(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
+   FIXErrCode res = int32_to_fix_msg(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
    for(uint32_t i = 0; i < field->size && res != FIX_FAILED; ++i)
    {
       FIXGroup* group = ((FIXGroups*)field->data)->group[i];
