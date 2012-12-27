@@ -7,6 +7,7 @@
 #define FIX_PARSER_FIX_PARSER_H
 
 #include "fix_types.h"
+#include "fix_parser_dll.h"
 #include "fix_msg.h"
 
 #include <stdint.h>
@@ -16,11 +17,11 @@ extern "C"
 {
 #endif
 
-FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags);
-void fix_parser_free(FIXParser* parser);
-FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
-FIXErrCode fix_parser_get_error_code(FIXParser* parser);
-char const* fix_parser_get_error_text(FIXParser* parser);
+FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags);
+FIX_PARSER_API void fix_parser_free(FIXParser* parser);
+FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
+FIX_PARSER_API FIXErrCode fix_parser_get_error_code(FIXParser* parser);
+FIX_PARSER_API char const* fix_parser_get_error_text(FIXParser* parser);
 
 #ifdef __cplusplus
 }
