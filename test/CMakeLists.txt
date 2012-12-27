@@ -10,6 +10,7 @@ ExternalProject_Add(
     TIMEOUT 10
     # Disable install step
     INSTALL_COMMAND ""
+    CMAKE_ARGS -Dgtest_force_shared_crt=ON
     # Wrap download, configure and build steps in a script to log output
     LOG_DOWNLOAD ON
     LOG_CONFIGURE ON
@@ -25,4 +26,8 @@ aux_source_directory(. TEST_SOURCES)
 
 add_executable(${PROJECT_NAME} ${TEST_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} gtest fix_parser pthread xml2 rt)
+if (WIN32)
+   target_link_libraries(${PROJECT_NAME} gtest fix_parser_s libxml2)
+else(WIN32)
+   target_link_libraries(${PROJECT_NAME} gtest fix_parser_s pthread xml2 rt)
+endif(WIN32)
