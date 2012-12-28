@@ -19,7 +19,7 @@
 #define CRC_FIELD_LEN 7
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags)
+FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags)
 {
    fix_error_static_reset();
    FIXParserAttrs myattrs = {};
@@ -31,7 +31,7 @@ FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, 
    {
       return NULL;
    }
-   FIXParser* parser = calloc(1, sizeof(FIXParser));
+   FIXParser* parser = (FIXParser*)calloc(1, sizeof(FIXParser));
    memcpy(&parser->attrs, &myattrs, sizeof(parser->attrs));
    parser->flags = flags;
    parser->protocol = fix_protocol_descr_create(fix_error_static_get(), protFile);
@@ -41,14 +41,14 @@ FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, 
    }
    for(uint32_t i = 0; i < parser->attrs.numPages; ++i)
    {
-      FIXPage* page = calloc(1, sizeof(FIXPage) + parser->attrs.pageSize - 1);
+      FIXPage* page = (FIXPage*)calloc(1, sizeof(FIXPage) + parser->attrs.pageSize - 1);
       page->size = parser->attrs.pageSize;
       page->next = parser->page;
       parser->page = page;
    }
    for(uint32_t i = 0; i < parser->attrs.numGroups; ++i)
    {
-      FIXGroup* group = calloc(1, sizeof(FIXGroup));
+      FIXGroup* group = (FIXGroup*)calloc(1, sizeof(FIXGroup));
       group->next = parser->group;
       parser->group = group;
    }
@@ -56,7 +56,7 @@ FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_parser_free(FIXParser* parser)
+FIX_PARSER_API void fix_parser_free(FIXParser* parser)
 {
    if (parser)
    {
@@ -83,7 +83,7 @@ void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
+FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    if (!parser || !data)
    {
@@ -106,7 +106,7 @@ FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len,
    }
    if (strncmp(parser->protocol->transportVersion, dbegin, dend - dbegin))
    {
-      char* actualVer = calloc(dend - dbegin + 1, 1);
+      char* actualVer = (char*)calloc(dend - dbegin + 1, 1);
       memcpy(actualVer, dbegin, dend - dbegin);
       fix_error_set(
             &parser->error,
@@ -183,7 +183,7 @@ FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len,
       fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
       return NULL;
    }
-   char* msgType = calloc(dend - dbegin + 1, 1);
+   char* msgType = (char*)calloc(dend - dbegin + 1, 1);
    memcpy(msgType, dbegin, dend - dbegin);
    FIXMsg* msg = fix_msg_create(parser, msgType);
    if (!msg)
@@ -239,4 +239,17 @@ FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len,
       }
    }
    return msg;
+}
+
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API FIXErrCode fix_parser_get_error_code(FIXParser* parser)
+{
+   return parser->error.code;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API char const* fix_parser_get_error_text(FIXParser* parser)
+{
+   return parser->error.text;
 }
