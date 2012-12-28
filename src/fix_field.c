@@ -33,7 +33,7 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
    int32_t idx = descr->type->tag % GROUP_SIZE;
    if (!field)
    {
-      field = fix_msg_alloc(msg, sizeof(FIXField));
+      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField));
       if (!field)
       {
          return NULL;
@@ -124,7 +124,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
    if (!field)
    {
       uint32_t const idx = descr->type->tag % GROUP_SIZE;
-      field = fix_msg_alloc(msg, sizeof(FIXField));
+      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField));
       field->descr = descr;
       field->next = group->fields[idx];
       group->fields[idx] = field;
@@ -145,7 +145,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
    else
    {
       FIXGroups* grps = (FIXGroups*)field->data;
-      FIXGroups* new_grps = fix_msg_realloc(msg, field->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * (field->size + 1));
+      FIXGroups* new_grps = (FIXGroups*)fix_msg_realloc(msg, field->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * (field->size + 1));
       memcpy(new_grps->group, grps->group, sizeof(FIXGroup*) * (field->size));
       new_grps->group[field->size] = fix_msg_alloc_group(msg);
       if (!new_grps->group[field->size])
@@ -247,7 +247,7 @@ static FIXField* fix_field_free(FIXMsg* msg, FIXField* field)
    if (field->descr->category == FIXFieldCategory_Group)
    {
       FIXGroups* grps = (FIXGroups*)field->data;
-      for(int32_t i = 0; i < field->size; ++i)
+      for(uint32_t i = 0; i < field->size; ++i)
       {
          fix_group_free(msg, grps->group[i]);
       }
