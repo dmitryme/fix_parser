@@ -6,10 +6,17 @@
 #ifndef FIX_PARSER_FIX_UTILS_H
 #define FIX_PARSER_FIX_UTILS_H
 
-#include <stdint.h>
+#include <fix_types.h>
 
-#define LIKE(x)    __builtin_expect(!!(x), 1)
-#define UNLIKE(x)  __builtin_expect(!!(x), 0)
+#ifndef WIN32
+#  define LIKE(x)    __builtin_expect(!!(x), 1)
+#  define UNLIKE(x)  __builtin_expect(!!(x), 0)
+#  define _strdup strdup
+#else
+#  define LIKE(x) x
+#  define UNLIKE(x) x
+#  define PATH_MAX 4096
+#endif
 
 #ifdef __cplusplus
 extern "C"
@@ -24,6 +31,9 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen);
 int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val);
 int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val);
 int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val);
+
+FIXErrCode fix_utils_make_path(char const* protocolFile, char const* transpFile, char* path, uint32_t buffLen);
+
 
 #ifdef __cplusplus
 }
