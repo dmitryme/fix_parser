@@ -36,7 +36,7 @@ void* fix_msg_alloc(FIXMsg* msg, uint32_t size)
 /*------------------------------------------------------------------------------------------------------------------------*/
 void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size)
 {
-   if (*(uint32_t*)(ptr - sizeof(uint32_t)) >= size)
+   if (*(uint32_t*)((char const*)ptr - sizeof(uint32_t)) >= size)
    {
       return ptr;
    }
@@ -188,7 +188,7 @@ FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimit
       return FIX_FAILED;
    }
    uint32_t const len = (*buffLen > field->size) ? field->size : *buffLen;
-   strncpy(*buff, field->data, len);
+   strncpy(*buff, (char const*)field->data, len);
    *buff += len;
    *buffLen -= len;
    if (UNLIKE(*buffLen == 0))
