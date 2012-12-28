@@ -3,6 +3,7 @@
    @date   Created on: 07/30/2012 10:26:54 AM
 */
 
+#include "fix_utils.h"
 #include "fix_error.h"
 #include "fix_error_priv.h"
 #include "fix_parser_priv.h"
@@ -12,26 +13,15 @@
 
 static FIXError error;
 
-/*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_parser_get_error_code(FIXParser* parser)
-{
-   return parser->error.code;
-}
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-char const* fix_parser_get_error_text(FIXParser* parser)
-{
-   return parser->error.text;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_error_get_code()
+FIX_PARSER_API FIXErrCode fix_error_get_code()
 {
    return error.code;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-char const* fix_error_get_text()
+FIX_PARSER_API char const* fix_error_get_text()
 {
    return error.text;
 }
