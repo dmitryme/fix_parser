@@ -28,14 +28,14 @@ struct FIXField_
    uint32_t body_len;
    uint32_t size;
    void* data;
-} __attribute__((packed));
+};
 
 struct FIXGroup_
 {
    FIXField* fields[GROUP_SIZE];
    FIXFieldDescr const* parent_fdescr;
    struct FIXGroup_* next;
-} __attribute__((packed));
+};
 
 typedef struct FIXGroups_
 {
