@@ -143,7 +143,7 @@ int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int3
 int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val)
 {
    *val = 0;
-   int32_t i = 0;
+   uint32_t i = 0;
    int64_t sign = 1;
    if (buff[i] == '-')
    {
@@ -170,7 +170,7 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int6
 int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val)
 {
    *val = 0.0;
-   int32_t i = 0;
+   uint32_t i = 0;
    int32_t sign = 1;
    if (buff[i] == '-')
    {
