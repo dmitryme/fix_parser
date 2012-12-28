@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall")
 
 ExternalProject_Add(
     googletest
-    SVN_REPOSITORY http://googletest.googlecode.com/svn/trunk/
+    GIT_REPOSITORY git://github.com/dmitryme/googletest.git
     TIMEOUT 10
     # Disable install step
     INSTALL_COMMAND ""
