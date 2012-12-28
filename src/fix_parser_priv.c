@@ -30,7 +30,7 @@ FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize)
                parser->attrs.maxPageSize, psize);
          return NULL;
       }
-      page = calloc(1, sizeof(FIXPage) + psize - 1);
+      page = (FIXPage*)calloc(1, sizeof(FIXPage) + psize - 1);
       page->size = psize;
    }
    else
@@ -67,7 +67,7 @@ FIXGroup* fix_parser_alloc_group(FIXParser* parser)
    FIXGroup* group = NULL;
    if (parser->group == NULL) // no more free group
    {
-      group = calloc(1, sizeof(FIXGroup));
+      group = (FIXGroup*)calloc(1, sizeof(FIXGroup));
    }
    else
    {
