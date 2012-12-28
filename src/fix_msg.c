@@ -20,7 +20,7 @@
 #include <string.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
+FIX_PARSER_API FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
 {
    if (!parser)
    {
@@ -37,7 +37,7 @@ FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
    {
       return NULL;
    }
-   FIXMsg* msg = malloc(sizeof(FIXMsg));
+   FIXMsg* msg = (FIXMsg*)malloc(sizeof(FIXMsg));
    msg->fields = msg->used_groups = fix_parser_alloc_group(parser);
    if (!msg->fields)
    {
@@ -59,7 +59,7 @@ FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_msg_free(FIXMsg* msg)
+FIX_PARSER_API void fix_msg_free(FIXMsg* msg)
 {
    if (!msg)
    {
@@ -79,7 +79,7 @@ void fix_msg_free(FIXMsg* msg)
    free(msg);
 }
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
+FIX_PARSER_API FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    if (!msg)
    {
@@ -105,7 +105,7 @@ FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
+FIX_PARSER_API FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -128,7 +128,7 @@ FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
+FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
 {
    if (!msg)
    {
@@ -150,7 +150,7 @@ FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* val)
+FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* val)
 {
    if (!msg)
    {
@@ -173,7 +173,7 @@ FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char co
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t val)
+FIX_PARSER_API FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t val)
 {
    if (!msg)
    {
@@ -198,7 +198,7 @@ FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t val)
+FIX_PARSER_API FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t val)
 {
    if (!msg)
    {
@@ -223,7 +223,7 @@ FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char val)
+FIX_PARSER_API FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char val)
 {
    if (!msg)
    {
@@ -246,7 +246,7 @@ FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char val)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double val)
+FIX_PARSER_API FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double val)
 {
    if (!msg)
    {
@@ -271,7 +271,7 @@ FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val)
+FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val)
 {
    if (!msg)
    {
@@ -294,11 +294,11 @@ FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t*
       fix_error_set(&msg->parser->error, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", field->size);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64(field->data, field->size, 0, (int64_t*)val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   return fix_utils_atoi64((char const*)field->data, field->size, 0, (int64_t*)val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val)
+FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val)
 {
    if (!msg)
    {
@@ -316,11 +316,11 @@ FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t*
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64(field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   return fix_utils_atoi64((char const*)field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val)
+FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val)
 {
    if(!msg)
    {
@@ -338,11 +338,11 @@ FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double*
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
-   return fix_utils_atod(field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   return fix_utils_atod((char const*)field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val)
+FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val)
 {
    if (!msg)
    {
@@ -365,7 +365,7 @@ FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len)
+FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len)
 {
    if (!msg)
    {
@@ -389,7 +389,7 @@ FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char co
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
+FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
 {
    if(!msg || !msg || !reqBuffLen)
    {
@@ -398,7 +398,7 @@ FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buff
    fix_error_reset(&msg->parser->error);
    FIXMsgDescr* descr = msg->descr;
    uint32_t crc = 0;
-   int32_t buffLenBefore = buffLen;
+   uint32_t buffLenBefore = buffLen;
    for(uint32_t i = 0; i < descr->field_count; ++i)
    {
       char* prev = buff;
