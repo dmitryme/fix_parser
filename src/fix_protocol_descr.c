@@ -14,7 +14,6 @@
 #include  <libxml/tree.h>
 #include <string.h>
 #include <stdint.h>
-#include  <libgen.h>
 #include <limits.h>
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
@@ -138,7 +137,7 @@ static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIEL
          }
          FIXFieldType* fld = (FIXFieldType*)malloc(sizeof(FIXFieldType));
          fld->tag = atoi(get_attr(field, "number", NULL));
-         fld->name = strdup(get_attr(field, "name", NULL));
+         fld->name = _strdup(get_attr(field, "name", NULL));
          fld->valueType = str2FIXFieldValueType(get_attr(field, "type", NULL));
          int32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = (*ftypes)[idx];
@@ -162,7 +161,7 @@ static FIXErrCode load_fields(
       {
          char const* name = get_attr(field, "name", NULL);
          char const* required = get_attr(field, "required", NULL);
-         *fields = realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
+         *fields = (FIXFieldDescr*)realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
          FIXFieldDescr* fld = &(*fields)[*count - 1];
          memset(fld, 0, sizeof(FIXFieldDescr));
          fld->type = fix_protocol_get_field_type(error, ftypes, name);
@@ -211,7 +210,7 @@ static FIXErrCode load_fields(
       {
          char const* name = get_attr(field, "name", NULL);
          char const* required = get_attr(field, "required", NULL);
-         *fields = realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
+         *fields = (FIXFieldDescr*)realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
          FIXFieldDescr* fld = &(*fields)[*count - 1];
          memset(fld, 0, sizeof(FIXFieldDescr));
          fld->type = fix_protocol_get_field_type(error, ftypes, name);
@@ -225,7 +224,7 @@ static FIXErrCode load_fields(
          {
             fld->flags |= FIELD_FLAG_REQUIRED;
          }
-         fld->group_index = calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
+         fld->group_index = (FIXFieldDescr**)calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
          if (FIX_FAILED == load_fields(error, &fld->group, &fld->group_count, field, root, ftypes))
          {
             return FIX_FAILED;
@@ -257,13 +256,13 @@ static FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNo
       FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
 {
    FIXMsgDescr* msg = (FIXMsgDescr*)calloc(1, sizeof(FIXMsgDescr));
-   msg->name = strdup(get_attr(msg_node, "name", NULL));
-   msg->type = strdup(get_attr(msg_node, "type", NULL));
+   msg->name = _strdup(get_attr(msg_node, "name", NULL));
+   msg->type = _strdup(get_attr(msg_node, "type", NULL));
    if (FIX_FAILED == load_fields(error, &msg->fields, &msg->field_count, msg_node, root, ftypes))
    {
       return NULL;
    }
-   msg->field_index = calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
+   msg->field_index = (FIXFieldDescr**)calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
    build_index(msg->fields, msg->field_count, msg->field_index);
    return msg;
 }
@@ -293,30 +292,19 @@ static int32_t load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldTy
 /*-----------------------------------------------------------------------------------------------------------------------*/
 static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, xmlNode* parentRoot, char const* parentFile)
 {
-   char* transpFile = strdup(get_attr(parentRoot, "transport", parentFile));
+   char const* transpFile = get_attr(parentRoot, "transport", parentFile);
    if(!strcmp(transpFile, parentFile)) // transport is the same as protocol
    {
-      prot->transportVersion = strdup(prot->version);
-      free(transpFile);
+      prot->transportVersion = _strdup(prot->version);
       return FIX_SUCCESS;
    }
    xmlDoc* doc = NULL;
-   if (!strcmp(dirname(transpFile), "."))
+   char path[PATH_MAX] = {};
+   if (FIX_FAILED == fix_utils_make_path(parentFile, transpFile, path, PATH_MAX))
    {
-      char* parentFileDup = strdup(parentFile);
-      char* parentPath = dirname(parentFileDup);
-      char fullPath[PATH_MAX] = {};
-      strcat(fullPath, parentPath);
-      strcat(fullPath, "/");
-      strcat(fullPath, basename(transpFile));
-      doc = xmlParseFile(fullPath);
-      free(parentFileDup);
+      return FIX_FAILED;
    }
-   else
-   {
-      doc = xmlParseFile(transpFile);
-   }
-   free(transpFile);
+   doc = xmlParseFile(transpFile);
    if (!doc)
    {
       fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
@@ -328,7 +316,7 @@ static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, 
       return FIX_FAILED;
    }
    xmlNode* root = xmlDocGetRootElement(doc);
-   prot->transportVersion = strdup(get_attr(root, "version", NULL));
+   prot->transportVersion = _strdup(get_attr(root, "version", NULL));
    if (!strcmp(prot->version, prot->transportVersion)) // versions are the same, no need to process transport protocol
    {
       xmlFreeDoc(doc);
@@ -378,8 +366,8 @@ FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file)
       xmlFreeDoc(doc);
       return NULL;
    }
-   FIXProtocolDescr* prot = calloc(1, sizeof(FIXProtocolDescr));
-   prot->version = strdup(get_attr(root, "version", NULL));
+   FIXProtocolDescr* prot = (FIXProtocolDescr*)calloc(1, sizeof(FIXProtocolDescr));
+   prot->version = _strdup(get_attr(root, "version", NULL));
    if (prot && load_transport_protocol(error, prot, root, file) == FIX_FAILED)
    {
       free(prot);
