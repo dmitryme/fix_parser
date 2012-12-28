@@ -119,3 +119,27 @@ TEST(FixUtilsTests, atod_Test)
    ASSERT_EQ(fix_utils_atod(str4, strlen(str4), 1, &val4), 7);
    ASSERT_EQ(val4, 123.456);
 }
+
+TEST(FixUtilsTests, MakePath)
+{
+   char path[2024];
+   ASSERT_EQ(fix_utils_make_path("/usr/share/fix_parser/fix.4.4.xml", "fixt.1.1.xml", path, sizeof(path)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "/usr/share/fix_parser/fixt.1.1.xml");
+   ASSERT_EQ(fix_utils_make_path("fix.4.4.xml", "fixt.1.1.xml", path, sizeof(path)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "fixt.1.1.xml");
+   ASSERT_EQ(fix_utils_make_path("./fix.4.4.xml", "fixt.1.1.xml", path, sizeof(path)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "./fixt.1.1.xml");
+   ASSERT_EQ(fix_utils_make_path("./fix.4.4.xml", "../../test/fixt.1.1.xml", path, sizeof(path)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "../../test/fixt.1.1.xml");
+   ASSERT_EQ(fix_utils_make_path("../../test/fix.4.4.xml", "fixt.1.1.xml", path, sizeof(path)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "../../test/fixt.1.1.xml");
+   ASSERT_EQ(fix_utils_make_path("../../test/fix.4.4.xml", "./fixt.1.1.xml", path, sizeof(path)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "./fixt.1.1.xml");
+   char path1[5];
+   ASSERT_EQ(fix_utils_make_path("../../test/fix.4.4.xml", "./fixt.1.1.xml", path1, sizeof(path1)), FIX_FAILED);
+   char path2[14];
+   ASSERT_EQ(fix_utils_make_path("../../test/fix.4.4.xml", "./fixt.1.1.xml", path2, sizeof(path2)), FIX_FAILED);
+   char path3[15];
+   ASSERT_EQ(fix_utils_make_path("../../test/fix.4.4.xml", "./fixt.1.1.xml", path3, sizeof(path3)), FIX_SUCCESS);
+   ASSERT_STREQ(path, "./fixt.1.1.xml");
+}
