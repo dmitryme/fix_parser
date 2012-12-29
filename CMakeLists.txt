@@ -16,9 +16,9 @@ link_directories(${LIBXML2_LIBRARIES})
 
 if (WIN32)
    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Wall")
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 else(WIN32)
-   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -O2 -Wall")
+   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -Wall")
 endif(WIN32)
 
 aux_source_directory(src LIB_SOURCES)
