@@ -125,8 +125,8 @@ TEST(FixFieldTests, DelTagTest)
 
    FIXMsg* msg = new_fake_message(parser);
 
-   long val = 1000;
-   FIXField* field = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val, sizeof(val));
+   int val = 1000;
+   FIXField* field = fix_field_set(msg, NULL, new_fdescr(1, FIXFieldCategory_Value, FIXFieldValueType_Int), (unsigned char const*)&val, sizeof(val));
    ASSERT_EQ(msg->fields->fields[1], field);
    ASSERT_EQ(field->descr->type->tag, 1);
    ASSERT_EQ(field->descr->category, FIXFieldCategory_Value);
@@ -137,8 +137,8 @@ TEST(FixFieldTests, DelTagTest)
    ASSERT_EQ(msg->curr_page->offset, 4 + sizeof(FIXField) + 4 + sizeof(val));
    ASSERT_TRUE(msg->curr_page->next == NULL);
 
-   uint64_t val1 = 2000;
-   FIXField* field1 = fix_field_set(msg, NULL, new_fdescr(65, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val1, sizeof(val1));
+   uint32_t val1 = 2000;
+   FIXField* field1 = fix_field_set(msg, NULL, new_fdescr(65, FIXFieldCategory_Value, FIXFieldValueType_Int), (unsigned char const*)&val1, sizeof(val1));
    ASSERT_EQ(msg->fields->fields[1], field1);
    ASSERT_EQ(field1->descr->type->tag, 65);
    ASSERT_EQ(field1->descr->category, FIXFieldCategory_Value);
@@ -149,8 +149,8 @@ TEST(FixFieldTests, DelTagTest)
    ASSERT_EQ(msg->curr_page->offset, 2 * (4 + sizeof(FIXField)) + 4 + sizeof(val) + 4 + sizeof(val1));
    ASSERT_TRUE(msg->curr_page->next == NULL);
 
-   uint64_t val2 = 3000;
-   FIXField* field2 = fix_field_set(msg, NULL, new_fdescr(129, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val2, sizeof(val2));
+   uint32_t val2 = 3000;
+   FIXField* field2 = fix_field_set(msg, NULL, new_fdescr(129, FIXFieldCategory_Value, FIXFieldValueType_Int), (unsigned char const*)&val2, sizeof(val2));
    ASSERT_EQ(msg->fields->fields[1], field2);
    ASSERT_EQ(field2->descr->type->tag, 129);
    ASSERT_EQ(field2->descr->category, FIXFieldCategory_Value);
@@ -161,8 +161,8 @@ TEST(FixFieldTests, DelTagTest)
    ASSERT_EQ(msg->curr_page->offset, 3 * (4 + sizeof(FIXField)) + 4 + sizeof(val) + 4 + sizeof(val1) + 4 + sizeof(val));
    ASSERT_TRUE(msg->curr_page->next == NULL);
 
-   long val3 = 4000;
-   FIXField* field3 = fix_field_set(msg, NULL, new_fdescr(193, FIXFieldCategory_Value, FIXFieldValueType_String), (unsigned char const*)&val3, sizeof(val3));
+   int val3 = 4000;
+   FIXField* field3 = fix_field_set(msg, NULL, new_fdescr(193, FIXFieldCategory_Value, FIXFieldValueType_Int), (unsigned char const*)&val3, sizeof(val3));
 
    ASSERT_EQ(msg->fields->fields[1], field3);
    ASSERT_EQ(field3->descr->type->tag, 193);
