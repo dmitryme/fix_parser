@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 #pragma pack(push, 1)
+#pragma pack(1)
 
 #ifdef __cplusplus
 extern "C"
@@ -27,7 +28,7 @@ struct FIXField_
    struct FIXField_* next;
    uint32_t body_len;
    uint32_t size;
-   void* data;
+   char* data;
 };
 
 struct FIXGroup_
