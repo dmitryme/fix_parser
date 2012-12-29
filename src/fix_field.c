@@ -43,13 +43,13 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
       field->next = group->fields[idx];
       group->fields[idx] = field;
       field->size = len;
-      field->data = fix_msg_alloc(msg, len);
+      field->data = (char*)fix_msg_alloc(msg, len);
       field->body_len = 0;
    }
    else
    {
       field->size = len;
-      field->data = fix_msg_realloc(msg, field->data, len);
+      field->data = (char*)fix_msg_realloc(msg, field->data, len);
       msg->body_len -= field->body_len;
    }
    if (!field->data)
@@ -128,7 +128,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
       field->descr = descr;
       field->next = group->fields[idx];
       group->fields[idx] = field;
-      field->data = fix_msg_alloc(msg, sizeof(FIXGroups));
+      field->data = (char*)fix_msg_alloc(msg, sizeof(FIXGroups));
       if (!field->data)
       {
          return NULL;
@@ -153,7 +153,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
          return NULL;
       }
       ++field->size;
-      field->data = new_grps;
+      field->data = (char*)new_grps;
       msg->body_len -= field->body_len;
    }
    if (LIKE(field->descr->type->tag != FIXFieldTag_BeginString &&
