@@ -13,6 +13,7 @@
 #include <stdint.h>
 
 #pragma pack(push, 1)
+#pragma pack(1)
 
 #ifdef __cplusplus
 extern "C"
