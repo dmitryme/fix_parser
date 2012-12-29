@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #pragma pack(push, 1)
+#pragma pack(1)
 
 typedef struct FIXPage_
 {
