@@ -289,12 +289,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
       return FIX_FAILED;
    }
-   if (field->size > sizeof(int32_t))
-   {
-      fix_error_set(&msg->parser->error, FIX_ERROR_INVALID_ARGUMENT, "Data is too long (%d bytes)", field->size);
-      return FIX_FAILED;
-   }
-   return fix_utils_atoi64((char const*)field->data, field->size, 0, (int64_t*)val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   return fix_utils_atoi32((char const*)field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
