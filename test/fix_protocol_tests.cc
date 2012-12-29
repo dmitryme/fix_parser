@@ -121,7 +121,7 @@ TEST(FIXProtocolTests, FIXProtocolTest2)
 
 TEST(FIXProtocolTests, FIXProtocolTest3)
 {
-   FIXParser* p = fix_parser_create("./data/fix2.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create("./test_data/fix2.xml", NULL, PARSER_FLAG_CHECK_ALL);
    ASSERT_TRUE(p != NULL);
    ASSERT_TRUE(fix_protocol_get_msg_descr(p, "8") != NULL);
    ASSERT_TRUE(fix_protocol_get_msg_descr(p, "0") == NULL);
