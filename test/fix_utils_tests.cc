@@ -26,7 +26,7 @@ TEST(FixUtilsTests, i64toa_Test)
 
    char buff3[7];
    ASSERT_EQ(fix_utils_i64toa(-77777, buff3, sizeof(buff3), 0), 6);
-   ASSERT_TRUE(!strncmp(buff3, "-77777", 7));
+   ASSERT_TRUE(!strncmp(buff3, "-77777", 6));
 
    char buff4[4];
    ASSERT_EQ(fix_utils_i64toa(-37, buff4, sizeof(buff4), '0'), 4);
