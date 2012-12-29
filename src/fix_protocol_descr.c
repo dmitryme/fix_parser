@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <limits.h>
+#include <assert.h>
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PRIVATES                                                                                                              */
@@ -149,8 +150,46 @@ static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIEL
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
+static uint32_t count_msg_fields(xmlNode const* msg_node, xmlNode const* components)
+{
+   uint32_t count = 0;
+   xmlNode const* field = msg_node->children;
+   while(field)
+   {
+      if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "field"))
+      {
+         ++count;
+      }
+      else if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "component"))
+      {
+         char const* component_name = get_attr(field, "name", NULL);
+         xmlNode* component = get_first(components, "component");
+         while(component)
+         {
+            if (component->type == XML_ELEMENT_NODE)
+            {
+               char const* name = get_attr(component, "name", NULL);
+               if (!strcmp(component_name, name))
+               {
+                  count += count_msg_fields(component, components);
+                  break;
+               }
+            }
+            component = component->next;
+         }
+      }
+      else if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "group"))
+      {
+         ++count;
+      }
+      field = field->next;
+   }
+   return count;
+}
+
+/*-----------------------------------------------------------------------------------------------------------------------*/
 static FIXErrCode load_fields(
-      FIXError* error, FIXFieldDescr** fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* root,
+      FIXError* error, FIXFieldDescr* fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* components,
       FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
 {
    xmlNode const* field = msg_node->children;
@@ -160,9 +199,7 @@ static FIXErrCode load_fields(
       {
          char const* name = get_attr(field, "name", NULL);
          char const* required = get_attr(field, "required", NULL);
-         *fields = (FIXFieldDescr*)realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
-         FIXFieldDescr* fld = &(*fields)[*count - 1];
-         memset(fld, 0, sizeof(FIXFieldDescr));
+         FIXFieldDescr* fld = &fields[(*count)++];
          fld->type = fix_protocol_get_field_type(error, ftypes, name);
          fld->category = FIXFieldCategory_Value;
          if (!fld->type)
@@ -176,13 +213,13 @@ static FIXErrCode load_fields(
          }
          if (fld->type->valueType == FIXFieldValueType_Data)
          {
-            if (*count < 2)
+            if ((*count) < 2)
             {
                fix_error_set(error, FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
                return FIX_FAILED;
             }
             // get previous field. It must be Length data type
-            FIXFieldDescr* prevFld = &(*fields)[*count - 2]; 
+            FIXFieldDescr* prevFld = &fields[(*count) - 2]; 
             if (prevFld->type->valueType != FIXFieldValueType_Length)
             {
                fix_error_set(error, FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
@@ -194,7 +231,7 @@ static FIXErrCode load_fields(
       else if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "component"))
       {
          char const* component_name = get_attr(field, "name", NULL);
-         xmlNode* component = get_first(get_first(root, "components"), "component");
+         xmlNode* component = get_first(components, "component");
          while(component)
          {
             if (component->type == XML_ELEMENT_NODE)
@@ -202,7 +239,7 @@ static FIXErrCode load_fields(
                char const* name = get_attr(component, "name", NULL);
                if (!strcmp(component_name, name))
                {
-                  if (FIX_FAILED == load_fields(error, fields, count, component, root, ftypes))
+                  if (FIX_FAILED == load_fields(error, fields, count, component, components, ftypes))
                   {
                      return FIX_FAILED;
                   }
@@ -215,8 +252,7 @@ static FIXErrCode load_fields(
       {
          char const* name = get_attr(field, "name", NULL);
          char const* required = get_attr(field, "required", NULL);
-         *fields = (FIXFieldDescr*)realloc(*fields, ++(*count) * sizeof(FIXFieldDescr));
-         FIXFieldDescr* fld = &(*fields)[*count - 1];
+         FIXFieldDescr* fld = &fields[(*count)++];
          memset(fld, 0, sizeof(FIXFieldDescr));
          fld->type = fix_protocol_get_field_type(error, ftypes, name);
          fld->category = FIXFieldCategory_Group;
@@ -230,7 +266,10 @@ static FIXErrCode load_fields(
             fld->flags |= FIELD_FLAG_REQUIRED;
          }
          fld->group_index = (FIXFieldDescr**)calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
-         if (FIX_FAILED == load_fields(error, &fld->group, &fld->group_count, field, root, ftypes))
+         fld->group_count = count_msg_fields(field, components);
+         fld->group = (FIXFieldDescr*)calloc(fld->group_count, sizeof(FIXFieldDescr));
+         uint32_t count1 = 0;
+         if (FIX_FAILED == load_fields(error, fld->group, &count1, field, components, ftypes))
          {
             return FIX_FAILED;
          }
@@ -263,10 +302,14 @@ static FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNo
    FIXMsgDescr* msg = (FIXMsgDescr*)calloc(1, sizeof(FIXMsgDescr));
    msg->name = _strdup(get_attr(msg_node, "name", NULL));
    msg->type = _strdup(get_attr(msg_node, "type", NULL));
-   if (FIX_FAILED == load_fields(error, &msg->fields, &msg->field_count, msg_node, root, ftypes))
+   msg->field_count = count_msg_fields(msg_node, get_first(root, "components"));
+   msg->fields = (FIXFieldDescr*)calloc(msg->field_count, sizeof(FIXFieldDescr));
+   uint32_t count = 0;
+   if (FIX_FAILED == load_fields(error, msg->fields, &count, msg_node, get_first(root, "components"), ftypes))
    {
       return NULL;
    }
+   assert(count == msg->field_count);
    msg->field_index = (FIXFieldDescr**)calloc(FIELD_DESCR_CNT, sizeof(FIXFieldDescr*));
    build_index(msg->fields, msg->field_count, msg->field_index);
    return msg;
