@@ -8,15 +8,37 @@
 #include "fix_error.h"
 
 #include <stdio.h>
-#include <time.h>
+#ifdef WIN32
+#  include <windows.h>
+#else
+#  include <time.h>
+#endif
 #include <string.h>
 #include <assert.h>
 
+#ifdef WIN32
+#  define TIMESTAMP LARGE_INTEGER
+#  define TIMESTAMP_INIT \
+   LARGE_INTEGER freq_1977_04_23; \
+   QueryPerformanceFrequency(&freq_1977_04_23);
+#  define GET_TIMESTAMP(ts) QueryPerformanceCounter(&ts);
+#  define GET_TIMESTAMP_DIFF_USEC(ts1, ts2) \
+   (ts1.QuadPart - ts2.QuadPart) * 1000000 / freq_1977_04_23.QuadPart
+#else
+#  define TIMESTAMP struct timespec
+#  define TIMESTAMP_INIT
+#  define GET_TIMESTAMP(ts) \
+   clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+#define GET_TIMESTAMP_DIFF_USEC(ts1, ts2) \
+   (ts1.tv_sec - ts2.tv_sec) * 1000000 + (ts1.tv_nsec - ts2.tv_nsec) / 1000;
+#endif
+
 void create_msg(FIXParser* parser)
 {
-   struct timespec start, stop;
+   TIMESTAMP_INIT;
+   TIMESTAMP start, stop;
 
-   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+   GET_TIMESTAMP(start);
 
    int const count = 100000;
 
@@ -25,7 +47,7 @@ void create_msg(FIXParser* parser)
       FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_parser_error_text(parser));
+         printf("ERROR: %s\n", fix_parser_get_error_text(parser));
          return;
       }
 
@@ -56,16 +78,17 @@ void create_msg(FIXParser* parser)
       fix_msg_free(msg);
    }
 
-   clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
-   int const total = (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000;
-   printf("%12s%12d%12d%10.2f\n", "create_msg", count, total, (float)total/count);
+   GET_TIMESTAMP(stop);
+   uint64_t const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
+   printf("%12s%12d%12ld%10.2f\n", "create_msg", count, total, (float)total/count);
 }
 
 void msg_to_fix(FIXParser* parser)
 {
-   struct timespec start, stop;
+   TIMESTAMP_INIT;
+   TIMESTAMP start, stop;
 
-   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+   GET_TIMESTAMP(start);
 
    int const count = 100000;
 
@@ -74,7 +97,7 @@ void msg_to_fix(FIXParser* parser)
       FIXMsg* msg = fix_msg_create(parser, "8");
       if (!msg)
       {
-         printf("ERROR: %s\n", get_fix_parser_error_text(parser));
+         printf("ERROR: %s\n", fix_parser_get_error_text(parser));
          return;
       }
 
@@ -109,21 +132,21 @@ void msg_to_fix(FIXParser* parser)
       fix_msg_free(msg);
    }
 
-   clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+   GET_TIMESTAMP(stop);
 
-
-   int const total = (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000;
-   printf("%12s%12d%12d%10.2f\n", "msg_to_fix", count, total, (float)total/count);
+   uint64_t const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
+   printf("%12s%12d%12ld%10.2f\n", "msg_to_fix", count, total, (float)total/count);
 }
 
 void fix_to_msg(FIXParser* parser)
 {
-   struct timespec start, stop;
+   TIMESTAMP_INIT;
+   TIMESTAMP start, stop;
 
    char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=110|";
    size_t len = strlen(buff);
 
-   clock_gettime(CLOCK_MONOTONIC_RAW, &start);
+   GET_TIMESTAMP(start);
 
    FIXMsg* msg = NULL;
 
@@ -137,9 +160,9 @@ void fix_to_msg(FIXParser* parser)
       fix_msg_free(msg);
    }
 
-   clock_gettime(CLOCK_MONOTONIC_RAW, &stop);
+   GET_TIMESTAMP(stop);
 
-   int const total = (stop.tv_sec - start.tv_sec) * 1000000 + (stop.tv_nsec - start.tv_nsec) / 1000;
+   int const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
    printf("%12s%12d%12d%10.2f\n", "fix_to_msg", count, total, (float)total/count);
 }
 
@@ -154,7 +177,7 @@ int main(int argc, char *argv[])
    FIXParser* parser = fix_parser_create(argv[1], NULL, PARSER_FLAG_CHECK_ALL);
    if (!parser)
    {
-      printf("ERROR: %s\n", get_fix_error_text(parser));
+      printf("ERROR: %s\n", fix_error_get_text());
       return 1;
    }
 

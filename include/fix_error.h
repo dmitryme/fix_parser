@@ -7,13 +7,20 @@
 #define FIX_PARSER_FIX_ERROR_H
 
 #include "fix_types.h"
+#include "fix_parser_dll.h"
 
 #include <stdint.h>
 
-int32_t get_fix_parser_error_code(FIXParser* parser);
-char const* get_fix_parser_error_text(FIXParser* parser);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-int32_t get_fix_error_code();
-char const* get_fix_error_text();
+FIX_PARSER_API FIXErrCode fix_error_get_code();
+FIX_PARSER_API char const* fix_error_get_text();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // FIX_PARSER_FIX_ERROR_H

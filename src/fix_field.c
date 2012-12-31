@@ -21,7 +21,7 @@ static void fix_group_free(FIXMsg* msg, FIXGroup* group);
 FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len)
 {
    FIXField* field = fix_field_get(msg, grp, descr->type->tag);
-   if (!field && get_fix_parser_error_code(msg->parser))
+   if (!field && fix_parser_get_error_code(msg->parser))
    {
       return NULL;
    }
@@ -33,7 +33,7 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
    int32_t idx = descr->type->tag % GROUP_SIZE;
    if (!field)
    {
-      field = fix_msg_alloc(msg, sizeof(FIXField));
+      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField));
       if (!field)
       {
          return NULL;
@@ -43,13 +43,13 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
       field->next = group->fields[idx];
       group->fields[idx] = field;
       field->size = len;
-      field->data = fix_msg_alloc(msg, len);
+      field->data = (char*)fix_msg_alloc(msg, len);
       field->body_len = 0;
    }
    else
    {
       field->size = len;
-      field->data = fix_msg_realloc(msg, field->data, len);
+      field->data = (char*)fix_msg_realloc(msg, field->data, len);
       msg->body_len -= field->body_len;
    }
    if (!field->data)
@@ -68,7 +68,7 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
+FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    uint32_t const idx = tag % GROUP_SIZE;
    FIXField* it = (grp ? grp : msg->fields)->fields[idx];
@@ -84,7 +84,7 @@ FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_field_del(FIXMsg* msg, FIXGroup* grp, uint32_t tag)
+FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    uint32_t const idx = tag % GROUP_SIZE;
    FIXGroup* group = grp ? grp : msg->fields;
@@ -124,11 +124,11 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
    if (!field)
    {
       uint32_t const idx = descr->type->tag % GROUP_SIZE;
-      field = fix_msg_alloc(msg, sizeof(FIXField));
+      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField));
       field->descr = descr;
       field->next = group->fields[idx];
       group->fields[idx] = field;
-      field->data = fix_msg_alloc(msg, sizeof(FIXGroups));
+      field->data = (char*)fix_msg_alloc(msg, sizeof(FIXGroups));
       if (!field->data)
       {
          return NULL;
@@ -145,7 +145,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
    else
    {
       FIXGroups* grps = (FIXGroups*)field->data;
-      FIXGroups* new_grps = fix_msg_realloc(msg, field->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * (field->size + 1));
+      FIXGroups* new_grps = (FIXGroups*)fix_msg_realloc(msg, field->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * (field->size + 1));
       memcpy(new_grps->group, grps->group, sizeof(FIXGroup*) * (field->size));
       new_grps->group[field->size] = fix_msg_alloc_group(msg);
       if (!new_grps->group[field->size])
@@ -153,7 +153,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
          return NULL;
       }
       ++field->size;
-      field->data = new_grps;
+      field->data = (char*)new_grps;
       msg->body_len -= field->body_len;
    }
    if (LIKE(field->descr->type->tag != FIXFieldTag_BeginString &&
@@ -170,7 +170,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXFie
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grpIdx)
+FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
 {
    int32_t const idx = tag % GROUP_SIZE;
    FIXGroup* group = (grp ? grp : msg->fields);
@@ -201,7 +201,7 @@ FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grpId
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_group_del(FIXMsg* msg, FIXGroup* grp, uint32_t tag, uint32_t grpIdx)
+FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
 {
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
@@ -247,7 +247,7 @@ static FIXField* fix_field_free(FIXMsg* msg, FIXField* field)
    if (field->descr->category == FIXFieldCategory_Group)
    {
       FIXGroups* grps = (FIXGroups*)field->data;
-      for(int32_t i = 0; i < field->size; ++i)
+      for(uint32_t i = 0; i < field->size; ++i)
       {
          fix_group_free(msg, grps->group[i]);
       }

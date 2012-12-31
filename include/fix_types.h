@@ -10,6 +10,11 @@
 
 #include  <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define FIX_FAILED                        -1
 #define FIX_SUCCESS                        0
 #define FIX_ERROR_FIELD_HAS_WRONG_TYPE     1
@@ -40,6 +45,8 @@ typedef struct FIXField_ FIXField;
 typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
 typedef struct FIXError FIXError;
+typedef int32_t FIXTagNum;
+typedef int32_t FIXErrCode;
 
 #define PARSER_FLAG_CHECK_CRC 0x01
 #define PARSER_FLAG_CHECK_REQUIRED 0x02
@@ -105,5 +112,9 @@ typedef struct FIXParserAttrs
 } FIXParserAttrs;
 
 FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* FIX_PARSER_FIX_TYPES_H */

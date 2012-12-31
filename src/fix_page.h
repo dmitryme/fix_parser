@@ -8,12 +8,17 @@
 
 #include <stdint.h>
 
+#pragma pack(push, 1)
+#pragma pack(1)
+
 typedef struct FIXPage_
 {
    uint32_t size;
    uint32_t offset;
    struct FIXPage_* next;
    char data[1];
-} __attribute__((packed)) FIXPage;
+} FIXPage;
+
+#pragma pack(pop)
 
 #endif /* FIX_PARSER_FIX_PAGE_H */

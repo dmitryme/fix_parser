@@ -11,6 +11,13 @@
 
 #include <stdint.h>
 
+#pragma pack(push, 1)
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define FIELD_TYPE_CNT 1000
 #define FIELD_DESCR_CNT 100
 #define MSG_CNT   100
@@ -18,7 +25,7 @@
 
 typedef struct FIXFieldType_
 {
-   uint32_t tag;
+   FIXTagNum tag;
    FIXFieldValueTypeEnum valueType;
    char* name;
    struct FIXFieldType_* next;
@@ -60,7 +67,13 @@ void fix_protocol_descr_free(FIXProtocolDescr* prot);
 
 FIXFieldType* fix_protocol_get_field_type(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name);
 FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
-FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, uint32_t tag);
-FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, uint32_t tag);
+FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag);
+FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag);
+
+#ifdef __cplusplus
+}
+#endif
+
+#pragma pack(pop)
 
 #endif /* FIX_PARSER_FIX_PROTOCOL_DESCR_H */
