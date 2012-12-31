@@ -80,7 +80,7 @@ void create_msg(FIXParser* parser)
 
    GET_TIMESTAMP(stop);
    uint64_t const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
-   printf("%12s%12d%12d%10.2f\n", "create_msg", count, total, (float)total/count);
+   printf("%12s%12d%12ld%10.2f\n", "create_msg", count, total, (float)total/count);
 }
 
 void msg_to_fix(FIXParser* parser)
@@ -135,7 +135,7 @@ void msg_to_fix(FIXParser* parser)
    GET_TIMESTAMP(stop);
 
    uint64_t const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
-   printf("%12s%12d%12d%10.2f\n", "msg_to_fix", count, total, (float)total/count);
+   printf("%12s%12d%12ld%10.2f\n", "msg_to_fix", count, total, (float)total/count);
 }
 
 void fix_to_msg(FIXParser* parser)
