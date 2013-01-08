@@ -193,7 +193,6 @@ static FIXErrCode load_fields(
       FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
 {
    xmlNode const* field = msg_node->children;
-   FIXFieldDescr* prevFld = NULL;
    while(field)
    {
       if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "field"))
