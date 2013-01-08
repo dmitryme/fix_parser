@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 2.6)
 
 project(test)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall")
-
 ExternalProject_Add(
     googletest
     GIT_REPOSITORY git://github.com/dmitryme/googletest.git
