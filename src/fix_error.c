@@ -11,17 +11,14 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-static FIXError error;
-
-
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_error_get_code()
 {
-   return error.code;
+   return fix_error_static_get()->code;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API char const* fix_error_get_text()
 {
-   return error.text;
+   return fix_error_static_get()->text;
 }
