@@ -1,7 +1,8 @@
-/* @file   fix_types.h
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/31/2012 10:22:19 AM
-*/
+/**
+ * @file   fix_types.h
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/31/2012 10:22:19 AM
+ */
 
 #ifndef FIX_PARSER_FIX_TYPES_H
 #define FIX_PARSER_FIX_TYPES_H
@@ -14,6 +15,8 @@
 extern "C"
 {
 #endif
+
+#define FIX_SOH                            0x01 ///< default FIX field delimiter
 
 #define FIX_FAILED                        -1
 #define FIX_SUCCESS                        0
@@ -45,22 +48,28 @@ typedef struct FIXField_ FIXField;
 typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
 typedef struct FIXError FIXError;
-typedef int32_t FIXTagNum;
-typedef int32_t FIXErrCode;
+typedef int32_t FIXTagNum;  ///< FIX field tag type
+typedef int32_t FIXErrCode; ///< error code
 
-#define PARSER_FLAG_CHECK_CRC 0x01
-#define PARSER_FLAG_CHECK_REQUIRED 0x02
-#define PARSER_FLAG_CHECK_VALUE    0x04
-#define PARSER_FLAG_CHECK_UNKNOWN_FIELDS 0x08
+#define PARSER_FLAG_CHECK_CRC 0x01       ///< check FIX message CRC during parsing
+#define PARSER_FLAG_CHECK_REQUIRED 0x02  ///< check for required FIX fields
+#define PARSER_FLAG_CHECK_VALUE    0x04  ///< check for valid value. Not used yet
+#define PARSER_FLAG_CHECK_UNKNOWN_FIELDS 0x08 ///< check for unknown FIX fields during parsing. If not set all unknown fields ignored
 #define PARSER_FLAG_CHECK_ALL \
-   (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_VALUE | PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
+   (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_VALUE | PARSER_FLAG_CHECK_UNKNOWN_FIELDS) ///< make all possible checks during parsing.
 
+/**
+ * Determine FIX field category (simple value or group of fields)
+ */
 typedef enum FIXFieldCategoryEnum
 {
-   FIXFieldCategory_Value = 1,
-   FIXFieldCategory_Group = 2
+   FIXFieldCategory_Value = 1,  ///< FIX field is a simple value
+   FIXFieldCategory_Group = 2   ///< FIX field is a group
 } FIXFieldCategoryEnum;
 
+/**
+ * type of FIX field value
+ */
 typedef enum FIXFieldValueTypeEnum
 {
    FIXFieldValueType_Unknown              = -1,
@@ -95,23 +104,32 @@ typedef enum FIXFieldValueTypeEnum
    FIXFieldValueType_Data                 = 0x10000
 } FIXFieldValueTypeEnum;
 
+/**
+ * string to FIXFieldValueTypeEnum enum conversion
+ * @param[in] type - string type value
+ * @return see FIXFieldValueTypeEnum
+ */
+FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
+
+
 #define IS_STRING_TYPE(type) ((type & 0xF000) > 0)
 #define IS_INT_TYPE(type)    ((type & 0x0F) > 0)
 #define IS_FLOAT_TYPE(type)  ((type & 0xF0) > 0)
 #define IS_CHAR_TYPE(type)   ((type & 0xF00) > 0)
 #define IS_DATA_TYPE(type)   ((type & 0xF0000) > 0)
 
+/**
+ * FIX parser attributes. Determine memory usage stategy
+ */
 typedef struct FIXParserAttrs
 {
-   uint32_t pageSize;     /* Page size in bytes. Default 4096 */
-   uint32_t maxPageSize;  /* Maximum page size. 0 - page can be grow depends of tag value size, pageSize - page can not grow. Default 0    */
-   uint32_t numPages;     /* Pages allocated at parser creation. Default 1000 */
-   uint32_t maxPages;     /* Maximum alocated pages. 0 - not bounded, numPages - only numPages pages can be allocates. Default 0    */
-   uint32_t numGroups;    /* Groups allocated at parser creation. Default 1000 */
-   uint32_t maxGroups;    /* Maximum allocated groups. 0 - not bounded, numGroups - onlu numGroups groups can be allocated. Default 0    */
+   uint32_t pageSize;     ///< Page size in bytes. Default 4096
+   uint32_t maxPageSize;  ///< Maximum page size. 0 - page can be grow depends of tag value size, pageSize - page can not grow. Default 0
+   uint32_t numPages;     ///< Pages allocated at parser creation. Default 1000
+   uint32_t maxPages;     ///< Maximum alocated pages. 0 - not bounded, numPages - only numPages pages can be allocates. Default 0
+   uint32_t numGroups;    ///< Groups allocated at parser creation. Default 1000
+   uint32_t maxGroups;    ///< Maximum allocated groups. 0 - not bounded, numGroups - onlu numGroups groups can be allocated. Default 0
 } FIXParserAttrs;
-
-FIXFieldValueTypeEnum str2FIXFieldValueType(char const* type);
 
 #ifdef __cplusplus
 }
