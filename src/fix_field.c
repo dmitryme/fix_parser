@@ -1,7 +1,8 @@
-/* @file   fix_field.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/25/2012 03:35:31 PM
-*/
+/**
+ * @file   fix_field.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/25/2012 03:35:31 PM
+ */
 
 #include "fix_field.h"
 #include "fix_parser.h"
