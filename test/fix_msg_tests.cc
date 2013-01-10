@@ -1,7 +1,8 @@
-/* @file   fix_msg_tests.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 08/27/2012 05:09:24 PM
-*/
+/**
+ * @file   fix_msg_tests.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 08/27/2012 05:09:24 PM
+ */
 
 #include <fix_msg.h>
 #include <fix_parser.h>
