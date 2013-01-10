@@ -17,7 +17,7 @@ TEST(FixUtilsTests, i64toa_Test)
    ASSERT_STREQ(buff, "100");
 
    char buff1[4];
-   ASSERT_EQ(fix_utils_i64toa(77777, buff1, sizeof(buff1), 0), 4);
+   ASSERT_EQ(fix_utils_i64toa(77777, buff1, sizeof(buff1), 0), 5);
    ASSERT_TRUE(!strncmp(buff1, "7777", 4));
 
    char buff2[3];
@@ -48,8 +48,20 @@ TEST(FixUtilsTests, dtoa_Test)
    ASSERT_STREQ(buff1, "-3456");
 
    char buff2[3];
-   ASSERT_EQ(fix_utils_dtoa(-3456.12, buff2, sizeof(buff2)), 3);
+   ASSERT_EQ(fix_utils_dtoa(-3456.12, buff2, sizeof(buff2)), 8);
    ASSERT_TRUE(!strncmp(buff2, "-34", 3));
+
+   char buff3[2];
+   ASSERT_EQ(fix_utils_dtoa(3.12, buff3, sizeof(buff3)), 4);
+   ASSERT_TRUE(!strncmp(buff3, "3.", 2));
+
+   char buff4[1];
+   ASSERT_EQ(fix_utils_dtoa(3.12, buff4, sizeof(buff4)), 4);
+   ASSERT_TRUE(!strncmp(buff4, "3", 1));
+
+   char buff5[1];
+   ASSERT_EQ(fix_utils_dtoa(-3.12, buff5, sizeof(buff5)), 5);
+   ASSERT_TRUE(!strncmp(buff5, "-", 1));
 }
 
 
