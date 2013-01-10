@@ -1,7 +1,8 @@
-/* @file   fix_field_tests.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 08/03/2012 02:41:02 PM
-*/
+/**
+ * @file   fix_field_tests.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 08/03/2012 02:41:02 PM
+ */
 
 #include  <fix_parser.h>
 #include  <fix_parser_priv.h>
