@@ -1,7 +1,8 @@
-/* @file   fix_field_tag.h
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 08/30/2012 12:03:34 PM
-*/
+/**
+ * @file   fix_field_tag.h
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 08/30/2012 12:03:34 PM
+ */
 
 #ifndef FIX_PARSER_FIX_FIELD_TAG_H
 #define FIX_PARSER_FIX_FIELD_TAG_H
@@ -11,6 +12,9 @@ extern "C"
 {
 #endif
 
+/**
+ * All standard FIX tags up to FIX 5.0 SP2
+ */
 typedef enum FIXFieldTagEnum_
 {
    FIXFieldTag_Account=1,
