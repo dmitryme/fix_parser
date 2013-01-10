@@ -1,19 +1,20 @@
 /**
- * @file   fix_parser_priv.h
+ * @file   fix_msg_priv.h
  * @author Dmitry S. Melnikov, dmitryme@gmail.com
- * @date   Created on: 07/30/2012 10:54:30 AM
+ * @date   Created on: 07/30/2012 06:28:42 PM
  */
 
-#ifndef FIX_PARSER_FIX_PARSER_PRIV_H
-#define FIX_PARSER_FIX_PARSER_PRIV_H
+#ifndef FIX_PARSER_FIX_MSG_PRIV_H
+#define FIX_PARSER_FIX_MSG_PRIV_H
 
 #include "fix_types.h"
 #include "fix_protocol_descr.h"
 #include "fix_page.h"
-#include "fix_field.h"
-#include "fix_error_priv.h"
 
 #include <stdint.h>
+
+#pragma pack(push, 1)
+#pragma pack(1)
 
 #ifdef __cplusplus
 extern "C"
@@ -21,123 +22,111 @@ extern "C"
 #endif
 
 /**
- * FIX parser data
+ * FIX message
  */
-struct FIXParser_
+struct FIXMsg_
 {
-   FIXProtocolDescr* protocol; ///< FIX protocol
-   FIXError error;             ///< own error
-   FIXParserAttrs attrs;       ///< attributes
-   int32_t  flags;             ///< flags
-   FIXPage* page;              ///< list of allocated memory pages
-   uint32_t used_pages;        ///< count of memory pages in use
-   FIXGroup* group;            ///< allocated FIX groups
-   uint32_t used_groups;       ///< count of used groups
+   FIXParser* parser;     ///< pointer to parser, who holds this message
+   FIXMsgDescr* descr;    ///< FIX message description
+   FIXGroup* fields;      ///< message FIX fields
+   FIXPage* pages;        ///< allocated pages with FIX field data
+   FIXPage* curr_page;    ///< current memory page
+   FIXGroup* used_groups; ///< used groups by this message
+   uint32_t body_len;     ///< entire body len, if message converted to FIX data
 };
 
 /**
- * allocate new page by parser
- * @param[in] parser   - FIX parser
- * @param[in] pageSize - size of page
- * @return allocated page, NULL - if allocated page exceeded parser attributes
+ * allocate data for this message
+ * @param[in] msg - pointer to message
+ * @param[in] size - size of data being allocated
+ * @return pointer to allocated space
  */
-FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize);
+void* fix_msg_alloc(FIXMsg* msg, uint32_t size);
 
 /**
- * free allocated page
- * @param[in] parser - page holder
- * @param[in] page - deallocated page
- * @return next used page or NULL if no more pages are used
+ * realloc previous allocated space
+ * @param[in] msg - msg with allocated space
+ * @param[in] ptr - pointer to data previously allocated
+ * @param[in] size - new size of allocated space. If new size greater, new space will be allocated, else no new space allocated
+ * @return pointer to reallocated space
  */
-FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
+void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size);
 
 /**
- * allocate new FIX group
- * @param[in] parser - group allocator
- * @return allocated group pr NULL if parser attributes are exceeded
+ * return FIX field by tag num
+ * @param[in] msg - FIX message with required FIX field
+ * @param[in] grp - pointer to FIX group, if tag is a part of FIX groups, else must be NULL
+ * @param[in] tag - FIX field tag num
+ * @return required FIX field or NULL in case of error
  */
-FIXGroup* fix_parser_alloc_group(FIXParser* parser);
+FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
 
 /**
- * free allocated group
- * @param[in] parser - group holder
- * @param[in] group - deallocated group
- * @return next used group or NULL
- */
-FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
-
-/**
- * parse string with mandatory fields. Mandatory fields are BeginString, BodyLength, CheckSum, MsgType
- * @param[in] parser - FIX parser
- * @param[in] data - string to parse
- * @param[in] len - length of data
- * @param[in] delimiter - FIX field SOH
- * @param[out] dbegin - points to begin of field value
- * @param[out] dend - points to end of field value
- * @return FIX field tag number or FIX_FAILED
- */
-FIXTagNum fix_parser_parse_mandatory_field(
-      FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend);
-
-/**
- * parser string with FIX field
- * @param[in] parser - FIX parser
- * @param[in] msg - FIX message, which will hold parsed field
- * @param[in] group - FIX group, which will hold parsed field. Can be NULL
- * @param[in] data - string to parser
- * @param[in] len - length of data
- * @param[in] delimiter - FIX field SOH
- * @param[out] fdescr - description of field
- * @param[out] dbegin - points to begin of field value
- * @param[out] dend - points to end of field value
- * @return FIX field tag number or FIX_FAILED
- */
-FIXTagNum fix_parser_parse_field(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr, char const** dbegin, char const** dend);
-
-/**
- * validate parser attributes
- * @param[in] attrs - attributes to validate
- * @return FIX_SUCCESS - ok, FIX_FAILED - invalid attributes
- */
-FIXErrCode fix_parser_validate_attrs(FIXParserAttrs* attrs);
-
-/**
- * extract field value from string
- * @param[in] parser - FIX parser
- * @param[in] dbegin - begin of data
- * @param[in] len - length of data
- * @param[in] delimiter - FIX field SOH
- * @param[out] dend - end of field data
- * @return FIX_SUCCESS - ok, FIX_FAILED - error
- */
-FIXErrCode fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len, char delimiter, char const** dend);
-
-/**
- * test field value
+ * set FIX field value
+ * @param[in] msg - FIX msg with being changed field
+ * @param[in] grp - FIX group, if FIX field is a part of it, else must be NULL
  * @param[in] fdescr - FIX field description
- * @param[in] dbegin - begin of value to validate
- * @param[in] dend - end of value to validate
- * @param[in] delimiter - FIX field SOH
- * @return FIX_SUCCESS - ok, FIX_FAILED - error
+ * @param[in] data - new FIX field value
+ * @param[in] len - length of data
  */
-FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter);
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* fdescr, unsigned char const* data, uint32_t len);
 
 /**
- * parse string with group
- * @param[in] parser - FIX parser
- * @param[in] msg - FIX message, which will hold parsed group
- * @param[in] parentGroup - FIX group, which will hold nested group
- * @param[in] groupTag - FIX field tag number
- * @param[in] data - string to parser
- * @param[in] len - length of data
- * @param[out] stop - parse stop pointer
+ * create new FIX group
+ * @param[in] msg - FIX message
+ * @return new FIX group
+ */
+FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
+
+/**
+ * destroy FIX group
+ * @param[in] msg - FIX message
+ * @param[in] grp - pointer to deallocated group
+ */
+void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
+
+/**
+ * converts FIX group to string
+ * @param[in] msg - FIX message with converted FIX group
+ * @param[in] field - FIX field with group data
+ * @param[in] fdescr - FIX field description
+ * @param[in] delimiter - FIX field SOH
+ * @param[out] buff - space with converted data
+ * @param[out] buffLen - size of converted data
+ * @param[out] crc - ajustment of crc. Can be differ from 0, if delimiter is not a FIX_SOH
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXTagNum groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop);
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc);
+
+/**
+ * convert numeric value to string
+ * @param[in] parser - FIX parser
+ * @param[in] tag - FIX field tag value
+ * @param[in] val - converted value
+ * @param[in] delimiter - FIX field delimiter
+ * @param[in] width - value width
+ * @param[in] padSym - char for padding value width. E.g. tag = 35, width = 5, padSym = '0' and value is 10, so converted data is '35=00010'
+ * @param[out] buff - buffer with converted data
+ * @param[out] buffLen - size of converted data
+ * @return FIX_SUCCESS - ok, FIX_FAILED - error
+ */
+FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen);
+
+/**
+ * convert FIX field to string
+ * @param[in] parser - FIX parser
+ * @param[in] field - FIX field being converted
+ * @param[in] delimiter - FIX field SOH
+ * @param[out] buff - buffer with converted data
+ * @param[out] buffLen - size of converted data
+ * @return FIX_SUCCESS - ok, FIX_FAILED - error
+ */
+FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* FIX_PARSER_FIX_PARSER_PRIV_H */
+#pragma pack(pop)
+
+#endif /* FIX_PARSER_FIX_MSG_PRIV_H */
