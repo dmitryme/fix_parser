@@ -1,7 +1,8 @@
-/* @file   fix_protocol_descr.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/27/2012 06:14:53 PM
-*/
+/**
+ * @file   fix_protocol_descr.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/27/2012 06:14:53 PM
+ */
 
 #include "fix_protocol_descr.h"
 #include "fix_utils.h"
@@ -130,7 +131,7 @@ static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIEL
    {
       if (field->type == XML_ELEMENT_NODE && !strcmp((char const*)field->name, "field"))
       {
-         if (fix_protocol_get_field_type(error, ftypes, get_attr(field, "name", NULL)))
+         if (fix_protocol_get_field_type(ftypes, get_attr(field, "name", NULL)))
          {
             fix_error_set(
                   error, FIX_ERROR_FIELD_TYPE_EXISTS, "FIXFieldType '%s' already exists", (char const*)field->name);
@@ -200,7 +201,7 @@ static FIXErrCode load_fields(
          char const* name = get_attr(field, "name", NULL);
          char const* required = get_attr(field, "required", NULL);
          FIXFieldDescr* fld = &fields[(*count)++];
-         fld->type = fix_protocol_get_field_type(error, ftypes, name);
+         fld->type = fix_protocol_get_field_type(ftypes, name);
          fld->category = FIXFieldCategory_Value;
          if (!fld->type)
          {
@@ -254,7 +255,7 @@ static FIXErrCode load_fields(
          char const* required = get_attr(field, "required", NULL);
          FIXFieldDescr* fld = &fields[(*count)++];
          memset(fld, 0, sizeof(FIXFieldDescr));
-         fld->type = fix_protocol_get_field_type(error, ftypes, name);
+         fld->type = fix_protocol_get_field_type(ftypes, name);
          fld->category = FIXFieldCategory_Group;
          if (!fld->type)
          {
@@ -468,7 +469,7 @@ void fix_protocol_descr_free(FIXProtocolDescr* prot)
 
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXFieldType* fix_protocol_get_field_type(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name)
+FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name)
 {
    int32_t idx = fix_utils_hash_string(name) % FIELD_TYPE_CNT;
    FIXFieldType* fld = (*ftypes)[idx];
