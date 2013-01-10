@@ -1,7 +1,8 @@
-/* @file   fix_parser_dll.h
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 12/22/2012 6:20:19 PM
-*/
+/**
+ * @file   fix_parser_dll.h
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 12/22/2012 6:20:19 PM
+ */
 
 #ifdef _WINDLL
 #   ifdef WIN32
