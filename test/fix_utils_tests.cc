@@ -1,7 +1,8 @@
-/* @file   fix_parser_tests.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 09/13/2012 03:23:02 PM
-*/
+/**
+ * @file   fix_parser_tests.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 09/13/2012 03:23:02 PM
+ */
 
 extern "C"
 {
