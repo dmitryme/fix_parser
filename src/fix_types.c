@@ -1,7 +1,8 @@
-/* @file   fix_types.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 08/01/2012 01:53:57 PM
-*/
+/**
+ * @file   fix_types.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 08/01/2012 01:53:57 PM
+ */
 
 #include "fix_types.h"
 
