@@ -1,7 +1,8 @@
-/* @file   fix_parser_priv.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/30/2012 10:26:54 AM
-*/
+/**
+ * @file   fix_parser_priv.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/30/2012 10:26:54 AM
+ */
 
 #include "fix_parser_priv.h"
 #include "fix_utils.h"
