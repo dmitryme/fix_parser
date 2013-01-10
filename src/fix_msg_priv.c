@@ -1,7 +1,8 @@
-/* @file   fix_msg.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/30/2012 06:35:11 PM
-*/
+/**
+ * @file   fix_msg_priv.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/30/2012 06:35:11 PM
+ */
 
 #include "fix_msg_priv.h"
 #include "fix_parser_priv.h"
@@ -115,17 +116,6 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
-{
-   if (!msg)
-   {
-      return FIX_FAILED;
-   }
-   fix_error_reset(&msg->parser->error);
-   return fix_field_del(msg, grp, tag);
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
@@ -203,9 +193,10 @@ FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimit
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen)
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc)
 {
    FIXErrCode res = int32_to_fix_msg(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
+   (*crc) += (FIX_SOH - delimiter);
    for(uint32_t i = 0; i < field->size && res != FIX_FAILED; ++i)
    {
       FIXGroup* group = ((FIXGroups*)field->data)->group[i];
@@ -225,11 +216,12 @@ FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fde
          }
          else if (child_field && child_field->descr->category == FIXFieldCategory_Group)
          {
-            res = fix_groups_to_string(msg, child_field, child_fdescr, delimiter, buff, buffLen);
+            res = fix_groups_to_string(msg, child_field, child_fdescr, delimiter, buff, buffLen, crc);
          }
          else if(child_field)
          {
             res = fix_field_to_fix_msg(msg->parser, child_field, delimiter, buff, buffLen);
+            (*crc) += (FIX_SOH - delimiter);
          }
       }
    }
