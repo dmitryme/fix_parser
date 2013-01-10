@@ -1,7 +1,8 @@
-/* @file   fix_error.h
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/30/2012 10:54:30 AM
-*/
+/**
+ * @file   fix_error.h
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/30/2012 10:54:30 AM
+ */
 
 #ifndef FIX_PARSER_FIX_ERROR_H
 #define FIX_PARSER_FIX_ERROR_H
@@ -16,7 +17,15 @@ extern "C"
 {
 #endif
 
+/**
+ * return error code during new parser instance creation
+ * @note this method uses global variable without multithread protection
+ */
 FIX_PARSER_API FIXErrCode fix_error_get_code();
+/**
+ * return human readable error description
+ * @note this method uses global variable without multithread protection
+ */
 FIX_PARSER_API char const* fix_error_get_text();
 
 #ifdef __cplusplus
