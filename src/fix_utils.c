@@ -1,7 +1,8 @@
-/* @file   fix_utils.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 08/02/2012 01:05:17 PM
-*/
+/**
+ * @file   fix_utils.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 08/02/2012 01:05:17 PM
+ */
 
 #include "fix_utils.h"
 #include "fix_types.h"
@@ -92,7 +93,7 @@ int32_t fix_utils_i64toa(int64_t val, char* buff, uint32_t buffLen, char padSym)
       buff[i] = digit + 48;
       val -= (pow * digit);
    }
-   return i;
+   return i + nd;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
@@ -115,10 +116,14 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
       buff[i] = digit + 48;
       m -= (pow * digit);
    }
+   i += j;
    m = (int64_t)(val * fix_utils_lpow10(DOUBLE_MAX_DIGITS - nd)) - (int64_t)val * fix_utils_lpow10(DOUBLE_MAX_DIGITS - nd);
-   if (m && buffLen)
+   if (m)
    {
-      buff[i] = '.';
+      if (buffLen)
+      {
+         buff[i] = '.';
+      }
       ++i;
    }
    j = DOUBLE_MAX_DIGITS - nd;
@@ -127,6 +132,12 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
       int64_t pow = fix_utils_lpow10(j - 1);
       int64_t digit = m/pow;
       buff[i] = digit + 48;
+      m -= (pow * digit);
+   }
+   for(; m && j; ++i, --j)
+   {
+      int64_t pow = fix_utils_lpow10(j - 1);
+      int64_t digit = m/pow;
       m -= (pow * digit);
    }
    return i;
