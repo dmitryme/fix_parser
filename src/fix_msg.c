@@ -1,7 +1,8 @@
-/* @file   fix_msg.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/30/2012 06:35:11 PM
-*/
+/**
+ * @file   fix_msg.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/30/2012 06:35:11 PM
+ */
 
 #include "fix_msg.h"
 #include "fix_msg_priv.h"
@@ -271,6 +272,33 @@ FIX_PARSER_API FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* data, uint32_t dataLen)
+{
+   if (!msg)
+   {
+      return FIX_FAILED;
+   }
+   fix_error_reset(&msg->parser->error);
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+   if (!fdescr)
+   {
+      return FIX_FAILED;
+   }
+   if (!IS_DATA_TYPE(fdescr->type->valueType))
+   {
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with data value", tag);
+      return FIX_FAILED;
+   }
+   FIXField* field = fix_msg_set_field(msg, grp, fdescr, (unsigned char*)data, dataLen);
+   if (!field)
+   {
+      return FIX_FAILED;
+   }
+   return fix_msg_set_int32(msg, grp, fdescr->dataLenField->type->tag, dataLen);
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val)
 {
    if (!msg)
@@ -384,6 +412,39 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API FIXErrCode fix_msg_get_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len)
+{
+   return fix_msg_get_string(msg, grp, tag, val, len);
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
+{
+   if (!msg)
+   {
+      return FIX_FAILED;
+   }
+   fix_error_reset(&msg->parser->error);
+   FIXField* field = fix_field_get(msg, grp, tag);
+   if (!field)
+   {
+      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
+      return FIX_FAILED;
+   }
+   FIXFieldDescr* fdescr = grp ? fix_protocol_get_group_descr(&msg->parser->error, grp->parent_fdescr, tag) :
+      fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+   if (!fdescr)
+   {
+      return FIX_FAILED;
+   }
+   if (IS_DATA_TYPE(fdescr->type->valueType))
+   {
+      fix_field_del(msg, grp, fdescr->dataLenField->type->tag);
+   }
+   return fix_field_del(msg, grp, tag);
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
 {
    if(!msg || !msg || !reqBuffLen)
@@ -392,7 +453,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff
    }
    fix_error_reset(&msg->parser->error);
    FIXMsgDescr* descr = msg->descr;
-   uint32_t crc = 0;
+   int32_t crc = 0;
    uint32_t buffLenBefore = buffLen;
    for(uint32_t i = 0; i < descr->field_count; ++i)
    {
@@ -408,6 +469,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff
          {
             return FIX_FAILED;
          }
+         crc += (FIX_SOH - delimiter); // adjust CRC, if delimiter is not equal to FIX_SOH
       }
       else if(fdescr->type->tag == FIXFieldTag_CheckSum)
       {
@@ -420,11 +482,12 @@ FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff
       }
       else if (field && field->descr->category == FIXFieldCategory_Group)
       {
-         res = fix_groups_to_string(msg, field, fdescr, delimiter, &buff, &buffLen);
+         res = fix_groups_to_string(msg, field, fdescr, delimiter, &buff, &buffLen, &crc);
       }
       else if(field)
       {
          res = fix_field_to_fix_msg(msg->parser, field, delimiter, &buff, &buffLen);
+         crc += (FIX_SOH - delimiter); // adjust CRC, if delimiter is not equal to FIX_SOH
       }
       if (res == FIX_FAILED)
       {
