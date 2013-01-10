@@ -1,7 +1,8 @@
-/* @file   fix_protocol_tests.c
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 10/01/2012 18:20:02 PM
-*/
+/**
+ * @file   fix_protocol_tests.c
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 10/01/2012 18:20:02 PM
+ */
 
 #include  <fix_parser.h>
 #include  <fix_parser_priv.h>
