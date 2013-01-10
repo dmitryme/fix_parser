@@ -1,7 +1,8 @@
-/* @file   fix_descr_xsd.h
-   @author Dmitry S. Melnikov, dmitryme@gmail.com
-   @date   Created on: 07/30/2012 02:40:30 PM
-*/
+/**
+ * @file   fix_descr_xsd.h
+ * @author Dmitry S. Melnikov, dmitryme@gmail.com
+ * @date   Created on: 07/30/2012 02:40:30 PM
+ */
 
 #ifndef FIX_PARSER_FIX_DESCR_XSD_H
 #define FIX_PARSER_FIX_DESCR_XSD_H
