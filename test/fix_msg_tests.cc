@@ -222,7 +222,7 @@ TEST(FixMsgTests, ToStringTest)
 
    char buff[1024];
    uint32_t reqBuffLen = 0;
-   ASSERT_EQ(FIX_SUCCESS, fix_msg_to_fix(msg, 1, buff,sizeof(buff), &reqBuffLen));
+   ASSERT_EQ(FIX_SUCCESS, fix_msg_to_fix(msg, FIX_SOH, buff,sizeof(buff), &reqBuffLen));
    ASSERT_EQ(reqBuffLen, 251U);
    buff[reqBuffLen] = 0;
    ASSERT_STREQ(buff, "8=FIX.4.4\0019=228\00135=8\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00157=srv-ivanov_ii1\00152=20120716-06:00:16.230\001"

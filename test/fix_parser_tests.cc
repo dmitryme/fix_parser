@@ -234,4 +234,10 @@ TEST(FixParserTests, ParseStringTest)
    CHECK_STRING(msg, FIXFieldTag_HandlInst, "1");
    CHECK_STRING(msg, FIXFieldTag_Text, "COMMENT12");
    CHECK_STRING(msg, FIXFieldTag_CheckSum, "240");
+
+   char buff1[1024];
+   uint32_t reqBuffLen = 0;
+   ASSERT_EQ(FIX_SUCCESS, fix_msg_to_fix(msg, FIX_SOH, buff1, sizeof(buff1), &reqBuffLen));
+   buff1[reqBuffLen] = 0;
+   ASSERT_STREQ(buff, buff1); // Bingo!
 }
