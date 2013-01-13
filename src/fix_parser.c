@@ -12,6 +12,7 @@
 #include "fix_page.h"
 #include "fix_utils.h"
 #include "fix_error_priv.h"
+#include "fix_field_tag.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -151,9 +152,9 @@ FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data
       fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
       return NULL;
    }
+   int64_t check_sum = 0;
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
    {
-      int64_t check_sum = 0;
       if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum) == FIX_FAILED)
       {
          fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "CheckSum value not a tagber.");
@@ -192,7 +193,18 @@ FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data
       free(msgType);
       return NULL;
    }
-   free(msgType);
+   if (fix_msg_set_int32(msg, NULL, FIXFieldTag_BodyLength, bodyLen) != FIX_SUCCESS)
+   {
+      free(msgType);
+      return NULL;
+   }
+   char crc[3];
+   fix_utils_i64toa(check_sum, crc, sizeof(crc), '0');
+   if (fix_msg_set_string(msg, NULL, FIXFieldTag_CheckSum, crc) != FIX_SUCCESS)
+   {
+      free(msgType);
+      return NULL;
+   }
    while(dend != bodyEnd)
    {
       FIXFieldDescr* fdescr = NULL;
