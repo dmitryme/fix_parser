@@ -445,7 +445,7 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
+FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen)
 {
    if(!msg || !msg || !reqBuffLen)
    {
