@@ -43,7 +43,7 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser);
  * @param[in] stop - pointer to position in data, where parsing is stopped
  * @return new instance of parsed message
  */
-FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
+FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
 
 /**
  * get error code of failed operation
