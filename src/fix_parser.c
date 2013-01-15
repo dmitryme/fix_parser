@@ -85,7 +85,7 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
+FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    if (!parser || !data)
    {
@@ -152,9 +152,9 @@ FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data
       fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
       return NULL;
    }
-   int64_t check_sum = 0;
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
    {
+      int64_t check_sum = 0;
       if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum) == FIX_FAILED)
       {
          fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "CheckSum value not a tagber.");
@@ -188,26 +188,32 @@ FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data
    char* msgType = (char*)calloc(dend - dbegin + 1, 1);
    memcpy(msgType, dbegin, dend - dbegin);
    FIXMsg* msg = fix_msg_create(parser, msgType);
+   free(msgType);
    if (!msg)
    {
-      free(msgType);
       return NULL;
    }
    if (fix_msg_set_int32(msg, NULL, FIXFieldTag_BodyLength, bodyLen) != FIX_SUCCESS)
    {
-      free(msgType);
+      fix_msg_free(msg);
       return NULL;
    }
-   char crc[3];
-   fix_utils_i64toa(check_sum, crc, sizeof(crc), '0');
-   if (fix_msg_set_string(msg, NULL, FIXFieldTag_CheckSum, crc) != FIX_SUCCESS)
+   FIXFieldDescr* fdescr  = fix_protocol_get_field_descr(&parser->error, msg->descr, FIXFieldTag_CheckSum);
+   if (!fdescr)
    {
-      free(msgType);
+      fix_msg_free(msg);
+      return NULL;
+   }
+   char crc[4] = {};
+   memcpy(crc, crcbeg, *stop - crcbeg);
+   if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)crcbeg, *stop - crcbeg))
+   {
+      fix_msg_free(msg);
       return NULL;
    }
    while(dend != bodyEnd)
    {
-      FIXFieldDescr* fdescr = NULL;
+      fdescr = NULL;
       tag = fix_parser_parse_field(parser, msg, NULL, dend + 1, bodyEnd - dend, delimiter, &fdescr, &dbegin, &dend);
       if (tag == FIX_FAILED)
       {
@@ -242,7 +248,7 @@ FIX_PARSER_API FIXMsg* fix_parser_fix_to_msg(FIXParser* parser, char const* data
                fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
                return NULL;
             }
-            res = fix_parser_parse_group(parser, msg, NULL, tag, numGroups, dend + 1, bodyEnd - dend, delimiter, &dend);
+            res = fix_parser_parse_group(parser, msg, NULL, tag, numGroups, dend, bodyEnd - dend, delimiter, &dend);
             if (res == FIX_FAILED)
             {
                fix_msg_free(msg);
