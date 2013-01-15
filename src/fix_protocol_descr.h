@@ -44,8 +44,8 @@ typedef struct FIXFieldDescr_
    FIXFieldCategoryEnum category;       ///< category - value or group
    uint8_t flags;                       ///< only FIELD_FLAG_REQUIRED is used
    uint32_t group_count;                ///< count of field descriptions in group
-   struct FIXFieldDescr_*  group;       ///< hash table with field descriptions
-   struct FIXFieldDescr_** group_index; ///< all field descriptions indexed as array
+   struct FIXFieldDescr_*  group;       ///< all field descriptions indexed as array
+   struct FIXFieldDescr_** group_index; ///< hash table with field descriptions
    struct FIXFieldDescr_*  next;        ///< next field description in hash table
    struct FIXFieldDescr_*  dataLenField; ///< reference to field description. Not NULL if this field has valueType == Data.
 } FIXFieldDescr;
@@ -58,8 +58,8 @@ typedef struct FIXMsgDescr_
    char* type;                   ///< type. E.g. "A", "AE", "D"
    char* name;                   ///< textual message name
    uint32_t field_count;         ///< count of field descriptions
-   FIXFieldDescr* fields;        ///< hash table with fields
-   FIXFieldDescr** field_index;  ///< all fields indexed as array
+   FIXFieldDescr* fields;        ///< all fields indexed as array
+   FIXFieldDescr** field_index;  ///< hash table with fields
    struct FIXMsgDescr_* next;    ///< next description with the same hash key
 } FIXMsgDescr;
 
