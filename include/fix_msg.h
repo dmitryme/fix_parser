@@ -192,7 +192,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum
 FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
 
 /**
- * convert message to FIX format
+ * convert FIX message to string
  * @param[in] msg - message to be converted
  * @param[in] delimiter - FIX field delimter char
  * @param[out] buff - buffer with converted message
@@ -200,7 +200,7 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[out] reqBuffLen - if buff length too small, reqBuffLen returns length of needed space
  * @return FIX_SUCCESS - OK, FIX_FAILED - convertion failed. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_to_fix(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen);
+FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen);
 
 #ifdef __cplusplus
 }
