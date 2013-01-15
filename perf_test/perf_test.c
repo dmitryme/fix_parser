@@ -127,7 +127,7 @@ void msg_to_fix(FIXParser* parser)
 
       char buff[1024];
       uint32_t reqBuffLen = 0;
-      fix_msg_to_fix(msg, '|', buff, sizeof(buff), &reqBuffLen);
+      fix_msg_to_str(msg, '|', buff, sizeof(buff), &reqBuffLen);
 
       fix_msg_free(msg);
    }
@@ -155,7 +155,7 @@ void fix_to_msg(FIXParser* parser)
    for(int32_t i = 0; i < count; ++i)
    {
       char const* stop = NULL;
-      msg = fix_parser_fix_to_msg(parser, buff, len, '|', &stop);
+      msg = fix_parser_str_to_msg(parser, buff, len, '|', &stop);
       assert(msg != NULL);
       fix_msg_free(msg);
    }
