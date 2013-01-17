@@ -145,24 +145,40 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, cha
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len, char delimiter, char const** dend)
+inline FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGroup* group, FIXFieldDescr* fdescr,
+      char const* dbegin, uint32_t len, char delimiter, char const** dend)
 {
    *dend = dbegin;
-   for(;len > 0; --len)
+   if (msg && fdescr && fdescr->type->valueType == FIXFieldValueType_Data) // Data field
    {
-      if (**dend == delimiter)
+      int32_t dataLength;
+      if (FIX_FAILED == fix_msg_get_int32(msg, group, fdescr->dataLenField->type->tag, &dataLength))
       {
-         break;
+         fix_error_set(
+               &parser->error, FIX_ERROR_UNKNOWN_FIELD,
+               "Unable to get length field '%d'.", fdescr->dataLenField->type->tag);
+         return FIX_FAILED;
       }
-      else
-      {
-         ++(*dend);
-      }
+      *dend = dbegin + dataLength;
    }
-   if (!len)
+   else // get value till delimiter
    {
-      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
-      return FIX_FAILED;
+      for(;len > 0; --len)
+      {
+         if (**dend == delimiter)
+         {
+            break;
+         }
+         else
+         {
+            ++(*dend);
+         }
+      }
+      if (!len)
+      {
+         fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
+         return FIX_FAILED;
+      }
    }
    return FIX_SUCCESS;
 }
@@ -178,42 +194,39 @@ FIXTagNum fix_parser_parse_mandatory_field(
       fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
       return FIX_FAILED;
    }
-   len -= res;
-   *dend = *dbegin = data + res + 1;
-   for(;len > 0; --len)
+   if (FIX_FAILED == fix_parser_parse_value(parser, NULL, NULL, NULL, data + res + 1, len - res - 1 , delimiter, dend))
    {
-      if (**dend == delimiter)
-      {
-         break;
-      }
-      else
-      {
-         ++(*dend);
-      }
-   }
-   if (!len)
-   {
-      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Field value must be terminated with '%c' delimiter.", delimiter);
       return FIX_FAILED;
    }
    return tag;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXTagNum fix_parser_parse_field(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr, char const** dbegin, char const** dend)
+inline FIXTagNum fix_parser_parse_tag(
+      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, FIXTagNum* tag, FIXFieldDescr** fdescr, char const** dbegin)
 {
-   FIXTagNum tag = 0;
-   FIXErrCode res = fix_utils_atoi32(data, len, '=', &tag);
+   FIXErrCode res = fix_utils_atoi32(data, len, '=', tag);
    if (res == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
       return FIX_FAILED;
    }
-   len -= res;
    *dbegin = data + res + 1;
-   *fdescr = group ? fix_protocol_get_group_descr(&parser->error, group->parent_fdescr, tag)
-      : fix_protocol_get_field_descr(&parser->error, msg->descr, tag);
+   *fdescr = group ? fix_protocol_get_group_descr(&parser->error, group->parent_fdescr, *tag)
+      : fix_protocol_get_field_descr(&parser->error, msg->descr, *tag);
+   return FIX_FAILED;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXTagNum fix_parser_parse_field(
+      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr,
+      char const** dbegin, char const** dend)
+{
+   FIXTagNum tag = 0;
+   if (FIX_FAILED == fix_parser_parse_tag(parser, msg, group, data, len, &tag, fdescr, dbegin))
+   {
+      return FIX_FAILED;
+   }
    if (!(*fdescr))
    {
       if (parser->flags & PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
@@ -223,28 +236,15 @@ FIXTagNum fix_parser_parse_field(
       }
       else // just skip field value
       {
-         if (fix_parser_get_value(parser, *dbegin, len, delimiter, dend) == FIX_FAILED)
+         if (fix_parser_parse_value(parser, NULL, NULL, NULL, *dbegin, len - (*dbegin - data), delimiter, dend))
          {
             return FIX_FAILED;
          }
       }
    }
-   if ((*fdescr)->type->valueType == FIXFieldValueType_Data) // extract value by DataLength field
+   if (fix_parser_parse_value(parser, msg, group, *fdescr, *dbegin, len - (*dbegin - data), delimiter, dend))
    {
-      int32_t dataLength;
-      if (FIX_FAILED == fix_msg_get_int32(msg, group, (*fdescr)->dataLenField->type->tag, &dataLength))
-      {
-         fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Unable to get length field '%d'.", tag);
-         return FIX_FAILED;
-      }
-      *dend = *dbegin + dataLength;
-   }
-   else // extract value till delimiter
-   {
-      if (fix_parser_get_value(parser, *dbegin, len, delimiter, dend) == FIX_FAILED)
-      {
-         return FIX_FAILED;
-      }
+      return FIX_FAILED;
    }
    return tag;
 }
