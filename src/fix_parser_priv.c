@@ -145,7 +145,7 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, cha
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-inline FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGroup* group, FIXFieldDescr* fdescr,
+static FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGroup* group, FIXFieldDescr* fdescr,
       char const* dbegin, uint32_t len, char delimiter, char const** dend)
 {
    *dend = dbegin;
@@ -184,25 +184,7 @@ inline FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGrou
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXTagNum fix_parser_parse_mandatory_field(
-      FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
-{
-   FIXTagNum tag = 0;
-   int32_t res = fix_utils_atoi32(data, len, '=', &tag);
-   if (res == FIX_FAILED)
-   {
-      fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to extract field number.");
-      return FIX_FAILED;
-   }
-   if (FIX_FAILED == fix_parser_parse_value(parser, NULL, NULL, NULL, data + res + 1, len - res - 1 , delimiter, dend))
-   {
-      return FIX_FAILED;
-   }
-   return tag;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-inline FIXTagNum fix_parser_parse_tag(
+static FIXTagNum fix_parser_parse_tag(
       FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, FIXTagNum* tag, FIXFieldDescr** fdescr, char const** dbegin)
 {
    FIXErrCode res = fix_utils_atoi32(data, len, '=', tag);
@@ -212,9 +194,28 @@ inline FIXTagNum fix_parser_parse_tag(
       return FIX_FAILED;
    }
    *dbegin = data + res + 1;
-   *fdescr = group ? fix_protocol_get_group_descr(&parser->error, group->parent_fdescr, *tag)
-      : fix_protocol_get_field_descr(&parser->error, msg->descr, *tag);
-   return FIX_FAILED;
+   if (fdescr)
+   {
+      *fdescr = group ? fix_protocol_get_group_descr(&parser->error, group->parent_fdescr, *tag)
+         : fix_protocol_get_field_descr(&parser->error, msg->descr, *tag);
+   }
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXTagNum fix_parser_parse_mandatory_field(
+      FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend)
+{
+   FIXTagNum tag = 0;
+   if(FIX_FAILED == fix_parser_parse_tag(parser, NULL, NULL, data, len, &tag, NULL, dbegin))
+   {
+      return FIX_FAILED;
+   }
+   if (FIX_FAILED == fix_parser_parse_value(parser, NULL, NULL, NULL, *dbegin, len - (*dbegin - data) , delimiter, dend))
+   {
+      return FIX_FAILED;
+   }
+   return tag;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
