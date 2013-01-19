@@ -168,29 +168,29 @@ TEST(FixParserTests, ParseCheckSumTest)
    }
 }
 
-#define CHECK_STRING(msg, tag, text) \
+#define CHECK_STRING(msg, group, tag, text) \
 { \
    char const* buff = NULL; \
    uint32_t len = 0; \
-   ASSERT_EQ(fix_msg_get_string(msg, NULL, tag, &buff, &len), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_string(msg, group, tag, &buff, &len), FIX_SUCCESS); \
    ASSERT_TRUE(!strncmp(text, buff, len)); \
 }
-#define CHECK_INT32(msg, tag, val) \
+#define CHECK_INT32(msg, group, tag, val) \
 { \
    int32_t tmp = 0; \
-   ASSERT_EQ(fix_msg_get_int32(msg, NULL, tag, &tmp), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_int32(msg, group, tag, &tmp), FIX_SUCCESS); \
    ASSERT_EQ(val, tmp); \
 }
-#define CHECK_CHAR(msg, tag, val) \
+#define CHECK_CHAR(msg, group, tag, val) \
 { \
    char tmp = 0; \
-   ASSERT_EQ(fix_msg_get_char(msg, NULL, tag, &tmp), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_char(msg, group, tag, &tmp), FIX_SUCCESS); \
    ASSERT_EQ(tmp, val); \
 }
-#define CHECK_DOUBLE(msg, tag, val) \
+#define CHECK_DOUBLE(msg, group, tag, val) \
 { \
    double tmp = 0; \
-   ASSERT_EQ(fix_msg_get_double(msg, NULL, tag, &tmp), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_double(msg, group, tag, &tmp), FIX_SUCCESS); \
    ASSERT_EQ(tmp, val); \
 }
 
@@ -206,34 +206,33 @@ TEST(FixParserTests, ParseStringTest)
    FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), FIX_SOH, &stop);
    ASSERT_TRUE(msg != NULL);
 
-   CHECK_STRING(msg, FIXFieldTag_BeginString,  "FIX.4.4");
-   CHECK_INT32(msg,  FIXFieldTag_BodyLength,   228);
-   CHECK_STRING(msg, FIXFieldTag_MsgType,      "8");
-   CHECK_STRING(msg, FIXFieldTag_SenderCompID, "QWERTY_12345678");
-   CHECK_STRING(msg, FIXFieldTag_TargetCompID, "ABCQWE_XYZ");
-   CHECK_INT32(msg,  FIXFieldTag_MsgSeqNum,    34);
-   CHECK_STRING(msg, FIXFieldTag_TargetSubID,  "srv-ivanov_ii1");
-   CHECK_STRING(msg, FIXFieldTag_SendingTime,  "20120716-06:00:16.230");
-   CHECK_INT32(msg,  FIXFieldTag_OrderID,      1);
-   CHECK_STRING(msg, FIXFieldTag_ClOrdID,      "CL_ORD_ID_1234567");
-   CHECK_STRING(msg, FIXFieldTag_ExecID,       "FE_1_9494_1");
-   CHECK_STRING(msg, FIXFieldTag_ExecID,       "FE_1_9494_1");
-   CHECK_CHAR(msg,   FIXFieldTag_ExecType,     '0');
-   CHECK_CHAR(msg,   FIXFieldTag_OrdStatus,    '1');
-   CHECK_STRING(msg, FIXFieldTag_Account,      "ZUM");
-   CHECK_STRING(msg, FIXFieldTag_Symbol,       "RTS-12.12");
-   CHECK_CHAR(msg,   FIXFieldTag_Side,         '1');
-   CHECK_DOUBLE(msg, FIXFieldTag_OrderQty,     25);
-   CHECK_DOUBLE(msg, FIXFieldTag_Price,        135155);
-   CHECK_CHAR(msg,   FIXFieldTag_TimeInForce,  '0');
-   CHECK_DOUBLE(msg, FIXFieldTag_LastQty,      0);
-   CHECK_DOUBLE(msg, FIXFieldTag_LastPx,       0);
-   CHECK_DOUBLE(msg, FIXFieldTag_LeavesQty,    25);
-   CHECK_DOUBLE(msg, FIXFieldTag_CumQty,       0);
-   CHECK_DOUBLE(msg, FIXFieldTag_AvgPx,        0);
-   CHECK_STRING(msg, FIXFieldTag_HandlInst,    "1");
-   CHECK_STRING(msg, FIXFieldTag_Text,         "COMMENT12");
-   CHECK_STRING(msg, FIXFieldTag_CheckSum,     "240");
+   CHECK_STRING(msg, NULL, FIXFieldTag_BeginString,  "FIX.4.4");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_BodyLength,   228);
+   CHECK_STRING(msg, NULL, FIXFieldTag_MsgType,      "8");
+   CHECK_STRING(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678");
+   CHECK_STRING(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_MsgSeqNum,    34);
+   CHECK_STRING(msg, NULL, FIXFieldTag_TargetSubID,  "srv-ivanov_ii1");
+   CHECK_STRING(msg, NULL, FIXFieldTag_SendingTime,  "20120716-06:00:16.230");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_OrderID,      1);
+   CHECK_STRING(msg, NULL, FIXFieldTag_ClOrdID,      "CL_ORD_ID_1234567");
+   CHECK_STRING(msg, NULL, FIXFieldTag_ExecID,       "FE_1_9494_1");
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_ExecType,     '0');
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_OrdStatus,    '1');
+   CHECK_STRING(msg, NULL, FIXFieldTag_Account,      "ZUM");
+   CHECK_STRING(msg, NULL, FIXFieldTag_Symbol,       "RTS-12.12");
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_Side,         '1');
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_OrderQty,     25);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_Price,        135155);
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_TimeInForce,  '0');
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_LastQty,      0);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_LastPx,       0);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_LeavesQty,    25);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_CumQty,       0);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_AvgPx,        0);
+   CHECK_STRING(msg, NULL, FIXFieldTag_HandlInst,    "1");
+   CHECK_STRING(msg, NULL, FIXFieldTag_Text,         "COMMENT12");
+   CHECK_STRING(msg, NULL, FIXFieldTag_CheckSum,     "240");
 
    char buff1[1024];
    uint32_t reqBuffLen = 0;
@@ -253,4 +252,29 @@ TEST(FixParserTests, ParseStringGroupTest)
    char const* stop = NULL;
    FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), FIX_SOH, &stop);
    ASSERT_TRUE(msg != NULL);
+
+   CHECK_STRING(msg, NULL, FIXFieldTag_BeginString,  "FIX.4.4");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_BodyLength,   190);
+   CHECK_STRING(msg, NULL, FIXFieldTag_MsgType,      "D");
+   CHECK_STRING(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678");
+   CHECK_STRING(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_MsgSeqNum,    34);
+   CHECK_STRING(msg, NULL, FIXFieldTag_SendingTime,  "20120716-06:00:16.230");
+   CHECK_STRING(msg, NULL, FIXFieldTag_ClOrdID,      "CL_ORD_ID_1234567");
+   CHECK_STRING(msg, NULL, FIXFieldTag_Symbol,       "RTS-12.12");
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_Side,         '1');
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_OrderQty,     25);
+   CHECK_STRING(msg, NULL, FIXFieldTag_CheckSum,     "088");
+
+   FIXGroup* group = fix_msg_get_group(msg, NULL, FIXFieldTag_NoPartyIDs, 0);
+   ASSERT_TRUE(group != NULL);
+   CHECK_STRING(msg, group, FIXFieldTag_PartyID, "ID1");
+   CHECK_CHAR(msg, group, FIXFieldTag_PartyIDSource, 'A');
+   CHECK_INT32(msg, group, FIXFieldTag_PartyRole, 1);
+
+   group = fix_msg_get_group(msg, NULL, FIXFieldTag_NoPartyIDs, 1);
+   ASSERT_TRUE(group != NULL);
+   CHECK_STRING(msg, group, FIXFieldTag_PartyID, "ID2");
+   CHECK_CHAR(msg, group, FIXFieldTag_PartyIDSource, 'B');
+   CHECK_INT32(msg, group, FIXFieldTag_PartyRole, 2);
 }

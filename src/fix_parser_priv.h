@@ -93,7 +93,8 @@ FIXTagNum fix_parser_parse_mandatory_field(
  * @return FIX field tag number or FIX_FAILED
  */
 FIXTagNum fix_parser_parse_field(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr, char const** dbegin, char const** dend);
+      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr,
+      char const** dbegin, char const** dend);
 
 /**
  * validate parser attributes
@@ -128,13 +129,14 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, cha
  * @param[in] parser - FIX parser
  * @param[in] msg - FIX message, which will hold parsed group
  * @param[in] parentGroup - FIX group, which will hold nested group
- * @param[in] groupTag - FIX field tag number
+ * @param[in] gdescr - FIX group description
  * @param[in] data - string to parser
  * @param[in] len - length of data
  * @param[out] stop - parse stop pointer
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXTagNum groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop);
+FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr* gdescr, int64_t numGroups,
+      char const* data, uint32_t len, char delimiter, char const** stop);
 
 #ifdef __cplusplus
 }

@@ -514,7 +514,6 @@ FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* 
       }
       fld = fld->next;
    }
-   fix_error_set(error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s'", tag, msg->name);
    return 0;
 }
 
@@ -531,6 +530,31 @@ FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const
       }
       fld = fld->next;
    }
-   fix_error_set(error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s'", tag, field->type->name);
    return NULL;
 }
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIXFieldDescr* fix_protocol_get_descr(FIXMsg* msg, FIXGroup* group, FIXTagNum tag)
+{
+   FIXFieldDescr* fdescr = NULL;
+   if (group)
+   {
+      fdescr = fix_protocol_get_group_descr(&msg->parser->error, group->parent_fdescr, tag);
+      if (!fdescr)
+      {
+         fix_error_set(&msg->parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s' description.",
+               tag, group->parent_fdescr->type->name);
+      }
+   }
+   else
+   {
+      fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+      if (!fdescr)
+      {
+         fix_error_set(&msg->parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
+               tag, msg->descr->name);
+      }
+   }
+   return fdescr;
+}
+

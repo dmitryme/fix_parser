@@ -243,7 +243,7 @@ FIXTagNum fix_parser_parse_field(
          }
       }
    }
-   if (fix_parser_parse_value(parser, msg, group, *fdescr, *dbegin, len - (*dbegin - data), delimiter, dend))
+   if (FIX_FAILED == fix_parser_parse_value(parser, msg, group, *fdescr, *dbegin, len - (*dbegin - data), delimiter, dend))
    {
       return FIX_FAILED;
    }
@@ -252,40 +252,64 @@ FIXTagNum fix_parser_parse_field(
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode fix_parser_parse_group(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXTagNum groupTag, int64_t numGroups, char const* data, uint32_t len, char delimiter, char const** stop)
+      FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr* gdescr, int64_t numGroups, char const* data,
+      uint32_t len, char delimiter, char const** stop)
 {
-   /*
-   char const* dbegin = NULL;
-   char const* dend = data;
-   for(int64_t i = 0; i < numGroups; ++i)
+   FIXFieldDescr* first_req_field = &gdescr->group[0];
+   FIXGroup* group = NULL;
+   int32_t groupCount = 0;
+   *stop = data;
+   while(1)
    {
-      FIXGroup* group = fix_msg_add_group(msg, parentGroup, groupTag);
-      if (!group)
-      {
-         return FIX_FAILED;
-      }
-      FIXFieldDescr const* first_req_field = &group->parent_fdescr->group[0];
+      FIXTagNum tag = 0;
+      char const* dbegin = NULL;
       FIXFieldDescr* fdescr = NULL;
-      FIXTagNum tag = fix_parser_parse_field(parser, msg, group, dend + 1, data + len - dend, delimiter, &fdescr, &dbegin, &dend);
-      if (tag == FIX_FAILED)
+      if(FIX_FAILED == fix_parser_parse_tag(parser, NULL, NULL, *stop + 1, len, &tag, NULL, &dbegin))
       {
          return FIX_FAILED;
       }
-      if (!fdescr)
+      if (tag == first_req_field->type->tag) // start of new group
       {
-         fix_parser_set_error(parser, FIX_ERROR_UNKNOWN_FIELD, "First required field %d is not in description.", tag);
+         group = fix_msg_add_group(msg, parentGroup, gdescr->type->tag);
+         if (!group)
+         {
+            return FIX_FAILED;
+         }
+         ++groupCount;
+         fdescr = first_req_field;
+      }
+      else
+      {
+         fdescr = fix_protocol_get_group_descr(&parser->error, group->parent_fdescr, tag);
+         if (!fdescr)
+         {
+            if (groupCount == numGroups) // looks like we finished
+            {
+               return FIX_SUCCESS;
+            }
+            else
+            {
+               fix_error_set(
+                     &parser->error,
+                     FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in group '%s' description.", tag, gdescr->type->name);
+               return FIX_FAILED;
+            }
+         }
+      }
+      if (FIX_FAILED == fix_parser_parse_value(parser, msg, group, fdescr, dbegin, len - (dbegin - data), delimiter, stop))
+      {
          return FIX_FAILED;
       }
       if (parser->flags & PARSER_FLAG_CHECK_VALUE)
       {
-         if (fix_parser_check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
+         if (fix_parser_check_value(fdescr, dbegin, *stop, delimiter) == FIX_FAILED)
          {
             return FIX_FAILED;
          }
       }
       if (fdescr->category == FIXFieldCategory_Value)
       {
-         if (!fix_field_set(msg, group, fdescr, (unsigned char*)dbegin, dend - dbegin))
+         if (!fix_field_set(msg, group, fdescr, (unsigned char*)dbegin, *stop - dbegin))
          {
             return FIX_FAILED;
          }
@@ -293,52 +317,18 @@ FIXErrCode fix_parser_parse_group(
       else if (fdescr->category == FIXFieldCategory_Group)
       {
          int32_t numGroups = 0;
-         FIXErrCode res = fix_utils_atoi32(dbegin, dend - dbegin, delimiter, &numGroups);
+         FIXErrCode res = fix_utils_atoi32(dbegin, *stop - dbegin, delimiter, &numGroups);
          if (res == FIX_FAILED)
          {
             fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
             return FIX_FAILED;
          }
-         res = fix_parser_parse_group(parser, msg, group, tag, numGroups, dend + 1, data + len - dend, delimiter, &dend);
+         res = fix_parser_parse_group(parser, msg, group, fdescr, numGroups, *stop, data + len - *stop, delimiter, stop);
          if (res == FIX_FAILED)
          {
             return FIX_FAILED;
          }
       }
-
-      if (fdescr) // if !fdescr, ignore this field
-      {
-         if (parser->flags & PARSER_FLAG_CHECK_VALUE)
-         {
-            if (fix_parser_check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
-            {
-               return FIX_FAILED;
-            }
-         }
-         if (fdescr->category == FIXFieldCategory_Value)
-         {
-            if (!fix_field_set(msg, group, fdescr, (unsigned char*)dbegin, dend - dbegin))
-            {
-               return FIX_FAILED;
-            }
-         }
-         else if (fdescr->category == FIXFieldCategory_Group)
-         {
-            int32_t numGroups = 0;
-            FIXErrCode res = fix_utils_atoi32(dbegin, dend - dbegin, delimiter, &numGroups);
-            if (res == FIX_FAILED)
-            {
-               fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
-               return FIX_FAILED;
-            }
-            res = fix_parser_parse_group(parser, msg, group, tag, numGroups, dend + 1, data + len - dend, delimiter, &dend);
-            if (res == FIX_FAILED)
-            {
-               return FIX_FAILED;
-            }
-         }
-      }
    }
-   *stop = dend; */
    return FIX_SUCCESS;
 }

@@ -114,13 +114,22 @@ FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
 FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag);
 
 /**
- * get FIX field description from FIX grou description
- * @param[out] error - retur error if any
+ * get FIX field description from FIX group description
+ * @param[out] error - return error if any
  * @param[in] field - FIX field description (group)
  * @param[in] tag - required FIX field tag number
  * @return FIX field description, NULL - error
  */
 FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag);
+
+/**
+ * get FIX field description
+ * @param[in] msg - message with description
+ * @param[in] group - group with description, can be NULL
+ * @param[in] tag - required FIX field tag number
+ * @return FIX field description, NULL - error, not found
+ */
+FIXFieldDescr* fix_protocol_get_descr(FIXMsg* msg, FIXGroup* group, FIXTagNum tag);
 
 #ifdef __cplusplus
 }

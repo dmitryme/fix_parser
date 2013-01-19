@@ -201,6 +201,8 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    FIXFieldDescr* fdescr  = fix_protocol_get_field_descr(&parser->error, msg->descr, FIXFieldTag_CheckSum);
    if (!fdescr)
    {
+      fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
+            tag, msg->descr->name);
       fix_msg_free(msg);
       return NULL;
    }
@@ -241,15 +243,13 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          else if (fdescr->category == FIXFieldCategory_Group)
          {
             int64_t numGroups = 0;
-            int32_t res = fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &numGroups);
-            if (res == FIX_FAILED)
+            if (FIX_FAILED == fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &numGroups))
             {
                fix_msg_free(msg);
                fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
                return NULL;
             }
-            res = fix_parser_parse_group(parser, msg, NULL, tag, numGroups, dend, bodyEnd - dend, delimiter, &dend);
-            if (res == FIX_FAILED)
+            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend, delimiter, &dend))
             {
                fix_msg_free(msg);
                return NULL;
