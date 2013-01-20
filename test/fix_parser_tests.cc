@@ -277,4 +277,10 @@ TEST(FixParserTests, ParseStringGroupTest)
    CHECK_STRING(msg, group, FIXFieldTag_PartyID, "ID2");
    CHECK_CHAR(msg, group, FIXFieldTag_PartyIDSource, 'B');
    CHECK_INT32(msg, group, FIXFieldTag_PartyRole, 2);
+
+   char buff1[1024];
+   uint32_t reqBuffLen = 0;
+   ASSERT_EQ(FIX_SUCCESS, fix_msg_to_str(msg, FIX_SOH, buff1, sizeof(buff1), &reqBuffLen));
+   buff1[reqBuffLen] = 0;
+   ASSERT_STREQ(buff, buff1); // Bingo!
 }

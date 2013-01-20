@@ -255,11 +255,11 @@ FIXErrCode fix_parser_parse_group(
       FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr* gdescr, int64_t numGroups, char const* data,
       uint32_t len, char delimiter, char const** stop)
 {
-   FIXFieldDescr* first_req_field = &gdescr->group[0];
+   FIXFieldDescr* first_req_field = &gdescr->group[0]; // first required field MUST be present in string
    FIXGroup* group = NULL;
    int32_t groupCount = 0;
    *stop = data;
-   while(1)
+   while(numGroups) // if number of groups = 0, nothing to do
    {
       FIXTagNum tag = 0;
       char const* dbegin = NULL;
