@@ -270,6 +270,23 @@ FIXErrCode fix_parser_parse_group(
       }
       if (tag == first_req_field->type->tag) // start of new group
       {
+         if (group && (parser->flags & PARSER_FLAG_CHECK_REQUIRED)) // previous group has already parsed, check it if needed
+         {
+            for(int32_t i = 0; i < gdescr->group_count; ++i)
+            {
+               FIXFieldDescr* fdescr = &gdescr->group[i];
+               if (fdescr->flags & FIELD_FLAG_REQUIRED)
+               {
+                  if (!fix_field_get(msg, group, fdescr->type->tag))
+                  {
+                     fix_error_set(&parser->error, FIX_ERROR_FIELD_NOT_FOUND,
+                           "Required field '%s' not found in group '%s'.",
+                           fdescr->type->name, group->parent_fdescr->type->name);
+                     return FIX_FAILED;
+                  }
+               }
+            }
+         }
          group = fix_msg_add_group(msg, parentGroup, gdescr->type->tag);
          if (!group)
          {

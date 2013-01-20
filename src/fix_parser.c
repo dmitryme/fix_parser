@@ -117,7 +117,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       free(actualVer);
       return NULL;
    }
-   tag = fix_parser_parse_mandatory_field(parser, dend + 1, len - (dend - data - 1), delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(parser, dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend);
    if (tag == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
@@ -195,23 +195,20 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    }
    if (fix_msg_set_int32(msg, NULL, FIXFieldTag_BodyLength, bodyLen) != FIX_SUCCESS)
    {
-      fix_msg_free(msg);
-      return NULL;
+      goto error;
    }
    FIXFieldDescr* fdescr  = fix_protocol_get_field_descr(&parser->error, msg->descr, FIXFieldTag_CheckSum);
    if (!fdescr)
    {
       fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
             tag, msg->descr->name);
-      fix_msg_free(msg);
-      return NULL;
+      goto error;
    }
    char crc[4] = {};
    memcpy(crc, crcbeg, *stop - crcbeg);
    if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)crcbeg, *stop - crcbeg))
    {
-      fix_msg_free(msg);
-      return NULL;
+      goto error;
    }
    while(dend != bodyEnd)
    {
@@ -219,8 +216,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       tag = fix_parser_parse_field(parser, msg, NULL, dend + 1, bodyEnd - dend, delimiter, &fdescr, &dbegin, &dend);
       if (tag == FIX_FAILED)
       {
-         fix_msg_free(msg);
-         return NULL;
+         goto error;
       }
       if (fdescr) // if !fdescr, ignore this field
       {
@@ -228,16 +224,14 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          {
             if (fix_parser_check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
             {
-               fix_msg_free(msg);
-               return NULL;
+               goto error;
             }
          }
          if (fdescr->category == FIXFieldCategory_Value)
          {
             if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin))
             {
-               fix_msg_free(msg);
-               return NULL;
+               goto error;
             }
          }
          else if (fdescr->category == FIXFieldCategory_Group)
@@ -245,17 +239,34 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
             int64_t numGroups = 0;
             if (FIX_FAILED == fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &numGroups))
             {
-               fix_msg_free(msg);
                fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
-               return NULL;
+               goto  error;
             }
             if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend, delimiter, &dend))
             {
-               fix_msg_free(msg);
-               return NULL;
+               goto error;
             }
          }
       }
+   }
+   if (parser->flags & PARSER_FLAG_CHECK_REQUIRED)
+   {
+      for(int32_t i = 0; i < msg->descr->field_count; ++i)
+      {
+         FIXFieldDescr* fdescr = &msg->descr->fields[i];
+         if (fdescr->flags & FIELD_FLAG_REQUIRED && !fix_field_get(msg, NULL, fdescr->type->tag))
+         {
+            fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Required field '%s' not found.", fdescr->type->name);
+            goto error;
+         }
+      }
+   }
+   return msg;
+error:
+   if (msg)
+   {
+      fix_msg_free(msg);
+      msg = NULL;
    }
    return msg;
 }
