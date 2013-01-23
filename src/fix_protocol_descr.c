@@ -341,54 +341,57 @@ static int32_t load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldTy
 /*-----------------------------------------------------------------------------------------------------------------------*/
 static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, xmlNode* parentRoot, char const* parentFile)
 {
+   int32_t res = FIX_SUCCESS;
+   xmlDoc* doc = NULL;
    char const* transpFile = get_attr(parentRoot, "transport", parentFile);
    if(!strcmp(transpFile, parentFile)) // transport is the same as protocol
    {
       prot->transportVersion = _strdup(prot->version);
-      return FIX_SUCCESS;
+      goto ok;
    }
-   xmlDoc* doc = NULL;
    char path[PATH_MAX] = {};
    if (FIX_FAILED == fix_utils_make_path(parentFile, transpFile, path, PATH_MAX))
    {
-      return FIX_FAILED;
+      goto err;
    }
-   doc = xmlParseFile(transpFile);
+   doc = xmlParseFile(path);
    if (!doc)
    {
       fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
-      return FIX_FAILED;
+      goto err;
    }
    if (xml_validate(error, doc) == FIX_FAILED)
    {
-      xmlFreeDoc(doc);
-      return FIX_FAILED;
+      goto err;
    }
    xmlNode* root = xmlDocGetRootElement(doc);
    prot->transportVersion = _strdup(get_attr(root, "version", NULL));
    if (!strcmp(prot->version, prot->transportVersion)) // versions are the same, no need to process transport protocol
    {
-      xmlFreeDoc(doc);
-      return FIX_SUCCESS;
+      goto ok;
    }
    if (!root)
    {
       fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
-      xmlFreeDoc(doc);
-      return FIX_FAILED;
+      goto err;
    }
    if (load_field_types(error, &prot->transport_field_types, root) == FIX_FAILED)
    {
-      xmlFreeDoc(doc);
-      return FIX_FAILED;
+      goto err;
    }
    if (load_messages(error, prot, &prot->transport_field_types, root) == FIX_FAILED)
    {
-      xmlFreeDoc(doc);
-      return FIX_FAILED;
+      goto err;
    }
-   xmlFreeDoc(doc);
-   return FIX_SUCCESS;
+   goto ok;
+err:
+   res = FIX_FAILED;
+ok:
+   if (doc)
+   {
+      xmlFreeDoc(doc);
+   }
+   return res;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
@@ -396,43 +399,50 @@ static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file)
 {
+   FIXProtocolDescr* prot = NULL;
    initLibXml(error);
    xmlDoc* doc = xmlParseFile(file);
    if (!doc)
    {
       fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
-      return NULL;
+      goto err;
    }
    if (xml_validate(error, doc) == FIX_FAILED)
    {
-      xmlFreeDoc(doc);
-      return NULL;
+      goto err;
    }
    xmlNode* root = xmlDocGetRootElement(doc);
    if (!root)
    {
       fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
-      xmlFreeDoc(doc);
-      return NULL;
+      goto err;
    }
-   FIXProtocolDescr* prot = (FIXProtocolDescr*)calloc(1, sizeof(FIXProtocolDescr));
+   prot = (FIXProtocolDescr*)calloc(1, sizeof(FIXProtocolDescr));
    prot->version = _strdup(get_attr(root, "version", NULL));
    if (prot && load_transport_protocol(error, prot, root, file) == FIX_FAILED)
    {
-      free(prot);
-      prot = NULL;
+      goto err;
    }
    else if (load_field_types(error, &prot->field_types, root) == FIX_FAILED)
    {
-      free(prot);
-      prot = NULL;
+      goto err;
    }
    else if (load_messages(error, prot, &prot->field_types, root) == FIX_FAILED)
+   {
+      goto err;
+   }
+   goto ok;
+err:
+   if (prot)
    {
       free(prot);
       prot = NULL;
    }
-   xmlFreeDoc(doc);
+ok:
+   if (doc)
+   {
+      xmlFreeDoc(doc);
+   }
    return prot;
 }
 
@@ -557,4 +567,3 @@ FIXFieldDescr* fix_protocol_get_descr(FIXMsg* msg, FIXGroup* group, FIXTagNum ta
    }
    return fdescr;
 }
-
