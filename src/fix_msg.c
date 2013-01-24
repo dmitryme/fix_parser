@@ -33,7 +33,7 @@ FIX_PARSER_API FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType)
       fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "MsgType parameter is NULL");
       return NULL;
    }
-   FIXMsgDescr* msg_descr = fix_protocol_get_msg_descr(parser, msgType);
+   FIXMsgDescr const* msg_descr = fix_protocol_get_msg_descr(parser, msgType);
    if (!msg_descr)
    {
       return NULL;
@@ -88,7 +88,7 @@ FIX_PARSER_API FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum
       return NULL;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return NULL;
@@ -113,7 +113,7 @@ FIX_PARSER_API FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum
       return NULL;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return NULL;
@@ -134,7 +134,7 @@ FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -155,7 +155,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -177,7 +177,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -201,7 +201,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -225,7 +225,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -247,7 +247,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -271,7 +271,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -422,7 +422,7 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
-   FIXFieldDescr* fdescr = fix_protocol_get_descr(msg, grp, tag);
+   FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag);
    if (!fdescr)
    {
       return FIX_FAILED;
@@ -442,7 +442,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
       return FIX_FAILED;
    }
    fix_error_reset(&msg->parser->error);
-   FIXMsgDescr* descr = msg->descr;
+   FIXMsgDescr const* descr = msg->descr;
    int32_t crc = 0;
    uint32_t buffLenBefore = buffLen;
    for(uint32_t i = 0; i < descr->field_count; ++i)
