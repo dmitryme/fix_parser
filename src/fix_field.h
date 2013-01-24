@@ -85,7 +85,7 @@ FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
 /**
  * add new FIX group
  */
-FIXGroup*  fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXField** fld);
+FIXGroup*  fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, FIXField** fld);
 
 /**
  * return FIX group bu zer-based index
