@@ -25,14 +25,14 @@ extern "C"
  */
 struct FIXParser_
 {
-   FIXProtocolDescr* protocol; ///< FIX protocol
-   FIXError error;             ///< own error
-   FIXParserAttrs attrs;       ///< attributes
-   int32_t  flags;             ///< flags
-   FIXPage* page;              ///< list of allocated memory pages
-   uint32_t used_pages;        ///< count of memory pages in use
-   FIXGroup* group;            ///< allocated FIX groups
-   uint32_t used_groups;       ///< count of used groups
+   FIXProtocolDescr const* protocol;   ///< FIX protocol
+   FIXError error;                     ///< own error
+   FIXParserAttrs attrs;               ///< attributes
+   int32_t  flags;                     ///< flags
+   FIXPage* page;                      ///< list of allocated memory pages
+   uint32_t used_pages;                ///< count of memory pages in use
+   FIXGroup* group;                    ///< allocated FIX groups
+   uint32_t used_groups;               ///< count of used groups
 };
 
 /**
@@ -93,7 +93,7 @@ FIXTagNum fix_parser_parse_mandatory_field(
  * @return FIX field tag number or FIX_FAILED
  */
 FIXTagNum fix_parser_parse_field(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr,
+      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr const** fdescr,
       char const** dbegin, char const** dend);
 
 /**
@@ -122,7 +122,7 @@ FIXErrCode fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t 
  * @param[in] delimiter - FIX field SOH
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter);
+FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter);
 
 /**
  * parse string with group
@@ -135,7 +135,7 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, cha
  * @param[out] stop - parse stop pointer
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr* gdescr, int64_t numGroups,
+FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups,
       char const* data, uint32_t len, char delimiter, char const** stop);
 
 #ifdef __cplusplus
