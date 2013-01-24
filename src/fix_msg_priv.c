@@ -48,7 +48,7 @@ void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* fdescr, unsigned char const* data, uint32_t len)
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* fdescr, unsigned char const* data, uint32_t len)
 {
    if (grp)
    {
@@ -154,7 +154,7 @@ FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen)
+FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -193,7 +193,7 @@ FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimit
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc)
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc)
 {
    FIXErrCode res = int32_to_fix_msg(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
    (*crc) += (FIX_SOH - delimiter);
