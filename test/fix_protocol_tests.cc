@@ -25,13 +25,13 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ("FIX.4.4", p->protocol->version);
    ASSERT_STREQ("FIX.4.4", p->protocol->transportVersion);
 
-   FIXMsgDescr* msg = fix_protocol_get_msg_descr(p, "8");
+   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "8");
    ASSERT_TRUE(msg != NULL);
    ASSERT_STREQ(msg->type, "8");
    ASSERT_STREQ(msg->name, "ExecutionReport");
    ASSERT_EQ(msg->field_count, 247U);
 
-   FIXFieldDescr* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
+   FIXFieldDescr const* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_BeginString);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
@@ -99,20 +99,20 @@ TEST(FIXProtocolTests, FIXProtocolTest2)
    ASSERT_STREQ("FIX.4.4", p->protocol->version);
    ASSERT_STREQ("FIX.4.4", p->protocol->transportVersion);
 
-   FIXMsgDescr* msg = fix_protocol_get_msg_descr(p, "A");
+   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "A");
    ASSERT_TRUE(msg != NULL);
    ASSERT_STREQ(msg->type, "A");
    ASSERT_STREQ(msg->name, "Logon");
    ASSERT_EQ(msg->field_count, 41U);
 
-   FIXFieldDescr* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_RawData);
+   FIXFieldDescr const* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_RawData);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_RawData);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_Data);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "RawData");
 
-   FIXFieldDescr* lengthField = field->dataLenField;
+   FIXFieldDescr const* lengthField = field->dataLenField;
    ASSERT_TRUE(lengthField != NULL);
    ASSERT_EQ(lengthField->type->tag, FIXFieldTag_RawDataLength);
    ASSERT_EQ(lengthField->type->valueType, FIXFieldValueType_Length);
@@ -131,13 +131,13 @@ TEST(FIXProtocolTests, FIXProtocolTest3)
    ASSERT_STREQ("FIX2", p->protocol->version);
    ASSERT_STREQ("FIX2", p->protocol->transportVersion);
 
-   FIXMsgDescr* msg = fix_protocol_get_msg_descr(p, "8");
+   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "8");
    ASSERT_TRUE(msg != NULL);
    ASSERT_STREQ(msg->type, "8");
    ASSERT_STREQ(msg->name, "ExecutionReport");
    ASSERT_EQ(msg->field_count, 11U);
 
-   FIXFieldDescr* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
+   FIXFieldDescr const* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_BeginString);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
