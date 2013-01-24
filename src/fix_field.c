@@ -113,7 +113,7 @@ FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* descr, FIXField** fld)
+FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, FIXField** fld)
 {
    FIXField* field = fix_field_get(msg, grp, descr->type->tag);
    FIXGroup* group = grp ? grp : msg->fields;
