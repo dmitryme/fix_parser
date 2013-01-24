@@ -80,13 +80,13 @@ typedef struct FIXProtocolDescr_
  * @param[out] error - in case of parse error, this error is set
  * @param[in] file - protocol xml file
  */
-FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file);
+FIXProtocolDescr const* fix_protocol_descr_create(FIXError* error, char const* file);
 
 /**
  * destroy protocol description
  * @param[in] prot - protocol, which is being deleted
  */
-void fix_protocol_descr_free(FIXProtocolDescr* prot);
+void fix_protocol_descr_free(FIXProtocolDescr const* prot);
 
 /**
  * return field type by name
@@ -102,7 +102,7 @@ FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT
  * @param[in] type - FIX message type
  * @return FIX message description, NULL - error
  */
-FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
+FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
 
 /**
  * get FIX field description by tag number
@@ -111,7 +111,7 @@ FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
  * @param[in] tag - FIX field tag
  * @return field description. NULL - error
  */
-FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag);
+FIXFieldDescr const* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag);
 
 /**
  * get FIX field description from FIX group description
@@ -120,7 +120,7 @@ FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* 
  * @param[in] tag - required FIX field tag number
  * @return FIX field description, NULL - error
  */
-FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag);
+FIXFieldDescr const* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag);
 
 /**
  * get FIX field description
@@ -129,7 +129,7 @@ FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const
  * @param[in] tag - required FIX field tag number
  * @return FIX field description, NULL - error, not found
  */
-FIXFieldDescr* fix_protocol_get_descr(FIXMsg* msg, FIXGroup* group, FIXTagNum tag);
+FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag);
 
 #ifdef __cplusplus
 }
