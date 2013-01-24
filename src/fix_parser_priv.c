@@ -125,7 +125,7 @@ int32_t fix_parser_validate_attrs(FIXParserAttrs* attrs)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, char const* dend, char delimiter)
+FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter)
 {
    if (IS_INT_TYPE(fdescr->type->valueType))
    {
@@ -145,7 +145,7 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr* fdescr, char const* dbegin, cha
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-static FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGroup* group, FIXFieldDescr* fdescr,
+static FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGroup* group, FIXFieldDescr const* fdescr,
       char const* dbegin, uint32_t len, char delimiter, char const** dend)
 {
    *dend = dbegin;
@@ -185,7 +185,7 @@ static FIXErrCode fix_parser_parse_value(FIXParser* parser, FIXMsg* msg, FIXGrou
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 static FIXTagNum fix_parser_parse_tag(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, FIXTagNum* tag, FIXFieldDescr** fdescr, char const** dbegin)
+      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, FIXTagNum* tag, FIXFieldDescr const** fdescr, char const** dbegin)
 {
    FIXErrCode res = fix_utils_atoi32(data, len, '=', tag);
    if (res == FIX_FAILED)
@@ -220,7 +220,7 @@ FIXTagNum fix_parser_parse_mandatory_field(
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXTagNum fix_parser_parse_field(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr** fdescr,
+      FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr const** fdescr,
       char const** dbegin, char const** dend)
 {
    FIXTagNum tag = 0;
@@ -252,7 +252,7 @@ FIXTagNum fix_parser_parse_field(
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode fix_parser_parse_group(
-      FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr* gdescr, int64_t numGroups, char const* data,
+      FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups, char const* data,
       uint32_t len, char delimiter, char const** stop)
 {
    FIXFieldDescr* first_req_field = &gdescr->group[0]; // first required field MUST be present in string
@@ -263,7 +263,7 @@ FIXErrCode fix_parser_parse_group(
    {
       FIXTagNum tag = 0;
       char const* dbegin = NULL;
-      FIXFieldDescr* fdescr = NULL;
+      FIXFieldDescr const* fdescr = NULL;
       if(FIX_FAILED == fix_parser_parse_tag(parser, NULL, NULL, *stop + 1, len, &tag, NULL, &dbegin))
       {
          return FIX_FAILED;
