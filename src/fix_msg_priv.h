@@ -26,13 +26,13 @@ extern "C"
  */
 struct FIXMsg_
 {
-   FIXParser* parser;     ///< pointer to parser, who holds this message
-   FIXMsgDescr* descr;    ///< FIX message description
-   FIXGroup* fields;      ///< message FIX fields
-   FIXPage* pages;        ///< allocated pages with FIX field data
-   FIXPage* curr_page;    ///< current memory page
-   FIXGroup* used_groups; ///< used groups by this message
-   uint32_t body_len;     ///< entire body len, if message converted to FIX data
+   FIXParser* parser;         ///< pointer to parser, who holds this message
+   FIXMsgDescr const* descr;  ///< FIX message description
+   FIXGroup* fields;          ///< message FIX fields
+   FIXPage* pages;            ///< allocated pages with FIX field data
+   FIXPage* curr_page;        ///< current memory page
+   FIXGroup* used_groups;     ///< used groups by this message
+   uint32_t body_len;         ///< entire body len, if message converted to FIX data
 };
 
 /**
@@ -69,7 +69,7 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
  * @param[in] data - new FIX field value
  * @param[in] len - length of data
  */
-FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr* fdescr, unsigned char const* data, uint32_t len);
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* fdescr, unsigned char const* data, uint32_t len);
 
 /**
  * create new FIX group
@@ -96,7 +96,7 @@ void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
  * @param[out] crc - ajustment of crc. Can be differ from 0, if delimiter is not a FIX_SOH
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField* field, FIXFieldDescr* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc);
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc);
 
 /**
  * convert numeric value to string
@@ -121,7 +121,7 @@ FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char 
  * @param[out] buffLen - size of converted data
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField* field, char delimiter, char** buff, uint32_t* buffLen);
+FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen);
 
 #ifdef __cplusplus
 }
