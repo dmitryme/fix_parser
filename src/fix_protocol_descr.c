@@ -103,14 +103,14 @@ static void free_field_descr(FIXFieldDescr* fd)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static void free_field_type(FIXFieldType* ft)
+static void free_field_type(FIXFieldType const* ft)
 {
    free(ft->name);
-   free(ft);
+   free((void*)ft);
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static void free_message(FIXMsgDescr* msg)
+static void free_message(FIXMsgDescr const* msg)
 {
    free(msg->name);
    free(msg->type);
@@ -120,7 +120,7 @@ static void free_message(FIXMsgDescr* msg)
       free_field_descr(&msg->fields[i]);
    }
    free(msg->fields);
-   free(msg);
+   free((void*)msg);
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
@@ -397,7 +397,7 @@ ok:
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXProtocolDescr* fix_protocol_descr_create(FIXError* error, char const* file)
+FIXProtocolDescr const* fix_protocol_descr_create(FIXError* error, char const* file)
 {
    FIXProtocolDescr* prot = NULL;
    initLibXml(error);
@@ -447,7 +447,7 @@ ok:
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void fix_protocol_descr_free(FIXProtocolDescr* prot)
+void fix_protocol_descr_free(FIXProtocolDescr const* prot)
 {
    if (!prot)
    {
@@ -455,7 +455,7 @@ void fix_protocol_descr_free(FIXProtocolDescr* prot)
    }
    for(int32_t i = 0; i < FIELD_TYPE_CNT; ++i)
    {
-      FIXFieldType* ft = prot->field_types[i];
+      FIXFieldType const* ft = prot->field_types[i];
       while(ft)
       {
          FIXFieldType* next_ft = ft->next;
@@ -465,7 +465,7 @@ void fix_protocol_descr_free(FIXProtocolDescr* prot)
    }
    for(int32_t i = 0; i < MSG_CNT; ++i)
    {
-      FIXMsgDescr* msg = prot->messages[i];
+      FIXMsgDescr const* msg = prot->messages[i];
       while(msg)
       {
          FIXMsgDescr* next_msg = msg->next;
@@ -475,6 +475,7 @@ void fix_protocol_descr_free(FIXProtocolDescr* prot)
    }
    free(prot->version);
    free(prot->transportVersion);
+   free((void*)prot);
 }
 
 
@@ -495,7 +496,7 @@ FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type)
+FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type)
 {
    int32_t idx = fix_utils_hash_string(type) % MSG_CNT;
    FIXMsgDescr* msg = parser->protocol->messages[idx];
@@ -512,10 +513,10 @@ FIXMsgDescr* fix_protocol_get_msg_descr(FIXParser* parser, char const* type)
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag)
+FIXFieldDescr const* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag)
 {
    int32_t idx = tag % FIELD_DESCR_CNT;
-   FIXFieldDescr* fld = msg->field_index[idx];
+   FIXFieldDescr const* fld = msg->field_index[idx];
    while(fld)
    {
       if (fld->type->tag == tag)
@@ -528,10 +529,10 @@ FIXFieldDescr* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* 
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag)
+FIXFieldDescr const* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag)
 {
    int32_t idx = tag % FIELD_DESCR_CNT;
-   FIXFieldDescr* fld = field->group_index[idx];
+   FIXFieldDescr const* fld = field->group_index[idx];
    while(fld)
    {
       if (fld->type->tag == tag)
@@ -544,9 +545,9 @@ FIXFieldDescr* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXFieldDescr* fix_protocol_get_descr(FIXMsg* msg, FIXGroup* group, FIXTagNum tag)
+FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag)
 {
-   FIXFieldDescr* fdescr = NULL;
+   FIXFieldDescr const* fdescr = NULL;
    if (group)
    {
       fdescr = fix_protocol_get_group_descr(&msg->parser->error, group->parent_fdescr, tag);
