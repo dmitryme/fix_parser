@@ -81,6 +81,26 @@ FIX_PARSER_API void fix_msg_free(FIXMsg* msg)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+char const* fix_msg_get_type(FIXMsg const* msg)
+{
+   if (!msg)
+   {
+      return NULL;
+   }
+   return msg->descr->type;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+char const* fix_msg_get_name(FIXMsg const* msg)
+{
+   if (!msg)
+   {
+      return NULL;
+   }
+   return msg->descr->name;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 {
    if (!msg)
