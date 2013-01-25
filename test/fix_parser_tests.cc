@@ -92,7 +92,7 @@ TEST(FixParserTests, ParseBodyLengthTest)
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, 0);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
    }
 
    {
@@ -100,7 +100,7 @@ TEST(FixParserTests, ParseBodyLengthTest)
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, 0);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
    }
 
    {
@@ -108,7 +108,7 @@ TEST(FixParserTests, ParseBodyLengthTest)
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, 0);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
    }
 
    {
@@ -239,6 +239,94 @@ TEST(FixParserTests, ParseStringTest)
    ASSERT_EQ(FIX_SUCCESS, fix_msg_to_str(msg, FIX_SOH, buff1, sizeof(buff1), &reqBuffLen));
    buff1[reqBuffLen] = 0;
    ASSERT_STREQ(buff, buff1); // Bingo!
+}
+
+TEST(FixParserTests, ParseMultipleStringTest)
+{
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   ASSERT_TRUE(parser != NULL);
+   ASSERT_EQ(parser->error.code, 0);
+   char buff[] = "8=FIX.4.4\0019=228\00135=8\00149=QWERTY_12345678\00156=ABCQWE_XYZ\00134=34\00157=srv-ivanov_ii1\00152=20120716-06:00:16.230\00137=1\001"
+      "11=CL_ORD_ID_1234567\00117=FE_1_9494_1\001150=0\00139=1\0011=ZUM\00155=RTS-12.12\00154=1\00138=25\00144=135155\00159=0\00132=0\00131=0\001151=25\001"
+      "14=0\0016=0\00121=1\00158=COMMENT12\00110=240\001"
+      "8=FIX.4.4\0019=228\00135=8\00149=QWERTY_22345679\00156=BBCQWE_123\00134=34\00157=srv-ivanov_ii1\00152=20120716-06:00:16.230\00137=1\001"
+      "11=CL_ORD_ID_1234567\00117=FE_1_9494_2\001150=0\00139=1\0011=ZUN\00155=RTS-03.13\00154=1\00138=25\00144=135155\00159=0\00132=0\00131=0\001151=35\001"
+      "14=0\0016=0\00121=1\00158=COMMENT15\00110=133\001";
+   char const* stop = NULL;
+   FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), FIX_SOH, &stop);
+   ASSERT_TRUE(msg != NULL);
+
+   CHECK_STRING(msg, NULL, FIXFieldTag_BeginString,  "FIX.4.4");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_BodyLength,   228);
+   CHECK_STRING(msg, NULL, FIXFieldTag_MsgType,      "8");
+   CHECK_STRING(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678");
+   CHECK_STRING(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_MsgSeqNum,    34);
+   CHECK_STRING(msg, NULL, FIXFieldTag_TargetSubID,  "srv-ivanov_ii1");
+   CHECK_STRING(msg, NULL, FIXFieldTag_SendingTime,  "20120716-06:00:16.230");
+   CHECK_INT32(msg,  NULL, FIXFieldTag_OrderID,      1);
+   CHECK_STRING(msg, NULL, FIXFieldTag_ClOrdID,      "CL_ORD_ID_1234567");
+   CHECK_STRING(msg, NULL, FIXFieldTag_ExecID,       "FE_1_9494_1");
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_ExecType,     '0');
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_OrdStatus,    '1');
+   CHECK_STRING(msg, NULL, FIXFieldTag_Account,      "ZUM");
+   CHECK_STRING(msg, NULL, FIXFieldTag_Symbol,       "RTS-12.12");
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_Side,         '1');
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_OrderQty,     25);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_Price,        135155);
+   CHECK_CHAR(msg,   NULL, FIXFieldTag_TimeInForce,  '0');
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_LastQty,      0);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_LastPx,       0);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_LeavesQty,    25);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_CumQty,       0);
+   CHECK_DOUBLE(msg, NULL, FIXFieldTag_AvgPx,        0);
+   CHECK_STRING(msg, NULL, FIXFieldTag_HandlInst,    "1");
+   CHECK_STRING(msg, NULL, FIXFieldTag_Text,         "COMMENT12");
+   CHECK_STRING(msg, NULL, FIXFieldTag_CheckSum,     "240");
+
+   char buff1[1024];
+   uint32_t reqBuffLen = 0;
+   ASSERT_EQ(FIX_SUCCESS, fix_msg_to_str(msg, FIX_SOH, buff1, sizeof(buff1), &reqBuffLen));
+   buff1[reqBuffLen] = 0;
+   ASSERT_TRUE(!strncmp(buff, buff1, reqBuffLen)); // Bingo!
+
+   fix_msg_free(msg);
+
+   char const* begin = stop + 1;
+   FIXMsg* msg1 = fix_parser_str_to_msg(parser, begin, strlen(buff) - (stop - buff) + 1, FIX_SOH, &stop);
+   ASSERT_TRUE(msg1 != NULL);
+
+   CHECK_STRING(msg1, NULL, FIXFieldTag_BeginString,  "FIX.4.4");
+   CHECK_INT32(msg1,  NULL, FIXFieldTag_BodyLength,   228);
+   CHECK_STRING(msg1, NULL, FIXFieldTag_MsgType,      "8");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_SenderCompID, "QWERTY_22345679");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_TargetCompID, "BBCQWE_123");
+   CHECK_INT32(msg1,  NULL, FIXFieldTag_MsgSeqNum,    34);
+   CHECK_STRING(msg1, NULL, FIXFieldTag_TargetSubID,  "srv-ivanov_ii1");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_SendingTime,  "20120716-06:00:16.230");
+   CHECK_INT32(msg1,  NULL, FIXFieldTag_OrderID,      1);
+   CHECK_STRING(msg1, NULL, FIXFieldTag_ClOrdID,      "CL_ORD_ID_1234567");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_ExecID,       "FE_1_9494_2");
+   CHECK_CHAR(msg1,   NULL, FIXFieldTag_ExecType,     '0');
+   CHECK_CHAR(msg1,   NULL, FIXFieldTag_OrdStatus,    '1');
+   CHECK_STRING(msg1, NULL, FIXFieldTag_Account,      "ZUN");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_Symbol,       "RTS-03.13");
+   CHECK_CHAR(msg1,   NULL, FIXFieldTag_Side,         '1');
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_OrderQty,     25);
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_Price,        135155);
+   CHECK_CHAR(msg1,   NULL, FIXFieldTag_TimeInForce,  '0');
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_LastQty,      0);
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_LastPx,       0);
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_LeavesQty,    35);
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_CumQty,       0);
+   CHECK_DOUBLE(msg1, NULL, FIXFieldTag_AvgPx,        0);
+   CHECK_STRING(msg1, NULL, FIXFieldTag_HandlInst,    "1");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_Text,         "COMMENT15");
+   CHECK_STRING(msg1, NULL, FIXFieldTag_CheckSum,     "133");
+
+   ASSERT_EQ(FIX_SUCCESS, fix_msg_to_str(msg1, FIX_SOH, buff1, sizeof(buff1), &reqBuffLen));
+   buff1[reqBuffLen] = 0;
+   ASSERT_TRUE(!strncmp(begin, buff1, reqBuffLen)); // Bingo!
 }
 
 TEST(FixParserTests, ParseStringGroupTest)
