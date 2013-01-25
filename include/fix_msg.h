@@ -32,6 +32,20 @@ FIX_PARSER_API FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType);
 FIX_PARSER_API void fix_msg_free(FIXMsg* msg);
 
 /**
+ * return message type. E.g. "A", "8", "D", etc
+ * @param[in] msg - fix message
+ * @return message type
+ */
+FIX_PARSER_API char const* fix_msg_get_type(FIXMsg const* msg);
+
+/**
+ * return message name. E.g. "Logon", "ExecutionReport", "NewOrderSingle", etc
+ * @param[in] msg - fix message
+ * @return message name
+ */
+FIX_PARSER_API char const* fix_msg_get_name(FIXMsg const* msg);
+
+/**
  * add new FIX group to tag
  * @param[in] msg - FIX message
  * @param[in] grp - parent group. Can be NULL if group added to message tag, or not null is new nested group should be
