@@ -136,6 +136,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
+      fix_error_set(&parser->error, FIX_ERROR_BODY_TOO_SHORT, "Body too short.");
       *stop = data + len;
       return NULL;
    }
