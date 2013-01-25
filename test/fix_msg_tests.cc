@@ -22,6 +22,8 @@ TEST(FixMsgTests, CreateMsgTest)
    ASSERT_TRUE(msg != NULL);
    ASSERT_EQ(msg->used_groups, group);
    ASSERT_EQ(msg->body_len, 5U);
+   ASSERT_STREQ(fix_msg_get_type(msg), "8");
+   ASSERT_STREQ(fix_msg_get_name(msg), "ExecutionReport");
 
    char const* buff = NULL;
    uint32_t len = 0;
@@ -140,6 +142,8 @@ TEST(FixMsgTests, CreateMsg2Test)
    ASSERT_TRUE(msg != NULL);
    ASSERT_EQ(msg->used_groups, group);
    ASSERT_EQ(msg->body_len, 5U);
+   ASSERT_STREQ(fix_msg_get_type(msg), "D");
+   ASSERT_STREQ(fix_msg_get_name(msg), "NewOrderSingle");
 
    char buff[1024];
    uint32_t reqBuffLen = 0;
@@ -195,6 +199,8 @@ TEST(FixMsgTests, ToStringTest)
    ASSERT_TRUE(msg != NULL);
    ASSERT_EQ(msg->used_groups, group);
    ASSERT_EQ(msg->body_len, 5U);
+   ASSERT_STREQ(fix_msg_get_type(msg), "8");
+   ASSERT_STREQ(fix_msg_get_name(msg), "ExecutionReport");
 
    ASSERT_EQ(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678"), FIX_SUCCESS);
    ASSERT_EQ(fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ"), FIX_SUCCESS);
@@ -250,6 +256,8 @@ TEST(FixMsgTests, ToStringGroupTest)
    ASSERT_TRUE(msg != NULL);
    ASSERT_EQ(msg->used_groups, group);
    ASSERT_EQ(msg->body_len, 5U);
+   ASSERT_STREQ(fix_msg_get_type(msg), "D");
+   ASSERT_STREQ(fix_msg_get_name(msg), "NewOrderSingle");
 
    char buff[1024];
    uint32_t reqBuffLen = 0;
