@@ -1,1 +1,2 @@
-FIX protocol parser
+FIX protocol parser (beta)
+==========================
