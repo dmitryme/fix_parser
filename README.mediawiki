@@ -1,1 +1,3 @@
 ==FIX protocol parser (beta)==
+
+=== Examples of usage ===
