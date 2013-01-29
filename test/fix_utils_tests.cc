@@ -131,6 +131,21 @@ TEST(FixUtilsTests, atod_Test)
    double val4 = 0;
    ASSERT_EQ(fix_utils_atod(str4, strlen(str4), 1, &val4), 7);
    ASSERT_EQ(val4, 123.456);
+
+   char str5[] = "0000.987";
+   double val5 = 0;
+   ASSERT_EQ(fix_utils_atod(str5, strlen(str5), 0, &val5), 8);
+   ASSERT_EQ(val5, 0.987);
+
+   char str6[] = ".987";
+   double val6 = 0;
+   ASSERT_EQ(fix_utils_atod(str6, strlen(str6), 0, &val6), 4);
+   ASSERT_EQ(val6, 0.987);
+
+   char str7[] = "23.";
+   double val7 = 0;
+   ASSERT_EQ(fix_utils_atod(str7, strlen(str7), 0, &val7), 3);
+   ASSERT_EQ(val7, 23.0);
 }
 
 TEST(FixUtilsTests, MakePath)
