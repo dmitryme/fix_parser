@@ -168,6 +168,73 @@ TEST(FixParserTests, ParseCheckSumTest)
    }
 }
 
+TEST(FixParserTests, GetSessionIdTest)
+{
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   ASSERT_TRUE(parser != NULL);
+   ASSERT_EQ(parser->error.code, 0);
+   ASSERT_TRUE(parser != NULL);
+   ASSERT_EQ(parser->error.code, 0);
+   char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+   char const* senderCompID = NULL;
+   uint32_t senderCompIDLen = 0;
+   char const* targetCompID = NULL;
+   uint32_t targetCompIDLen = 0;
+   FIXErrCode err = fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen);
+   ASSERT_EQ(err, FIX_SUCCESS);
+   ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+   ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+   {
+      char buff[] = "9=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+      ASSERT_TRUE(!strcmp(parser->error.text, "First field is '9', but must be BeginString."));
+   }
+   {
+      char buff[] = "8=FIX.4.4\00120=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+      ASSERT_TRUE(!strcmp(parser->error.text, "Second field is '20', but must be BodyLength."));
+   }
+   {
+      char buff[] = "8=FIX.4.4\0019=A139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+      ASSERT_TRUE(!strcmp(parser->error.text, "BodyLength value not a number."));
+   }
+   {
+      char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
+      ASSERT_TRUE(!strcmp(parser->error.text, "Body too short."));
+   }
+   {
+      char buff[] = "8=FIX.4.4\0019=139\00136=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+      ASSERT_TRUE(!strcmp(parser->error.text, "Field is '36', but must be MsgType."));
+   }
+   {
+      char buff[] = "8=FIX.4.4\0019=113\00135=A\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+      ASSERT_TRUE(!strcmp(parser->error.text, "Unable to find SenderCompID field."));
+   }
+   {
+   char buff[] = "8=FIX.4.4\0019=120\00135=A\00149=dmelnikov1_test_robot1\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      ASSERT_EQ(FIX_FAILED, fix_parser_get_session_id(parser, buff, strlen(buff), FIX_SOH, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen));
+      ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
+      ASSERT_TRUE(!strcmp(parser->error.text, "Unable to find TargetCompID field."));
+   }
+}
+
 #define CHECK_STRING(msg, group, tag, text) \
 { \
    char const* buff = NULL; \
