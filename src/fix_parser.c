@@ -86,9 +86,97 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser)
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_parser_get_session_id(FIXParser* parser, char const* data, uint32_t len, char delimiter,
-      char const** senderCompID, uint32_t senderCompIDLen,
-      char const** targetCompID, uint32_t targetCompIDLen)
+      char const** senderCompID, uint32_t* senderCompIDLen,
+      char const** targetCompID, uint32_t* targetCompIDLen)
 {
+   if (!parser || !data || !senderCompID || !targetCompID || !senderCompIDLen || !targetCompIDLen)
+   {
+      return FIX_FAILED;
+   }
+   fix_error_reset(&parser->error);
+   FIXTagNum tag = 0;
+   char const* dbegin = NULL;
+   char const* dend = NULL;
+   tag = fix_parser_parse_mandatory_field(parser, data, len, delimiter, &dbegin, &dend);
+   if (tag == FIX_FAILED)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
+      return FIX_FAILED;
+   }
+   if (tag != FIXFieldTag_BeginString)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
+      return FIX_FAILED;
+   }
+   tag = fix_parser_parse_mandatory_field(parser, dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend);
+   if (tag == FIX_FAILED)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
+      return FIX_FAILED;
+   }
+   if (tag != FIXFieldTag_BodyLength)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
+      return FIX_FAILED;
+   }
+   int64_t bodyLen;
+   if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen) == FIX_FAILED)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
+      return FIX_FAILED;
+   }
+   if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
+   {
+      fix_error_set(&parser->error, FIX_ERROR_BODY_TOO_SHORT, "Body too short.");
+      return FIX_FAILED;
+   }
+   char const* bodyEnd = dend + bodyLen;
+   tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
+   if (tag == FIX_FAILED)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
+      return FIX_FAILED;
+   }
+   if (tag != FIXFieldTag_MsgType)
+   {
+      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
+      return FIX_FAILED;
+   }
+   *senderCompID = NULL;
+   *targetCompID = NULL;
+   while(dend != bodyEnd)
+   {
+      tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
+      if (tag == FIX_FAILED)
+      {
+         return FIX_FAILED;
+      }
+      if (tag == FIXFieldTag_SenderCompID)
+      {
+         *senderCompID = dbegin;
+         *senderCompIDLen = dend - dbegin;
+      }
+      else if (tag == FIXFieldTag_TargetCompID)
+      {
+         *targetCompID = dbegin;
+         *targetCompIDLen = dend - dbegin;
+      }
+      if (*senderCompID && *targetCompID)
+      {
+         return FIX_SUCCESS;
+      }
+   }
+   if (!(*senderCompID))
+   {
+      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
+      return FIX_FAILED;
+   }
+   if (!(*targetCompID))
+   {
+      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
+      return FIX_FAILED;
+   }
+
    return FIX_SUCCESS;
 }
 
@@ -183,7 +271,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          return NULL;
       }
    }
-   tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend - 1, delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
    if (tag == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
