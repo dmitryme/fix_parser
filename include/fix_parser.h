@@ -46,6 +46,22 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser);
 FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
 
 /**
+ * pre-parse string and return pair SenderCompID and TargetCompID
+ * @param[in] parser - instance of parser
+ * @param[in] data - message to pre-parser
+ * @param[in] len  - length of pre-parsed data
+ * @param[in] delimiter - FIX SOH
+ * @param[out] senderCompID - pointer to SenderCompID data
+ * @param[out] senderCompIDLen - length of senderCompID data
+ * @param[out] targetCompID - pointer to TargetCompID data
+ * @param[out] targetCompIDLen - length of  TargetCompID data
+ * @return FIX_SUCCESS - ok, FIX_FAILED - bad
+ */
+FIX_PARSER_API FIXErrCode fix_parser_get_session_id(FIXParser* parser, char const* data, uint32_t len, char delimiter,
+      char const** senderCompID, uint32_t senderCompIDLen,
+      char const** targetCompID, uint32_t targetCompIDLen);
+
+/**
  * get error code of failed operation
  * @param[in] parser - FIX parser instance
  * @return error code - see FIX_ERROR_* for possible error values
