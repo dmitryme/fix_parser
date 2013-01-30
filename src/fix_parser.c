@@ -85,6 +85,14 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API FIXErrCode fix_parser_get_session_id(FIXParser* parser, char const* data, uint32_t len, char delimiter,
+      char const** senderCompID, uint32_t senderCompIDLen,
+      char const** targetCompID, uint32_t targetCompIDLen)
+{
+   return FIX_SUCCESS;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
 {
    if (!parser || !data)
