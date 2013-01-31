@@ -19,14 +19,16 @@ extern "C"
 
 /**
  * return error code during new parser instance creation
+ * @param[in] error - pointer to memory with error description
  * @note this method uses global variable without multithread protection
  */
-FIX_PARSER_API FIXErrCode fix_error_get_code();
+FIX_PARSER_API FIXErrCode fix_error_get_code(FIXError* error);
 /**
  * return human readable error description
+ * @param[in] error - pointer to memory with error description
  * @note this method uses global variable without multithread protection
  */
-FIX_PARSER_API char const* fix_error_get_text();
+FIX_PARSER_API char const* fix_error_get_text(FIXError* error);
 
 #ifdef __cplusplus
 }
