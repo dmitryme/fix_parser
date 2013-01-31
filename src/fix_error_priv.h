@@ -17,7 +17,7 @@ extern "C"
 {
 #endif
 
-#define ERROR_TXT_SIZE 1024 ///< maximum error description size
+#define ERROR_TXT_SIZE 192 ///< maximum error description size
 
 /**
  * hold error description
@@ -50,27 +50,6 @@ void fix_error_set(FIXError* error, FIXErrCode code, char const* text, ...);
  * @param[in] error - error, which is begin reset
  */
 void fix_error_reset(FIXError* error);
-
-/**
- * return global, not bound to any parser instance, error
- * @return error pointer
- */
-FIXError* fix_error_static_get();
-
-/**
- * set global error
- */
-void fix_error_static_set_va(FIXErrCode code, char const* text, va_list ap);
-
-/**
- * set global error
- */
-void fix_error_static_set(FIXErrCode code, char const* text, ...);
-
-/**
- * reset global error
- */
-void fix_error_static_reset();
 
 #ifdef __cplusplus
 }
