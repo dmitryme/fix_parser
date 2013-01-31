@@ -68,16 +68,16 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
 
 /**
  * parse string with mandatory fields. Mandatory fields are BeginString, BodyLength, CheckSum, MsgType
- * @param[in] parser - FIX parser
  * @param[in] data - string to parse
  * @param[in] len - length of data
  * @param[in] delimiter - FIX field SOH
  * @param[out] dbegin - points to begin of field value
  * @param[out] dend - points to end of field value
+ * @param[out] error - error description, if any
  * @return FIX field tag number or FIX_FAILED
  */
 FIXTagNum fix_parser_parse_mandatory_field(
-      FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend);
+      char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend, FIXError* error);
 
 /**
  * parser string with FIX field
@@ -98,21 +98,22 @@ FIXTagNum fix_parser_parse_field(
 
 /**
  * validate parser attributes
+ * @param[in] error - filled, if validation failed
  * @param[in] attrs - attributes to validate
- * @return FIX_SUCCESS - ok, FIX_FAILED - invalid attributes
+ * @return FIX_SUCCESS - ok, FIX_FAILED - invalid attributes, discover error for details
  */
-FIXErrCode fix_parser_validate_attrs(FIXParserAttrs* attrs);
+FIXErrCode fix_parser_validate_attrs(FIXError* error, FIXParserAttrs* attrs);
 
 /**
  * extract field value from string
- * @param[in] parser - FIX parser
  * @param[in] dbegin - begin of data
  * @param[in] len - length of data
  * @param[in] delimiter - FIX field SOH
  * @param[out] dend - end of field data
+ * @param[out] error - error description, if any
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_get_value(FIXParser* parser, char const* dbegin, uint32_t len, char delimiter, char const** dend);
+FIXErrCode fix_parser_get_value(char const* dbegin, uint32_t len, char delimiter, char const** dend, FIXError* error);
 
 /**
  * test field value
