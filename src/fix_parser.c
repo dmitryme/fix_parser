@@ -28,12 +28,13 @@ FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs
    {
       memcpy(&myattrs, attrs, sizeof(myattrs));
    }
+   FIXParser* parser = NULL;
    FIXError* err = (FIXError*)calloc(1, sizeof(FIXError));
    if (fix_parser_validate_attrs(err, &myattrs) == FIX_FAILED)
    {
       goto failed;
    }
-   FIXParser* parser = (FIXParser*)calloc(1, sizeof(FIXParser));
+   parser = (FIXParser*)calloc(1, sizeof(FIXParser));
    memcpy(&parser->attrs, &myattrs, sizeof(parser->attrs));
    parser->flags = flags;
    parser->protocol = fix_protocol_descr_create(err, protFile);
