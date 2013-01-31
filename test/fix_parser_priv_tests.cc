@@ -12,7 +12,7 @@
 TEST(FixParserPrivTests, CreateParserTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
    ASSERT_EQ(parser->flags, PARSER_FLAG_CHECK_ALL);
@@ -32,7 +32,7 @@ TEST(FixParserPrivTests, CreateParserTest)
 TEST(FixParserPrivTests, SetErrorParserTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
 
    fix_error_set(&parser->error, FIX_ERROR_NO_MORE_PAGES, "No more pages available");
@@ -51,7 +51,7 @@ TEST(FixParserPrivTests, SetErrorParserTest)
 TEST(FixParserPrivTests, GetFreePageTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -93,7 +93,7 @@ TEST(FixParserPrivTests, GetFreePageTest)
 TEST(FixParserPrivTests, MaxPagesTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 2, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -133,7 +133,7 @@ TEST(FixParserPrivTests, MaxPagesTest)
 TEST(FixParserPrivTests, MaxGroupsTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 2};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -170,7 +170,7 @@ TEST(FixParserPrivTests, MaxPageSizeTest)
 {
    {
       FIXParserAttrs attrs = {512, 0, 1, 0, 2, 0};
-      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
       ASSERT_TRUE(parser != NULL);
       ASSERT_EQ(parser->error.code, 0);
 
@@ -193,7 +193,7 @@ TEST(FixParserPrivTests, MaxPageSizeTest)
    }
    {
       FIXParserAttrs attrs = {512, 512, 1, 0, 2, 0};
-      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+      FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
       ASSERT_TRUE(parser != NULL);
       ASSERT_EQ(parser->error.code, 0);
 
@@ -219,28 +219,28 @@ TEST(FixParserPrivTests, MaxPageSizeTest)
 TEST(FixParserPrivTests, ParseMandatoryField)
 {
    FIXParserAttrs attrs = {512, 0, 2, 5, 2, 5};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    char const* dbegin = NULL;
    char const* dend = NULL;
    {
       char const data[] = "8=FIX4.4\00113=100\001";
-      ASSERT_EQ(8, fix_parser_parse_mandatory_field(parser, data, strlen(data), '\001', &dbegin, &dend));
+      ASSERT_EQ(8, fix_parser_parse_mandatory_field(data, strlen(data), '\001', &dbegin, &dend, &parser->error));
       ASSERT_TRUE(!strncmp("FIX4.4", dbegin, dend - dbegin));
    }
    {
       char const data[] = "A=FIX4.4\0013=100\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(parser, data, strlen(data), '\001', &dbegin, &dend));
+      ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(data, strlen(data), '\001', &dbegin, &dend, &parser->error));
       ASSERT_EQ(FIX_ERROR_INVALID_ARGUMENT, fix_parser_get_error_code(parser));
    }
    {
       char const data[] = "8-FIX4.4\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(parser, data, strlen(data), '\001', &dbegin, &dend));
+      ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(data, strlen(data), '\001', &dbegin, &dend, &parser->error));
       ASSERT_EQ(FIX_ERROR_INVALID_ARGUMENT, fix_parser_get_error_code(parser));
    }
    {
       char const data[] = "8=FIX4.4|";
-      ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(parser, data, strlen(data), '\001', &dbegin, &dend));
+      ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(data, strlen(data), '\001', &dbegin, &dend, &parser->error));
       ASSERT_EQ(FIX_ERROR_INVALID_ARGUMENT, fix_parser_get_error_code(parser));
    }
 
