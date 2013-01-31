@@ -24,9 +24,10 @@ extern "C"
  * protocol description
  * @param[in] attrs - parser attributes
  * @param[in] flags - parser flags. See PARSER_FLAG_CHECK_* values
- * @return new instance of FIX parser. if NULL, invoke fix_error_get_code(), fix_error_get_text() for error description
+ * @param[out] error - error description, if any. If error is returned, it must be destroyed by free(error)
+ * @return new instance of FIX parser. if NULL, invoke fix_error_get_code(error), fix_error_get_text(error) for error description
  */
-FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags);
+FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags, FIXError** error);
 
 /**
  * free parser instance.
@@ -47,7 +48,6 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
 
 /**
  * pre-parse string and return pair SenderCompID and TargetCompID
- * @param[in] parser - instance of parser
  * @param[in] data - message to pre-parser
  * @param[in] len  - length of pre-parsed data
  * @param[in] delimiter - FIX SOH
@@ -55,11 +55,12 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
  * @param[out] senderCompIDLen - length of senderCompID data
  * @param[out] targetCompID - pointer to TargetCompID data
  * @param[out] targetCompIDLen - length of  TargetCompID data
+ * @param[out] error - error description, if any. If error is returned it must be destroyed by free(error)
  * @return FIX_SUCCESS - ok, FIX_FAILED - bad
  */
-FIX_PARSER_API FIXErrCode fix_parser_get_session_id(FIXParser* parser, char const* data, uint32_t len, char delimiter,
+FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t len, char delimiter,
       char const** senderCompID, uint32_t* senderCompIDLen,
-      char const** targetCompID, uint32_t* targetCompIDLen);
+      char const** targetCompID, uint32_t* targetCompIDLen, FIXError** error);
 
 /**
  * get error code of failed operation
