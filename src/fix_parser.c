@@ -21,25 +21,25 @@
 #define CRC_FIELD_LEN 7
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags)
+FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs const* attrs, int32_t flags, FIXError** error)
 {
-   fix_error_static_reset();
    FIXParserAttrs myattrs = {};
    if (attrs)
    {
       memcpy(&myattrs, attrs, sizeof(myattrs));
    }
-   if (fix_parser_validate_attrs(&myattrs) == FIX_FAILED)
+   FIXError* err = (FIXError*)calloc(1, sizeof(FIXError));
+   if (fix_parser_validate_attrs(err, &myattrs) == FIX_FAILED)
    {
-      return NULL;
+      goto failed;
    }
    FIXParser* parser = (FIXParser*)calloc(1, sizeof(FIXParser));
    memcpy(&parser->attrs, &myattrs, sizeof(parser->attrs));
    parser->flags = flags;
-   parser->protocol = fix_protocol_descr_create(fix_error_static_get(), protFile);
+   parser->protocol = fix_protocol_descr_create(err, protFile);
    if (!parser->protocol)
    {
-      return NULL;
+      goto failed;
    }
    for(uint32_t i = 0; i < parser->attrs.numPages; ++i)
    {
@@ -54,6 +54,18 @@ FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs
       group->next = parser->group;
       parser->group = group;
    }
+   goto ok;
+failed:
+   if (error)
+   {
+      *error = err;
+   }
+   if (parser)
+   {
+      free(parser);
+      parser = NULL;
+   }
+ok:
    return parser;
 }
 
@@ -85,71 +97,73 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_parser_get_session_id(FIXParser* parser, char const* data, uint32_t len, char delimiter,
+FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t len, char delimiter,
       char const** senderCompID, uint32_t* senderCompIDLen,
-      char const** targetCompID, uint32_t* targetCompIDLen)
+      char const** targetCompID, uint32_t* targetCompIDLen,
+      FIXError** error)
 {
-   if (!parser || !data || !senderCompID || !targetCompID || !senderCompIDLen || !targetCompIDLen)
+   FIXError* err = (FIXError*)calloc(1, sizeof(FIXError));
+   if (!error || !data || !senderCompID || !targetCompID || !senderCompIDLen || !targetCompIDLen)
    {
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_INVALID_ARGUMENT, "One of arguments is invalid (possible NULL).");
+      goto failed;
    }
-   fix_error_reset(&parser->error);
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   tag = fix_parser_parse_mandatory_field(parser, data, len, delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
+      goto failed;
    }
    if (tag != FIXFieldTag_BeginString)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
+      goto failed;
    }
-   tag = fix_parser_parse_mandatory_field(parser, dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
+      goto failed;
    }
    if (tag != FIXFieldTag_BodyLength)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
+      goto failed;
    }
    int64_t bodyLen;
    if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen) == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
+      goto failed;
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(&parser->error, FIX_ERROR_BODY_TOO_SHORT, "Body too short.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_BODY_TOO_SHORT, "Body too short.");
+      goto failed;
    }
    char const* bodyEnd = dend + bodyLen;
-   tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
+      goto failed;
    }
    if (tag != FIXFieldTag_MsgType)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
+      goto failed;
    }
    *senderCompID = NULL;
    *targetCompID = NULL;
    while(dend != bodyEnd)
    {
-      tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
+      tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, err);
       if (tag == FIX_FAILED)
       {
-         return FIX_FAILED;
+         goto failed;
       }
       if (tag == FIXFieldTag_SenderCompID)
       {
@@ -163,20 +177,23 @@ FIX_PARSER_API FIXErrCode fix_parser_get_session_id(FIXParser* parser, char cons
       }
       if (*senderCompID && *targetCompID)
       {
-         return FIX_SUCCESS;
+         goto ok;
       }
    }
    if (!(*senderCompID))
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
+      goto failed;
    }
    if (!(*targetCompID))
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
-      return FIX_FAILED;
+      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
+      goto failed;
    }
-
+failed:
+   *error = err;
+   return FIX_FAILED;
+ok:
    return FIX_SUCCESS;
 }
 
@@ -191,7 +208,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   tag = fix_parser_parse_mandatory_field(parser, data, len, delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, &parser->error);
    if (tag == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
@@ -213,7 +230,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       free(actualVer);
       return NULL;
    }
-   tag = fix_parser_parse_mandatory_field(parser, dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, &parser->error);
    if (tag == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
@@ -238,7 +255,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    }
    char const* crcbeg = NULL;
    char const* bodyEnd = dend + bodyLen;
-   tag = fix_parser_parse_mandatory_field(parser, bodyEnd + 1, CRC_FIELD_LEN, delimiter, &crcbeg, stop);
+   tag = fix_parser_parse_mandatory_field(bodyEnd + 1, CRC_FIELD_LEN, delimiter, &crcbeg, stop, &parser->error);
    if (tag == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse CrcSum field.");
@@ -271,7 +288,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          return NULL;
       }
    }
-   tag = fix_parser_parse_mandatory_field(parser, dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend);
+   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, &parser->error);
    if (tag == FIX_FAILED)
    {
       fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
