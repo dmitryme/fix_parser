@@ -7,6 +7,7 @@
 #include "fix_msg.h"
 #include "fix_error.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #ifdef WIN32
 #  include <windows.h>
@@ -174,10 +175,12 @@ int main(int argc, char *argv[])
       return 1;
    }
 
-   FIXParser* parser = fix_parser_create(argv[1], NULL, PARSER_FLAG_CHECK_ALL);
+   FIXError* error = NULL;
+   FIXParser* parser = fix_parser_create(argv[1], NULL, PARSER_FLAG_CHECK_ALL, &error);
    if (!parser)
    {
-      printf("ERROR: %s\n", fix_error_get_text());
+      printf("ERROR: %s\n", fix_error_get_text(error));
+      free(error);
       return 1;
    }
 
