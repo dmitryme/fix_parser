@@ -38,7 +38,7 @@ FIXFieldDescr* new_fdescr(int tag, FIXFieldCategoryEnum category, FIXFieldValueT
 TEST(FixFieldTests, SetTagTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -120,7 +120,7 @@ TEST(FixFieldTests, SetTagTest)
 TEST(FixFieldTests, DelTagTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -208,7 +208,7 @@ TEST(FixFieldTests, DelTagTest)
 TEST(FixFieldTests, GetTagTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -278,7 +278,7 @@ TEST(FixFieldTests, GetTagTest)
 TEST(FixFieldTests, AddGetDelGroupTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
@@ -404,7 +404,7 @@ TEST(FixFieldTests, AddGetDelGroupTest)
 TEST(FixFieldTests, NestedGroupsTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(parser != NULL);
    ASSERT_EQ(parser->error.code, 0);
 
