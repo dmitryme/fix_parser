@@ -14,7 +14,7 @@
 TEST(FixMsgTests, CreateMsgTest)
 {
    FIXParserAttrs attrs = {512, 0, 2, 0, 2, 0};
-   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", &attrs, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(p != NULL);
    FIXGroup* group = p->group;
 
@@ -134,7 +134,7 @@ TEST(FixMsgTests, CreateMsgTest)
 
 TEST(FixMsgTests, CreateMsg2Test)
 {
-   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(p != NULL);
    FIXGroup* group = p->group;
 
@@ -191,7 +191,7 @@ TEST(FixMsgTests, CreateMsg2Test)
 
 TEST(FixMsgTests, ToStringTest)
 {
-   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(p != NULL);
    FIXGroup* group = p->group;
 
@@ -248,7 +248,7 @@ TEST(FixMsgTests, ToStringTest)
 
 TEST(FixMsgTests, ToStringGroupTest)
 {
-   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL);
+   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, NULL);
    ASSERT_TRUE(p != NULL);
    FIXGroup* group = p->group;
 
