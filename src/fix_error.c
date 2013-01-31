@@ -13,13 +13,21 @@
 #include <stdio.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_error_get_code()
+FIX_PARSER_API FIXErrCode fix_error_get_code(FIXError* error)
 {
-   return fix_error_static_get()->code;
+   if (!error)
+   {
+      return FIX_ERROR_INVALID_ARGUMENT;
+   }
+   return error->code;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API char const* fix_error_get_text()
+FIX_PARSER_API char const* fix_error_get_text(FIXError* error)
 {
-   return fix_error_static_get()->text;
+   if (!error)
+   {
+      return NULL;
+   }
+   return error->text;
 }
