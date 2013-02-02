@@ -91,6 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="textblock"><code>#include &quot;<a class="el" href="fix__parser__priv_8h_source.html">fix_parser_priv.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="fix__utils_8h_source.html">fix_utils.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="fix__msg_8h_source.html">fix_msg.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="fix__error__priv_8h_source.html">fix_error_priv.h</a>&quot;</code><br/>
 <code>#include &lt;string.h&gt;</code><br/>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
@@ -99,12 +100,11 @@ Functions</h2></td></tr>
 <tr class="memitem:abb63c2793fa5c71f878100ff8eddda77"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__page_8h.html#a8a196758c692854a4ab49f11278f4693">FIXPage</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#abb63c2793fa5c71f878100ff8eddda77">fix_parser_free_page</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="fix__page_8h.html#a8a196758c692854a4ab49f11278f4693">FIXPage</a> *page)</td></tr>
 <tr class="memitem:a24da596a9a7b37b315bec6ad4e06afc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a24da596a9a7b37b315bec6ad4e06afc2">fix_parser_alloc_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
 <tr class="memitem:a28fe63a67bfd0d465d21cf442df4a976"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a28fe63a67bfd0d465d21cf442df4a976">fix_parser_free_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *group)</td></tr>
-<tr class="memitem:ab98a49ff0f6cb023204cc824429671b0"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#ab98a49ff0f6cb023204cc824429671b0">fix_parser_validate_attrs</a> (<a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> *attrs)</td></tr>
-<tr class="memitem:a5fe3729c92b6fb676e6221af07ecc578"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a5fe3729c92b6fb676e6221af07ecc578">fix_parser_check_value</a> (<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> *fdescr, char const *dbegin, char const *dend, char delimiter)</td></tr>
-<tr class="memitem:a3c529b78c2535aab7f041a9fefa46603"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a3c529b78c2535aab7f041a9fefa46603">fix_parser_get_value</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *dbegin, uint32_t len, char delimiter, char const **dend)</td></tr>
-<tr class="memitem:abeb2caecf456772309b43c4f14806a0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#abeb2caecf456772309b43c4f14806a0b">fix_parser_parse_mandatory_field</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *data, uint32_t len, char delimiter, char const **dbegin, char const **dend)</td></tr>
-<tr class="memitem:a0a330569d237116ffe082866e5e17d52"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a0a330569d237116ffe082866e5e17d52">fix_parser_parse_field</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *group, char const *data, uint32_t len, char delimiter, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> **fdescr, char const **dbegin, char const **dend)</td></tr>
-<tr class="memitem:a048bec7d7f5f6965cc05613faf08d452"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a048bec7d7f5f6965cc05613faf08d452">fix_parser_parse_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *parentGroup, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> groupTag, int64_t numGroups, char const *data, uint32_t len, char delimiter, char const **stop)</td></tr>
+<tr class="memitem:a6f3a36763bfd6fdb5fd4e9ef3ebf5f99"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a6f3a36763bfd6fdb5fd4e9ef3ebf5f99">fix_parser_validate_attrs</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> *attrs)</td></tr>
+<tr class="memitem:aa2d1fc0d6b4b46b6ea0360a9a81e7f83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#aa2d1fc0d6b4b46b6ea0360a9a81e7f83">fix_parser_check_value</a> (<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, char const *dbegin, char const *dend, char delimiter)</td></tr>
+<tr class="memitem:a68ff9f1f0b5b72d35317e88a06063bbf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a68ff9f1f0b5b72d35317e88a06063bbf">fix_parser_parse_mandatory_field</a> (char const *data, uint32_t len, char delimiter, char const **dbegin, char const **dend, <a class="el" href="structFIXError.html">FIXError</a> *error)</td></tr>
+<tr class="memitem:abd2316484671df86eb1821243b1d9e70"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#abd2316484671df86eb1821243b1d9e70">fix_parser_parse_field</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *group, char const *data, uint32_t len, char delimiter, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const **fdescr, char const **dbegin, char const **dend)</td></tr>
+<tr class="memitem:aa43f7d361ceb0803dddfeec0cbd1f416"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#aa43f7d361ceb0803dddfeec0cbd1f416">fix_parser_parse_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *parentGroup, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *gdescr, int64_t numGroups, char const *data, uint32_t len, char delimiter, char const **stop)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
@@ -169,14 +169,14 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a5fe3729c92b6fb676e6221af07ecc578"></a>
+<a class="anchor" id="aa2d1fc0d6b4b46b6ea0360a9a81e7f83"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_parser_check_value </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
           <td class="paramname"><em>fdescr</em>, </td>
         </tr>
         <tr>
@@ -288,63 +288,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3c529b78c2535aab7f041a9fefa46603"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_parser_get_value </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
-          <td class="paramname"><em>parser</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>dbegin</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>len</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>delimiter</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">char const **&#160;</td>
-          <td class="paramname"><em>dend</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>extract field value from string </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- FIX parser </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">dbegin</td><td>- begin of data </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- length of data </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">delimiter</td><td>- FIX field SOH </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">dend</td><td>- end of field data </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - ok, FIX_FAILED - error </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a0a330569d237116ffe082866e5e17d52"></a>
+<a class="anchor" id="abd2316484671df86eb1821243b1d9e70"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -387,7 +331,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> **&#160;</td>
+          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const **&#160;</td>
           <td class="paramname"><em>fdescr</em>, </td>
         </tr>
         <tr>
@@ -428,7 +372,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a048bec7d7f5f6965cc05613faf08d452"></a>
+<a class="anchor" id="aa43f7d361ceb0803dddfeec0cbd1f416"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -453,8 +397,8 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td>
-          <td class="paramname"><em>groupTag</em>, </td>
+          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
+          <td class="paramname"><em>gdescr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -499,7 +443,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- FIX parser </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- FIX message, which will hold parsed group </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">parentGroup</td><td>- FIX group, which will hold nested group </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">groupTag</td><td>- FIX field tag number </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">gdescr</td><td>- FIX group description </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>- string to parser </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- length of data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">stop</td><td>- parse stop pointer </td></tr>
@@ -510,19 +454,13 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="abeb2caecf456772309b43c4f14806a0b"></a>
+<a class="anchor" id="a68ff9f1f0b5b72d35317e88a06063bbf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> fix_parser_parse_mandatory_field </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
-          <td class="paramname"><em>parser</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>data</em>, </td>
         </tr>
@@ -548,7 +486,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char const **&#160;</td>
-          <td class="paramname"><em>dend</em>&#160;</td>
+          <td class="paramname"><em>dend</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -560,12 +504,12 @@ Functions</h2></td></tr>
 <p>parse string with mandatory fields. Mandatory fields are BeginString, BodyLength, CheckSum, MsgType </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- FIX parser </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>- string to parse </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- length of data </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">delimiter</td><td>- FIX field SOH </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">dbegin</td><td>- points to begin of field value </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">dend</td><td>- points to end of field value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description, if any </td></tr>
   </table>
   </dd>
 </dl>
@@ -573,34 +517,45 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab98a49ff0f6cb023204cc824429671b0"></a>
+<a class="anchor" id="a6f3a36763bfd6fdb5fd4e9ef3ebf5f99"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">int32_t fix_parser_validate_attrs </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> *&#160;</td>
-          <td class="paramname"><em>attrs</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
+          <td class="paramname"><em>error</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> *&#160;</td>
+          <td class="paramname"><em>attrs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>validate parser attributes </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">error</td><td>- filled, if validation failed </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">attrs</td><td>- attributes to validate </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - ok, FIX_FAILED - invalid attributes </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - ok, FIX_FAILED - invalid attributes, discover error for details </dd></dl>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jan 12 2013 13:26:27 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

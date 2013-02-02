@@ -98,6 +98,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Functions</h2></td></tr>
 <tr class="memitem:ae2658ef8459766951b1ac671f757a8bf"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#ae2658ef8459766951b1ac671f757a8bf">fix_msg_create</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *msgType)</td></tr>
 <tr class="memitem:a5bfbb8f954ef5c8d1e4741c12a236131"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#a5bfbb8f954ef5c8d1e4741c12a236131">fix_msg_free</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg)</td></tr>
+<tr class="memitem:a8e8bc87eaf623455b092620d65bce861"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#a8e8bc87eaf623455b092620d65bce861">fix_msg_get_type</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> const *msg)</td></tr>
+<tr class="memitem:ac6862d87b1704c0cd00322ef08729600"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#ac6862d87b1704c0cd00322ef08729600">fix_msg_get_name</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> const *msg)</td></tr>
 <tr class="memitem:ac7d838589e301032cba69e058baaacbb"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#ac7d838589e301032cba69e058baaacbb">fix_msg_add_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tagNum)</td></tr>
 <tr class="memitem:a3df6dce2ddfcacbce607dacfdc2ab6b0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#a3df6dce2ddfcacbce607dacfdc2ab6b0">fix_msg_get_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tagNum, uint32_t grpIdx)</td></tr>
 <tr class="memitem:a24797c8a47ef97ab8fcdad1812648ed0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#a24797c8a47ef97ab8fcdad1812648ed0">fix_msg_del_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tagNum, uint32_t grpIdx)</td></tr>
@@ -114,7 +116,7 @@ Functions</h2></td></tr>
 <tr class="memitem:ae34d4b3cc35d736f7461993dc3b1312c"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#ae34d4b3cc35d736f7461993dc3b1312c">fix_msg_get_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tagNum, char const **val, uint32_t *len)</td></tr>
 <tr class="memitem:a588e9887181ce3442a5949dda5d77eff"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#a588e9887181ce3442a5949dda5d77eff">fix_msg_get_data</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tagNum, char const **val, uint32_t *len)</td></tr>
 <tr class="memitem:ac53a7ddd95f780c18b8bf9558ff4d4c9"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#ac53a7ddd95f780c18b8bf9558ff4d4c9">fix_msg_del_field</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
-<tr class="memitem:a262e953029d8f5a34d1d1c406bc907c0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#a262e953029d8f5a34d1d1c406bc907c0">fix_msg_to_fix</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, char delimiter, char *buff, uint32_t buffLen, uint32_t *reqBuffLen)</td></tr>
+<tr class="memitem:ae6714d081df1c5a316826ec3017236d0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8h.html#ae6714d081df1c5a316826ec3017236d0">fix_msg_to_str</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, char delimiter, char *buff, uint32_t buffLen, uint32_t *reqBuffLen)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
@@ -613,6 +615,30 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ac6862d87b1704c0cd00322ef08729600"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIX_PARSER_API char const* fix_msg_get_name </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXMsg__.html">FIXMsg</a> const *&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>return message name. E.g. "Logon", "ExecutionReport", "NewOrderSingle", etc </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- fix message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>message name </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="ae34d4b3cc35d736f7461993dc3b1312c"></a>
 <div class="memitem">
 <div class="memproto">
@@ -666,6 +692,30 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8e8bc87eaf623455b092620d65bce861"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIX_PARSER_API char const* fix_msg_get_type </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXMsg__.html">FIXMsg</a> const *&#160;</td>
+          <td class="paramname"><em>msg</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>return message type. E.g. "A", "8", "D", etc </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- fix message </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>message type </dd></dl>
 
 </div>
 </div>
@@ -970,12 +1020,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a262e953029d8f5a34d1d1c406bc907c0"></a>
+<a class="anchor" id="ae6714d081df1c5a316826ec3017236d0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_msg_to_fix </td>
+          <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_msg_to_str </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td>
           <td class="paramname"><em>msg</em>, </td>
@@ -1011,7 +1061,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>convert message to FIX format </p>
+<p>convert FIX message to string </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- message to be converted </td></tr>
@@ -1029,7 +1079,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jan 12 2013 13:26:27 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

@@ -105,18 +105,18 @@ Functions</h2></td></tr>
 <tr class="memitem:ad81caf247dc40a7bd3bf0c2a1c8e9fc8"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#ad81caf247dc40a7bd3bf0c2a1c8e9fc8">fix_msg_alloc</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, uint32_t size)</td></tr>
 <tr class="memitem:a6db759f203f0db6304a11ab354a6979c"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a6db759f203f0db6304a11ab354a6979c">fix_msg_realloc</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, void *ptr, uint32_t size)</td></tr>
 <tr class="memitem:ad042dcc69fdfe8a241efa689576674f2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXField__.html">FIXField</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#ad042dcc69fdfe8a241efa689576674f2">fix_msg_get_field</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
-<tr class="memitem:a7672ae804cc548b2d9c6549ed6495b7b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXField__.html">FIXField</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a7672ae804cc548b2d9c6549ed6495b7b">fix_msg_set_field</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> *fdescr, unsigned char const *data, uint32_t len)</td></tr>
+<tr class="memitem:afc4ceec474d9a89183f7283553148e80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXField__.html">FIXField</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#afc4ceec474d9a89183f7283553148e80">fix_msg_set_field</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, unsigned char const *data, uint32_t len)</td></tr>
 <tr class="memitem:a27ff0a40a8ff74b004a08cb435d379e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a27ff0a40a8ff74b004a08cb435d379e8">fix_msg_alloc_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg)</td></tr>
 <tr class="memitem:a3dff515543e500a744d2a428b6b89cfe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a3dff515543e500a744d2a428b6b89cfe">fix_msg_free_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp)</td></tr>
-<tr class="memitem:af59556be736e608b09840ab923b001e9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#af59556be736e608b09840ab923b001e9">fix_groups_to_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXField__.html">FIXField</a> *field, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> *fdescr, char delimiter, char **buff, uint32_t *buffLen, int32_t *crc)</td></tr>
+<tr class="memitem:aed44954aae4116b82f78fc7634c6fc27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#aed44954aae4116b82f78fc7634c6fc27">fix_groups_to_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXField__.html">FIXField</a> const *field, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, char delimiter, char **buff, uint32_t *buffLen, int32_t *crc)</td></tr>
 <tr class="memitem:a01a228853f6ac229573cfd109c36d89c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a01a228853f6ac229573cfd109c36d89c">int32_to_fix_msg</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int32_t val, char delimiter, uint32_t width, char padSym, char **buff, uint32_t *buffLen)</td></tr>
-<tr class="memitem:a71815f965eec8c3f153a445ef7cbb9ee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a71815f965eec8c3f153a445ef7cbb9ee">fix_field_to_fix_msg</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXField__.html">FIXField</a> *field, char delimiter, char **buff, uint32_t *buffLen)</td></tr>
+<tr class="memitem:a72af139cf025067ca6fe8ef14096386e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg__priv_8h.html#a72af139cf025067ca6fe8ef14096386e">fix_field_to_fix_msg</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXField__.html">FIXField</a> const *field, char delimiter, char **buff, uint32_t *buffLen)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on: 07/30/2012 06:28:42 PM </dd></dl>
 </div><h2>Function Documentation</h2>
-<a class="anchor" id="a71815f965eec8c3f153a445ef7cbb9ee"></a>
+<a class="anchor" id="a72af139cf025067ca6fe8ef14096386e"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -129,7 +129,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structFIXField__.html">FIXField</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structFIXField__.html">FIXField</a> const *&#160;</td>
           <td class="paramname"><em>field</em>, </td>
         </tr>
         <tr>
@@ -172,7 +172,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af59556be736e608b09840ab923b001e9"></a>
+<a class="anchor" id="aed44954aae4116b82f78fc7634c6fc27"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -185,13 +185,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structFIXField__.html">FIXField</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structFIXField__.html">FIXField</a> const *&#160;</td>
           <td class="paramname"><em>field</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
           <td class="paramname"><em>fdescr</em>, </td>
         </tr>
         <tr>
@@ -419,7 +419,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7672ae804cc548b2d9c6549ed6495b7b"></a>
+<a class="anchor" id="afc4ceec474d9a89183f7283553148e80"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -438,7 +438,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
           <td class="paramname"><em>fdescr</em>, </td>
         </tr>
         <tr>
@@ -554,7 +554,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jan 12 2013 13:26:27 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

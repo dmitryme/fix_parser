@@ -101,25 +101,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;FIX_PARSER_API <a class="code" href="structFIXParser__.html">FIXParser</a>* <a class="code" href="fix__parser_8h.html#abecad1d1aeacfcd5085c2cb4dd097e95">fix_parser_create</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* protFile, <a class="code" href="structFIXParserAttrs.html">FIXParserAttrs</a> <span class="keyword">const</span>* attrs, int32_t flags);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;FIX_PARSER_API <span class="keywordtype">void</span> <a class="code" href="fix__parser_8h.html#acc19059cf6668376e28af45dafb61d50">fix_parser_free</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;FIX_PARSER_API <a class="code" href="structFIXMsg__.html">FIXMsg</a>* <a class="code" href="fix__parser_8h.html#ab9c334bfbc565360b53ce4b5efb2f303">fix_parser_fix_to_msg</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser, <span class="keywordtype">char</span> <span class="keyword">const</span>* data, uint32_t len, <span class="keywordtype">char</span> delimiter, <span class="keywordtype">char</span> <span class="keyword">const</span>** stop);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;FIX_PARSER_API <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="fix__parser_8h.html#a88b2874470c88028d80763a6783b28b8">fix_parser_get_error_code</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;FIX_PARSER_API <span class="keywordtype">char</span> <span class="keyword">const</span>* <a class="code" href="fix__parser_8h.html#adadb7a9835878ecba21fcf965f7129b1">fix_parser_get_error_text</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* FIX_PARSER_FIX_PARSER_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;FIX_PARSER_API <a class="code" href="structFIXParser__.html">FIXParser</a>* <a class="code" href="fix__parser_8h.html#a3581067845d10c2533bb67f04e748354">fix_parser_create</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* protFile, <a class="code" href="structFIXParserAttrs.html">FIXParserAttrs</a> <span class="keyword">const</span>* attrs, int32_t flags, <a class="code" href="structFIXError.html">FIXError</a>** error);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;FIX_PARSER_API <span class="keywordtype">void</span> <a class="code" href="fix__parser_8h.html#acc19059cf6668376e28af45dafb61d50">fix_parser_free</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;FIX_PARSER_API <a class="code" href="structFIXMsg__.html">FIXMsg</a>* <a class="code" href="fix__parser_8h.html#a7d62e18114535d16bbcbbc9492a381dc">fix_parser_str_to_msg</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser, <span class="keywordtype">char</span> <span class="keyword">const</span>* data, uint32_t len, <span class="keywordtype">char</span> delimiter, <span class="keywordtype">char</span> <span class="keyword">const</span>** stop);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;FIX_PARSER_API <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="fix__parser_8h.html#abb36b085113af133ffcb3723e389f54c">fix_parser_get_session_id</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* data, uint32_t len, <span class="keywordtype">char</span> delimiter,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      <span class="keywordtype">char</span> <span class="keyword">const</span>** senderCompID, uint32_t* senderCompIDLen,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      <span class="keywordtype">char</span> <span class="keyword">const</span>** targetCompID, uint32_t* targetCompIDLen, <a class="code" href="structFIXError.html">FIXError</a>** error);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;FIX_PARSER_API <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="fix__parser_8h.html#a88b2874470c88028d80763a6783b28b8">fix_parser_get_error_code</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;FIX_PARSER_API <span class="keywordtype">char</span> <span class="keyword">const</span>* <a class="code" href="fix__parser_8h.html#adadb7a9835878ecba21fcf965f7129b1">fix_parser_get_error_text</a>(<a class="code" href="structFIXParser__.html">FIXParser</a>* parser);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* FIX_PARSER_FIX_PARSER_H */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jan 12 2013 13:26:27 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
