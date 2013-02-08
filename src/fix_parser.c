@@ -98,6 +98,16 @@ FIX_PARSER_API void fix_parser_free(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API char const* fix_parser_get_protocol_ver(FIXParser* parser)
+{
+   if (!parser)
+   {
+      return NULL;
+   }
+   return parser->protocol->version;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t len, char delimiter,
       char const** senderCompID, uint32_t* senderCompIDLen,
       char const** targetCompID, uint32_t* targetCompIDLen,
