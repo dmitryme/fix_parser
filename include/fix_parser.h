@@ -36,6 +36,13 @@ FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs
 FIX_PARSER_API void fix_parser_free(FIXParser* parser);
 
 /**
+ * return FIX protocol verision of the parser instance
+ * @param[in] parser - pointer to parser instance
+ * return FIX protocol version, NULL - in case of error
+ */
+FIX_PARSER_API char const* fix_parser_get_protocol_ver(FIXParser* parser);
+
+/**
  * parse FIX encoded message
  * @param[in] parser - instance of FIX parser
  * @param[in] data - pointer to data win FIX message
