@@ -126,21 +126,38 @@ int32_t fix_parser_validate_attrs(FIXError* error, FIXParserAttrs* attrs)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter)
+FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter)
 {
+   if (!fix_protocol_check_field_value(fdescr, dbegin, dend - dbegin))
+   {
+      fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+      return FIX_FAILED;
+   }
    if (IS_INT_TYPE(fdescr->type->valueType))
    {
       int64_t res = 0;
-      return fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &res);
+      if(FIX_FAILED == fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &res))
+      {
+         fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+         return FIX_FAILED;
+      }
    }
    else if (IS_FLOAT_TYPE(fdescr->type->valueType))
    {
       double res = 0.0;
-      return fix_utils_atod(dbegin, dend - dbegin, delimiter, &res);
+      if (!fix_utils_atod(dbegin, dend - dbegin, delimiter, &res))
+      {
+         fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+         return FIX_FAILED;
+      }
    }
    else if (IS_CHAR_TYPE(fdescr->type->valueType))
    {
-      return (dend - dbegin == 1) ? FIX_SUCCESS : FIX_FAILED;
+      if (dend - dbegin != 1)
+      {
+         fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+         return FIX_FAILED;
+      }
    }
    return FIX_SUCCESS;
 }
@@ -321,7 +338,7 @@ FIXErrCode fix_parser_parse_group(
       }
       if (parser->flags & PARSER_FLAG_CHECK_VALUE)
       {
-         if (fix_parser_check_value(fdescr, dbegin, *stop, delimiter) == FIX_FAILED)
+         if (fix_parser_check_value(&parser->error, fdescr, dbegin, *stop, delimiter) == FIX_FAILED)
          {
             return FIX_FAILED;
          }

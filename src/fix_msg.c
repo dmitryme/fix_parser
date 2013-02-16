@@ -473,7 +473,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
       FIXErrCode res = FIX_SUCCESS;
       if (fdescr->type->tag == FIXFieldTag_BodyLength)
       {
-         res = int32_to_fix_msg(msg->parser, fdescr->type->tag, msg->body_len, delimiter, 0, 0, &buff, &buffLen);
+         res = int32_to_str(msg->parser, fdescr->type->tag, msg->body_len, delimiter, 0, 0, &buff, &buffLen);
          *reqBuffLen = buffLenBefore - buffLen + msg->body_len + 7;
          if (*reqBuffLen > buffLenBefore)
          {
@@ -483,7 +483,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
       }
       else if(fdescr->type->tag == FIXFieldTag_CheckSum)
       {
-         res = int32_to_fix_msg(msg->parser, fdescr->type->tag, crc % 256, delimiter, 3, '0', &buff, &buffLen);
+         res = int32_to_str(msg->parser, fdescr->type->tag, crc % 256, delimiter, 3, '0', &buff, &buffLen);
       }
       else if ((msg->parser->flags & PARSER_FLAG_CHECK_REQUIRED) && !field && (fdescr->flags & FIELD_FLAG_REQUIRED))
       {
@@ -496,7 +496,15 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
       }
       else if(field)
       {
-         res = fix_field_to_fix_msg(msg->parser, field, delimiter, &buff, &buffLen);
+         if (msg->parser->flags & PARSER_FLAG_CHECK_VALUE)
+         {
+            if (!fix_protocol_check_field_value(fdescr, field->data, field->size))
+            {
+               fix_error_set(&msg->parser->error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+               return FIX_FAILED;
+            }
+         }
+         res = field_to_str(msg->parser, field, delimiter, &buff, &buffLen);
          crc += (FIX_SOH - delimiter); // adjust CRC, if delimiter is not equal to FIX_SOH
       }
       if (res == FIX_FAILED)

@@ -101,7 +101,7 @@ Functions</h2></td></tr>
 <tr class="memitem:a24da596a9a7b37b315bec6ad4e06afc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a24da596a9a7b37b315bec6ad4e06afc2">fix_parser_alloc_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
 <tr class="memitem:a28fe63a67bfd0d465d21cf442df4a976"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a28fe63a67bfd0d465d21cf442df4a976">fix_parser_free_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *group)</td></tr>
 <tr class="memitem:a6f3a36763bfd6fdb5fd4e9ef3ebf5f99"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a6f3a36763bfd6fdb5fd4e9ef3ebf5f99">fix_parser_validate_attrs</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> *attrs)</td></tr>
-<tr class="memitem:aa2d1fc0d6b4b46b6ea0360a9a81e7f83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#aa2d1fc0d6b4b46b6ea0360a9a81e7f83">fix_parser_check_value</a> (<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, char const *dbegin, char const *dend, char delimiter)</td></tr>
+<tr class="memitem:a48c73bc1b667cd4fecb487f8f796b8fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a48c73bc1b667cd4fecb487f8f796b8fd">fix_parser_check_value</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, char const *dbegin, char const *dend, char delimiter)</td></tr>
 <tr class="memitem:a68ff9f1f0b5b72d35317e88a06063bbf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#a68ff9f1f0b5b72d35317e88a06063bbf">fix_parser_parse_mandatory_field</a> (char const *data, uint32_t len, char delimiter, char const **dbegin, char const **dend, <a class="el" href="structFIXError.html">FIXError</a> *error)</td></tr>
 <tr class="memitem:abd2316484671df86eb1821243b1d9e70"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#abd2316484671df86eb1821243b1d9e70">fix_parser_parse_field</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *group, char const *data, uint32_t len, char delimiter, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const **fdescr, char const **dbegin, char const **dend)</td></tr>
 <tr class="memitem:aa43f7d361ceb0803dddfeec0cbd1f416"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser__priv_8c.html#aa43f7d361ceb0803dddfeec0cbd1f416">fix_parser_parse_group</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, <a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *parentGroup, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *gdescr, int64_t numGroups, char const *data, uint32_t len, char delimiter, char const **stop)</td></tr>
@@ -169,13 +169,19 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aa2d1fc0d6b4b46b6ea0360a9a81e7f83"></a>
+<a class="anchor" id="a48c73bc1b667cd4fecb487f8f796b8fd"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_parser_check_value </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
+          <td class="paramname"><em>error</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
           <td class="paramname"><em>fdescr</em>, </td>
         </tr>
@@ -207,6 +213,7 @@ Functions</h2></td></tr>
 <p>test field value </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">error</td><td>- error pointer to set, if any </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fdescr</td><td>- FIX field description </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dbegin</td><td>- begin of value to validate </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dend</td><td>- end of value to validate </td></tr>
@@ -555,7 +562,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

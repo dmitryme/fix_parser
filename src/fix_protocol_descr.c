@@ -151,14 +151,14 @@ static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIEL
                {
                   FIXFieldValue* val = (FIXFieldValue*)calloc(1, sizeof(FIXFieldValue));
                   val->value = strdup(get_attr(value, "enum", NULL));
-                  uint32_t idx = fix_utils_hash_string(val->value) % FIELD_VALUE_CNT;
+                  uint32_t idx = fix_utils_hash_string(val->value, strlen(val->value)) % FIELD_VALUE_CNT;
                   val->next = fld->values[idx];
                   fld->values[idx] = val;
                }
                value = value->next;
             }
          }
-         uint32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
+         uint32_t idx = fix_utils_hash_string(fld->name, strlen(fld->name)) % FIELD_TYPE_CNT;
          fld->next = (*ftypes)[idx];
          (*ftypes)[idx] = fld;
       }
@@ -346,7 +346,7 @@ static int32_t load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldTy
          {
             return FIX_FAILED;
          }
-         int32_t idx = fix_utils_hash_string(msg->type) % MSG_CNT;
+         int32_t idx = fix_utils_hash_string(msg->type, strlen(msg->type)) % MSG_CNT;
          msg->next = prot->messages[idx];
          prot->messages[idx] = msg;
       }
@@ -499,7 +499,7 @@ void fix_protocol_descr_free(FIXProtocolDescr const* prot)
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], char const* name)
 {
-   int32_t idx = fix_utils_hash_string(name) % FIELD_TYPE_CNT;
+   int32_t idx = fix_utils_hash_string(name, strlen(name)) % FIELD_TYPE_CNT;
    FIXFieldType* fld = (*ftypes)[idx];
    while(fld)
    {
@@ -515,7 +515,7 @@ FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT
 /*-----------------------------------------------------------------------------------------------------------------------*/
 FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type)
 {
-   int32_t idx = fix_utils_hash_string(type) % MSG_CNT;
+   int32_t idx = fix_utils_hash_string(type, strlen(type)) % MSG_CNT;
    FIXMsgDescr* msg = parser->protocol->messages[idx];
    while(msg)
    {
@@ -584,4 +584,25 @@ FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, 
       }
    }
    return fdescr;
+}
+
+//------------------------------------------------------------------------------------------------------------------------//
+int32_t fix_protocol_check_field_value(FIXFieldDescr const* fdescr, char const* value, uint32_t len)
+{
+   FIXFieldValue** values = fdescr->type->values;
+   if (!values) // no values at all, value is correct
+   {
+      return 1;
+   }
+   uint32_t idx = fix_utils_hash_string(value, len) % FIELD_VALUE_CNT;
+   FIXFieldValue* it = values[idx];
+   while(it)
+   {
+      if (!strncmp(it->value, value, len))
+      {
+         return 1; // found and equal, so correct
+      }
+      it = it->next;
+   }
+   return 0; // nothing was found, so incorrect
 }

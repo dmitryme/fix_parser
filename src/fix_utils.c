@@ -12,13 +12,13 @@
 #define DOUBLE_MAX_DIGITS 15
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-uint32_t fix_utils_hash_string(char const* s)
+uint32_t fix_utils_hash_string(char const* s, uint32_t len)
 {
     uint32_t hash = 0;
 
-    for(; *s; ++s)
+    for(uint32_t i = 0; i < len; ++i)
     {
-        hash += *s;
+        hash += s[i];
         hash += (hash << 10);
         hash ^= (hash >> 6);
     }

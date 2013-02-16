@@ -110,11 +110,54 @@ Functions</h2></td></tr>
 <tr class="memitem:a68a78d4e1d2aa7b864889cfa93dfe877"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a68a78d4e1d2aa7b864889cfa93dfe877">fix_protocol_get_field_descr</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__protocol__descr_8h.html#af9b235af15a7ea5bc82e943eb5a6b9cb">FIXMsgDescr</a> const *msg, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
 <tr class="memitem:a7b8064870ae4f8db91ee6c29d73f8db2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a7b8064870ae4f8db91ee6c29d73f8db2">fix_protocol_get_group_descr</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *field, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
 <tr class="memitem:a6133ce10f5c1000362a3a809dde062a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a6133ce10f5c1000362a3a809dde062a9">fix_protocol_get_descr</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> const *group, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
+<tr class="memitem:a6f84b4bb6c8ebc5c24ec35b54b83947f"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a6f84b4bb6c8ebc5c24ec35b54b83947f">fix_protocol_check_field_value</a> (<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, char const *value, uint32_t len)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on: 07/27/2012 06:14:53 PM </dd></dl>
 </div><h2>Function Documentation</h2>
+<a class="anchor" id="a6f84b4bb6c8ebc5c24ec35b54b83947f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int32_t fix_protocol_check_field_value </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
+          <td class="paramname"><em>fdescr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>check field value </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">fdescr</td><td>- field description </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>- value for check </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- value length </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 - valid, else - 0 </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a8c0595dccdc50fae655656f89335d9b5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -371,7 +414,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

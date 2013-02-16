@@ -111,6 +111,7 @@ Macros</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:a3581067845d10c2533bb67f04e748354"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a3581067845d10c2533bb67f04e748354">fix_parser_create</a> (char const *protFile, <a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> const *attrs, int32_t flags, <a class="el" href="structFIXError.html">FIXError</a> **error)</td></tr>
 <tr class="memitem:acc19059cf6668376e28af45dafb61d50"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#acc19059cf6668376e28af45dafb61d50">fix_parser_free</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
+<tr class="memitem:ae5a5b285eac777bf1d994461ba3dc698"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#ae5a5b285eac777bf1d994461ba3dc698">fix_parser_get_protocol_ver</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
 <tr class="memitem:abb36b085113af133ffcb3723e389f54c"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#abb36b085113af133ffcb3723e389f54c">fix_parser_get_session_id</a> (char const *data, uint32_t len, char delimiter, char const **senderCompID, uint32_t *senderCompIDLen, char const **targetCompID, uint32_t *targetCompIDLen, <a class="el" href="structFIXError.html">FIXError</a> **error)</td></tr>
 <tr class="memitem:a7d62e18114535d16bbcbbc9492a381dc"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a7d62e18114535d16bbcbbc9492a381dc">fix_parser_str_to_msg</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *data, uint32_t len, char delimiter, char const **stop)</td></tr>
 <tr class="memitem:a88b2874470c88028d80763a6783b28b8"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a88b2874470c88028d80763a6783b28b8">fix_parser_get_error_code</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
@@ -237,6 +238,29 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>error description </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae5a5b285eac777bf1d994461ba3dc698"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIX_PARSER_API char const* fix_parser_get_protocol_ver </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
+          <td class="paramname"><em>parser</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>return FIX protocol verision of the parser instance </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- pointer to parser instance return FIX protocol version, NULL - in case of error </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -376,7 +400,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

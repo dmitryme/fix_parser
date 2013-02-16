@@ -110,7 +110,7 @@ FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDesc
  * @param[out] buffLen - size of converted data
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen);
+FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen);
 
 /**
  * convert FIX field to string
@@ -121,7 +121,7 @@ FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char 
  * @param[out] buffLen - size of converted data
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen);
+FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen);
 
 #ifdef __cplusplus
 }

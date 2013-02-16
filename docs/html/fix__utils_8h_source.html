@@ -107,34 +107,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;uint32_t <a class="code" href="fix__utils_8c.html#a05c0d091907e9bff02e993db29e9810a">fix_utils_hash_string</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* s);</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#a70a408103f85003a205abe35bdc2baa7">fix_utils_numdigits</a>(int64_t val);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;int64_t <a class="code" href="fix__utils_8c.html#ad4ec727ddf47a526d9fc0b7b20dbbbee">fix_utils_lpow10</a>(int32_t n);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#a9927794b603005a98fbc87ff1b2f5b8a">fix_utils_i64toa</a>(int64_t val, <span class="keywordtype">char</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> padSym);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#aa02533854dd38ae33170843e5f83b01b">fix_utils_dtoa</a>(<span class="keywordtype">double</span> val, <span class="keywordtype">char</span>* buff, uint32_t buffLen);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#ae347fecfd86455a3a8d69067dc1c9587">fix_utils_atoi32</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> stopChar, int32_t* val);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#a9a4919ff990bf9b5c8314898906da751">fix_utils_atoi64</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> stopChar, int64_t* val);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#af1b87ba9ee02c4c06bf5b32839583e46">fix_utils_atod</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> stopChar, <span class="keywordtype">double</span>* val);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="fix__utils_8h.html#a7b4231c26224b6555d8f04eb525a8609">fix_utils_make_path</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* protocolFile, <span class="keywordtype">char</span> <span class="keyword">const</span>* transpFile, <span class="keywordtype">char</span>* path, uint32_t buffLen);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;uint32_t <a class="code" href="fix__utils_8c.html#a061f78a4ca5ae0a1f34dd0d27f4fe190">fix_utils_hash_string</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* s, uint32_t len);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#a70a408103f85003a205abe35bdc2baa7">fix_utils_numdigits</a>(int64_t val);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;int64_t <a class="code" href="fix__utils_8c.html#ad4ec727ddf47a526d9fc0b7b20dbbbee">fix_utils_lpow10</a>(int32_t n);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#a9927794b603005a98fbc87ff1b2f5b8a">fix_utils_i64toa</a>(int64_t val, <span class="keywordtype">char</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> padSym);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#aa02533854dd38ae33170843e5f83b01b">fix_utils_dtoa</a>(<span class="keywordtype">double</span> val, <span class="keywordtype">char</span>* buff, uint32_t buffLen);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#ae347fecfd86455a3a8d69067dc1c9587">fix_utils_atoi32</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> stopChar, int32_t* val);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#a9a4919ff990bf9b5c8314898906da751">fix_utils_atoi64</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> stopChar, int64_t* val);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;int32_t <a class="code" href="fix__utils_8c.html#af1b87ba9ee02c4c06bf5b32839583e46">fix_utils_atod</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* buff, uint32_t buffLen, <span class="keywordtype">char</span> stopChar, <span class="keywordtype">double</span>* val);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="fix__utils_8h.html#a7b4231c26224b6555d8f04eb525a8609">fix_utils_make_path</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* protocolFile, <span class="keywordtype">char</span> <span class="keyword">const</span>* transpFile, <span class="keywordtype">char</span>* path, uint32_t buffLen);</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* FIX_PARSER_FIX_UTILS_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* FIX_PARSER_FIX_UTILS_H */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

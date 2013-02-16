@@ -117,13 +117,14 @@ FIXErrCode fix_parser_get_value(char const* dbegin, uint32_t len, char delimiter
 
 /**
  * test field value
+ * @param[in] error - error pointer to set, if any
  * @param[in] fdescr - FIX field description
  * @param[in] dbegin - begin of value to validate
  * @param[in] dend - end of value to validate
  * @param[in] delimiter - FIX field SOH
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter);
+FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter);
 
 /**
  * parse string with group

@@ -43,6 +43,7 @@ extern "C"
 #define FIX_ERROR_WRONG_FIELD             21
 #define FIX_ERROR_INTEGRITY_CHECK         22
 #define FIX_ERROR_BODY_TOO_SHORT          23
+#define FIX_ERROR_WRONG_FIELD_VALUE       24
 
 typedef struct FIXGroup_ FIXGroup;
 typedef struct FIXField_ FIXField;
@@ -54,7 +55,7 @@ typedef int32_t FIXErrCode; ///< error code
 
 #define PARSER_FLAG_CHECK_CRC 0x01       ///< check FIX message CRC during parsing
 #define PARSER_FLAG_CHECK_REQUIRED 0x02  ///< check for required FIX fields
-#define PARSER_FLAG_CHECK_VALUE    0x04  ///< check for valid value. Not used yet
+#define PARSER_FLAG_CHECK_VALUE    0x04  ///< check for valid value.
 #define PARSER_FLAG_CHECK_UNKNOWN_FIELDS 0x08 ///< check for unknown FIX fields during parsing. If not set all unknown fields ignored
 #define PARSER_FLAG_CHECK_ALL \
    (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_VALUE | PARSER_FLAG_CHECK_UNKNOWN_FIELDS) ///< make all possible checks during parsing.

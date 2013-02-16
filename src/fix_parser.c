@@ -347,7 +347,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       {
          if (parser->flags & PARSER_FLAG_CHECK_VALUE)
          {
-            if (fix_parser_check_value(fdescr, dbegin, dend, delimiter) == FIX_FAILED)
+            if (fix_parser_check_value(&parser->error, fdescr, dbegin, dend, delimiter) == FIX_FAILED)
             {
                goto error;
             }

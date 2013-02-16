@@ -142,6 +142,15 @@ FIXFieldDescr const* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr
  */
 FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag);
 
+/**
+ * check field value
+ * @param[in] fdescr - field description
+ * @param[in] value - value for check
+ * @param[in] len - value length
+ * @return 1 - valid, else - 0
+ */
+int32_t fix_protocol_check_field_value(FIXFieldDescr const* fdescr, char const* value, uint32_t len);
+
 #ifdef __cplusplus
 }
 #endif

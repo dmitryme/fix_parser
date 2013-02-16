@@ -87,6 +87,17 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "CheckSum");
    ASSERT_TRUE(field->dataLenField == NULL);
 
+   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_OrdRejReason);
+   ASSERT_TRUE(field != NULL);
+   ASSERT_EQ(1, fix_protocol_check_field_value(field, "10", 2));
+   ASSERT_EQ(0, fix_protocol_check_field_value(field, "100", 3));
+
+   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_SecurityType);
+   ASSERT_TRUE(field != NULL);
+   ASSERT_EQ(0, fix_protocol_check_field_value(field, "FAKE", 4));
+   ASSERT_EQ(1, fix_protocol_check_field_value(field, "DEFLTED", 7));
+   ASSERT_EQ(1, fix_protocol_check_field_value(field, "YANK", 4));
+
    fix_parser_free(p);
 }
 

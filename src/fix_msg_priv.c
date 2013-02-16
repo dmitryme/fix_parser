@@ -116,7 +116,7 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
+FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -154,7 +154,7 @@ FIXErrCode int32_to_fix_msg(FIXParser* parser, FIXTagNum tag, int32_t val, char 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen)
+FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen)
 {
    if (UNLIKE(*buffLen == 0))
    {
@@ -195,7 +195,7 @@ FIXErrCode fix_field_to_fix_msg(FIXParser* parser, FIXField const* field, char d
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc)
 {
-   FIXErrCode res = int32_to_fix_msg(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
+   FIXErrCode res = int32_to_str(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
    (*crc) += (FIX_SOH - delimiter);
    for(uint32_t i = 0; i < field->size && res != FIX_FAILED; ++i)
    {
@@ -220,7 +220,7 @@ FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDesc
          }
          else if(child_field)
          {
-            res = fix_field_to_fix_msg(msg->parser, child_field, delimiter, buff, buffLen);
+            res = field_to_str(msg->parser, child_field, delimiter, buff, buffLen);
             (*crc) += (FIX_SOH - delimiter);
          }
       }

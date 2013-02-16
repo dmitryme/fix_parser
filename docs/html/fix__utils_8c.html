@@ -100,7 +100,7 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a05c0d091907e9bff02e993db29e9810a"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a05c0d091907e9bff02e993db29e9810a">fix_utils_hash_string</a> (char const *s)</td></tr>
+<tr class="memitem:a061f78a4ca5ae0a1f34dd0d27f4fe190"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a061f78a4ca5ae0a1f34dd0d27f4fe190">fix_utils_hash_string</a> (char const *s, uint32_t len)</td></tr>
 <tr class="memitem:a70a408103f85003a205abe35bdc2baa7"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a70a408103f85003a205abe35bdc2baa7">fix_utils_numdigits</a> (int64_t val)</td></tr>
 <tr class="memitem:ad4ec727ddf47a526d9fc0b7b20dbbbee"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#ad4ec727ddf47a526d9fc0b7b20dbbbee">fix_utils_lpow10</a> (int32_t n)</td></tr>
 <tr class="memitem:a9927794b603005a98fbc87ff1b2f5b8a"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a9927794b603005a98fbc87ff1b2f5b8a">fix_utils_i64toa</a> (int64_t val, char *buff, uint32_t buffLen, char padSym)</td></tr>
@@ -302,7 +302,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a05c0d091907e9bff02e993db29e9810a"></a>
+<a class="anchor" id="a061f78a4ca5ae0a1f34dd0d27f4fe190"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -310,8 +310,18 @@ Functions</h2></td></tr>
           <td class="memname">uint32_t fix_utils_hash_string </td>
           <td>(</td>
           <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>s</em></td><td>)</td>
+          <td class="paramname"><em>s</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>len</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -319,6 +329,7 @@ Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">s</td><td>- string for hash calculation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- string length </td></tr>
   </table>
   </dd>
 </dl>
@@ -419,7 +430,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

@@ -27,9 +27,10 @@ extern "C"
 /**
  * calculate string hash value
  * @param[in] s - string for hash calculation
+ * @param[in] len - string length
  * @return hash value
  */
-uint32_t fix_utils_hash_string(char const* s);
+uint32_t fix_utils_hash_string(char const* s, uint32_t len);
 
 /**
  * return number of digits. E.g. 10221 -> 5

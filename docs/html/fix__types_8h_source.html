@@ -126,91 +126,92 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FIX_ERROR_WRONG_FIELD             21</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FIX_ERROR_INTEGRITY_CHECK         22</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FIX_ERROR_BODY_TOO_SHORT          23</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXGroup__.html">FIXGroup_</a> <a class="code" href="structFIXGroup__.html">FIXGroup</a>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXField__.html">FIXField_</a> <a class="code" href="structFIXField__.html">FIXField</a>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXMsg__.html">FIXMsg_</a> <a class="code" href="structFIXMsg__.html">FIXMsg</a>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXParser__.html">FIXParser_</a> <a class="code" href="structFIXParser__.html">FIXParser</a>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXError.html">FIXError</a> <a class="code" href="structFIXError.html">FIXError</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="code" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">   52</a></span>&#160;<span class="keyword">typedef</span> int32_t <a class="code" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f" title="FIX field tag type.">FIXTagNum</a>;  </div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">   53</a></span>&#160;<span class="keyword">typedef</span> int32_t <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a>; </div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno"><a class="code" href="fix__types_8h.html#a1bf8ac405c3e350eb1a15471abecf2e9">   55</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_CRC 0x01       </span></div>
-<div class="line"><a name="l00056"></a><span class="lineno"><a class="code" href="fix__types_8h.html#afc12b16e2b802648f5c901c0a5fb1791">   56</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_REQUIRED 0x02  </span></div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="code" href="fix__types_8h.html#aad99895fc46883fc33cb4c1f04e4d132">   57</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_VALUE    0x04  </span></div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="code" href="fix__types_8h.html#af2ac963f8e032fdc12a1583ace7ed9e0">   58</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_UNKNOWN_FIELDS 0x08 </span></div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="code" href="fix__types_8h.html#a61f43d62fdaff85507c8c60e3a69e2b2">   59</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_ALL \</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="preprocessor">   (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_VALUE | PARSER_FLAG_CHECK_UNKNOWN_FIELDS) </span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define FIX_ERROR_WRONG_FIELD_VALUE       24</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXGroup__.html">FIXGroup_</a> <a class="code" href="structFIXGroup__.html">FIXGroup</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXField__.html">FIXField_</a> <a class="code" href="structFIXField__.html">FIXField</a>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXMsg__.html">FIXMsg_</a> <a class="code" href="structFIXMsg__.html">FIXMsg</a>;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXParser__.html">FIXParser_</a> <a class="code" href="structFIXParser__.html">FIXParser</a>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXError.html">FIXError</a> <a class="code" href="structFIXError.html">FIXError</a>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="code" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">   53</a></span>&#160;<span class="keyword">typedef</span> int32_t <a class="code" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f" title="FIX field tag type.">FIXTagNum</a>;  </div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">   54</a></span>&#160;<span class="keyword">typedef</span> int32_t <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a>; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="code" href="fix__types_8h.html#a1bf8ac405c3e350eb1a15471abecf2e9">   56</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_CRC 0x01       </span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="code" href="fix__types_8h.html#afc12b16e2b802648f5c901c0a5fb1791">   57</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_REQUIRED 0x02  </span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="code" href="fix__types_8h.html#aad99895fc46883fc33cb4c1f04e4d132">   58</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_VALUE    0x04  </span></div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="code" href="fix__types_8h.html#af2ac963f8e032fdc12a1583ace7ed9e0">   59</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_UNKNOWN_FIELDS 0x08 </span></div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="code" href="fix__types_8h.html#a61f43d62fdaff85507c8c60e3a69e2b2">   60</a></span>&#160;<span class="preprocessor">#define PARSER_FLAG_CHECK_ALL \</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">   (PARSER_FLAG_CHECK_CRC | PARSER_FLAG_CHECK_REQUIRED | PARSER_FLAG_CHECK_VALUE | PARSER_FLAG_CHECK_UNKNOWN_FIELDS) </span></div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791">   65</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791">FIXFieldCategoryEnum</a></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;{</div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a414cb1dffb179e80c25a80286efdf1a8">   67</a></span>&#160;   <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a414cb1dffb179e80c25a80286efdf1a8" title="FIX field is a simple value.">FIXFieldCategory_Value</a> = 1,  </div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a1dd673a9e1148a35d1eb47bcbaa9128c">   68</a></span>&#160;   <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a1dd673a9e1148a35d1eb47bcbaa9128c" title="FIX field is a group.">FIXFieldCategory_Group</a> = 2   </div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;} <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791">FIXFieldCategoryEnum</a>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">   74</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> <a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">FIXFieldValueTypeEnum</a></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;{</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;   FIXFieldValueType_Unknown              = -1,</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;   FIXFieldValueType_Int                  = 0x01,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;   FIXFieldValueType_Length               = 0x02,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;   FIXFieldValueType_NumInGroup           = 0x03,</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;   FIXFieldValueType_SeqNum               = 0x04,</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;   FIXFieldValueType_TagNum               = 0x05,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;   FIXFieldValueType_DayOfMonth           = 0x06,</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;   FIXFieldValueType_Float                = 0x10,</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;   FIXFieldValueType_Qty                  = 0x20,</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;   FIXFieldValueType_Price                = 0x30,</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;   FIXFieldValueType_PriceOffset          = 0x40,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;   FIXFieldValueType_Amt                  = 0x50,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;   FIXFieldValueType_Percentage           = 0x60,</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;   FIXFieldValueType_Char                 = 0x100,</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;   FIXFieldValueType_Boolean              = 0x200,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;   FIXFieldValueType_String               = 0x1000,</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;   FIXFieldValueType_MultipleValueString  = 0x2000,</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;   FIXFieldValueType_Country              = 0x3000,</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;   FIXFieldValueType_Currency             = 0x4000,</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;   FIXFieldValueType_Exchange             = 0x5000,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;   FIXFieldValueType_MonthYear            = 0x6000,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;   FIXFieldValueType_UTCTimestamp         = 0x7000,</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;   FIXFieldValueType_UTCTimeOnly          = 0x8000,</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;   FIXFieldValueType_UTCDateOnly          = 0x9000,</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;   FIXFieldValueType_LocalMktDate         = 0xA000,</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;   FIXFieldValueType_TZTimeOnly           = 0xB000,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;   FIXFieldValueType_TZTimestamp          = 0xC000,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;   FIXFieldValueType_Language             = 0xD000,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;   FIXFieldValueType_XMLData              = 0x20000,</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;   FIXFieldValueType_Data                 = 0x10000</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;} <a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">FIXFieldValueTypeEnum</a>;</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">FIXFieldValueTypeEnum</a> <a class="code" href="fix__types_8h.html#a64a36b0d6ec0b254ff9dfff6f7c1aecf">str2FIXFieldValueType</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* type);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791">   66</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791">FIXFieldCategoryEnum</a></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;{</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a414cb1dffb179e80c25a80286efdf1a8">   68</a></span>&#160;   <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a414cb1dffb179e80c25a80286efdf1a8" title="FIX field is a simple value.">FIXFieldCategory_Value</a> = 1,  </div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a1dd673a9e1148a35d1eb47bcbaa9128c">   69</a></span>&#160;   <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791a1dd673a9e1148a35d1eb47bcbaa9128c" title="FIX field is a group.">FIXFieldCategory_Group</a> = 2   </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;} <a class="code" href="fix__types_8h.html#ae44eb1db80bdecf81aa9bab477383791">FIXFieldCategoryEnum</a>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">   75</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span> <a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">FIXFieldValueTypeEnum</a></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;   FIXFieldValueType_Unknown              = -1,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;   FIXFieldValueType_Int                  = 0x01,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;   FIXFieldValueType_Length               = 0x02,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;   FIXFieldValueType_NumInGroup           = 0x03,</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;   FIXFieldValueType_SeqNum               = 0x04,</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;   FIXFieldValueType_TagNum               = 0x05,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;   FIXFieldValueType_DayOfMonth           = 0x06,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;   FIXFieldValueType_Float                = 0x10,</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;   FIXFieldValueType_Qty                  = 0x20,</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;   FIXFieldValueType_Price                = 0x30,</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;   FIXFieldValueType_PriceOffset          = 0x40,</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;   FIXFieldValueType_Amt                  = 0x50,</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;   FIXFieldValueType_Percentage           = 0x60,</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;   FIXFieldValueType_Char                 = 0x100,</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;   FIXFieldValueType_Boolean              = 0x200,</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;   FIXFieldValueType_String               = 0x1000,</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;   FIXFieldValueType_MultipleValueString  = 0x2000,</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;   FIXFieldValueType_Country              = 0x3000,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;   FIXFieldValueType_Currency             = 0x4000,</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;   FIXFieldValueType_Exchange             = 0x5000,</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;   FIXFieldValueType_MonthYear            = 0x6000,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;   FIXFieldValueType_UTCTimestamp         = 0x7000,</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;   FIXFieldValueType_UTCTimeOnly          = 0x8000,</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;   FIXFieldValueType_UTCDateOnly          = 0x9000,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;   FIXFieldValueType_LocalMktDate         = 0xA000,</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;   FIXFieldValueType_TZTimeOnly           = 0xB000,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;   FIXFieldValueType_TZTimestamp          = 0xC000,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;   FIXFieldValueType_Language             = 0xD000,</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;   FIXFieldValueType_XMLData              = 0x20000,</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;   FIXFieldValueType_Data                 = 0x10000</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;} <a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">FIXFieldValueTypeEnum</a>;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<a class="code" href="fix__types_8h.html#ae6ccdce86b752b37520181f076c4fd25">FIXFieldValueTypeEnum</a> <a class="code" href="fix__types_8h.html#a64a36b0d6ec0b254ff9dfff6f7c1aecf">str2FIXFieldValueType</a>(<span class="keywordtype">char</span> <span class="keyword">const</span>* type);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#define IS_STRING_TYPE(type) ((type &amp; 0xF000) &gt; 0)</span></div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_INT_TYPE(type)    ((type &amp; 0x0F) &gt; 0)</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_FLOAT_TYPE(type)  ((type &amp; 0xF0) &gt; 0)</span></div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_CHAR_TYPE(type)   ((type &amp; 0xF00) &gt; 0)</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_DATA_TYPE(type)   ((type &amp; 0xF0000) &gt; 0)</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html">  125</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXParserAttrs.html">FIXParserAttrs</a></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;{</div>
-<div class="line"><a name="l00127"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a6fc1edcec266aca278154faf8ec386c3">  127</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a6fc1edcec266aca278154faf8ec386c3" title="Page size in bytes. Default 4096.">pageSize</a>;     </div>
-<div class="line"><a name="l00128"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a1e7abcd2c9e5900f775df1f7d40b2fd7">  128</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a1e7abcd2c9e5900f775df1f7d40b2fd7" title="Maximum page size. 0 - page can be grow depends of tag value size, pageSize - page can not grow...">maxPageSize</a>;  </div>
-<div class="line"><a name="l00129"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#abda1ad5a77b59600576566575cf5d9dd">  129</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#abda1ad5a77b59600576566575cf5d9dd" title="Pages allocated at parser creation. Default 1000.">numPages</a>;     </div>
-<div class="line"><a name="l00130"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a2ef49e7db3a01f9e7cb472d878bec201">  130</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a2ef49e7db3a01f9e7cb472d878bec201" title="Maximum alocated pages. 0 - not bounded, numPages - only numPages pages can be allocates. Default 0.">maxPages</a>;     </div>
-<div class="line"><a name="l00131"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a7c5e05871d78ba8e55040a1764bd8c44">  131</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a7c5e05871d78ba8e55040a1764bd8c44" title="Groups allocated at parser creation. Default 1000.">numGroups</a>;    </div>
-<div class="line"><a name="l00132"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a3b0012a242ed4b0ab7c1ef555a6f5068">  132</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a3b0012a242ed4b0ab7c1ef555a6f5068" title="Maximum allocated groups. 0 - not bounded, numGroups - onlu numGroups groups can be allocated...">maxGroups</a>;    </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;} <a class="code" href="fix__types_8h.html#a65d241846936de9abdbc22942d1f7c7e">FIXParserAttrs</a>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* FIX_PARSER_FIX_TYPES_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor">#define IS_STRING_TYPE(type) ((type &amp; 0xF000) &gt; 0)</span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_INT_TYPE(type)    ((type &amp; 0x0F) &gt; 0)</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_FLOAT_TYPE(type)  ((type &amp; 0xF0) &gt; 0)</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_CHAR_TYPE(type)   ((type &amp; 0xF00) &gt; 0)</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define IS_DATA_TYPE(type)   ((type &amp; 0xF0000) &gt; 0)</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00126"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html">  126</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXParserAttrs.html">FIXParserAttrs</a></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;{</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a6fc1edcec266aca278154faf8ec386c3">  128</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a6fc1edcec266aca278154faf8ec386c3" title="Page size in bytes. Default 4096.">pageSize</a>;     </div>
+<div class="line"><a name="l00129"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a1e7abcd2c9e5900f775df1f7d40b2fd7">  129</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a1e7abcd2c9e5900f775df1f7d40b2fd7" title="Maximum page size. 0 - page can be grow depends of tag value size, pageSize - page can not grow...">maxPageSize</a>;  </div>
+<div class="line"><a name="l00130"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#abda1ad5a77b59600576566575cf5d9dd">  130</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#abda1ad5a77b59600576566575cf5d9dd" title="Pages allocated at parser creation. Default 1000.">numPages</a>;     </div>
+<div class="line"><a name="l00131"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a2ef49e7db3a01f9e7cb472d878bec201">  131</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a2ef49e7db3a01f9e7cb472d878bec201" title="Maximum alocated pages. 0 - not bounded, numPages - only numPages pages can be allocates. Default 0.">maxPages</a>;     </div>
+<div class="line"><a name="l00132"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a7c5e05871d78ba8e55040a1764bd8c44">  132</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a7c5e05871d78ba8e55040a1764bd8c44" title="Groups allocated at parser creation. Default 1000.">numGroups</a>;    </div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="code" href="structFIXParserAttrs.html#a3b0012a242ed4b0ab7c1ef555a6f5068">  133</a></span>&#160;   uint32_t <a class="code" href="structFIXParserAttrs.html#a3b0012a242ed4b0ab7c1ef555a6f5068" title="Maximum allocated groups. 0 - not bounded, numGroups - onlu numGroups groups can be allocated...">maxGroups</a>;    </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;} <a class="code" href="fix__types_8h.html#a65d241846936de9abdbc22942d1f7c7e">FIXParserAttrs</a>;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* FIX_PARSER_FIX_TYPES_H */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 2 2013 16:10:36 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
