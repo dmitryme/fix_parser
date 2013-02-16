@@ -105,6 +105,21 @@ static void free_field_descr(FIXFieldDescr* fd)
 /*-----------------------------------------------------------------------------------------------------------------------*/
 static void free_field_type(FIXFieldType const* ft)
 {
+   if (ft->values)
+   {
+      for(int32_t i = 0; i < FIELD_VALUE_CNT; ++i)
+      {
+         FIXFieldValue* fval = ft->values[i];
+         while(fval)
+         {
+            FIXFieldValue* next = fval->next;
+            free((void*)fval->value);
+            free((void*)fval);
+            fval = next;
+         }
+      }
+      free((void*)ft->values);
+   }
    free(ft->name);
    free((void*)ft);
 }

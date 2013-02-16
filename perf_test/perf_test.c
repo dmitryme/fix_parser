@@ -189,5 +189,7 @@ int main(int argc, char *argv[])
    msg_to_fix(parser);
    fix_to_msg(parser);
 
+   fix_parser_free(parser);
+
    return 0;
 }
