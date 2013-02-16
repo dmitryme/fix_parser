@@ -19,10 +19,20 @@ extern "C"
 {
 #endif
 
+#define FIELD_VALUE_CNT 20
 #define FIELD_TYPE_CNT 1000
 #define FIELD_DESCR_CNT 100
 #define MSG_CNT   100
 #define FIELD_FLAG_REQUIRED 0x01
+
+/**
+ * FIX field possible value
+ */
+typedef struct FIXFieldValue_
+{
+   char const* value;               ///< field value
+   struct FIXFieldValue_* next;     ///< next field value
+} FIXFieldValue;
 
 /**
  * description of FIX field type (entry in dictionary types)
@@ -32,6 +42,7 @@ typedef struct FIXFieldType_
    FIXTagNum tag;                   ///< tag number
    FIXFieldValueTypeEnum valueType; ///< type of field (string, number, length, etc)
    char* name;                      ///< textual representation of field
+   FIXFieldValue** values;          ///< hash table with possible field values
    struct FIXFieldType_* next;      ///< next type in chain
 } FIXFieldType;
 

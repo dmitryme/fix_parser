@@ -137,11 +137,28 @@ static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIEL
                   error, FIX_ERROR_FIELD_TYPE_EXISTS, "FIXFieldType '%s' already exists", (char const*)field->name);
             return FIX_FAILED;
          }
-         FIXFieldType* fld = (FIXFieldType*)malloc(sizeof(FIXFieldType));
+         FIXFieldType* fld = (FIXFieldType*)calloc(1, sizeof(FIXFieldType));
          fld->tag = atoi(get_attr(field, "number", NULL));
          fld->name = _strdup(get_attr(field, "name", NULL));
          fld->valueType = str2FIXFieldValueType(get_attr(field, "type", NULL));
-         int32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
+         xmlNode const* value = get_first(field, "value");
+         if (value)
+         {
+            fld->values = (FIXFieldValue**)calloc(FIELD_VALUE_CNT, sizeof(FIXFieldValue*));
+            while(value)
+            {
+               if (value->type == XML_ELEMENT_NODE && !strcmp((char const*)value->name, "value"))
+               {
+                  FIXFieldValue* val = (FIXFieldValue*)calloc(1, sizeof(FIXFieldValue));
+                  val->value = strdup(get_attr(value, "enum", NULL));
+                  uint32_t idx = fix_utils_hash_string(val->value) % FIELD_VALUE_CNT;
+                  val->next = fld->values[idx];
+                  fld->values[idx] = val;
+               }
+               value = value->next;
+            }
+         }
+         uint32_t idx = fix_utils_hash_string(fld->name) % FIELD_TYPE_CNT;
          fld->next = (*ftypes)[idx];
          (*ftypes)[idx] = fld;
       }
