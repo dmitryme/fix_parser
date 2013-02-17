@@ -13,56 +13,56 @@ extern "C"
 
 TEST(FixUtilsTests, i64toa_Test)
 {
-   char buff[10] = {};
+   char buff[10] = {"AAAAAAAAA"};
    ASSERT_EQ(fix_utils_i64toa(100, buff, sizeof(buff), 0), 3);
-   ASSERT_STREQ(buff, "100");
+   ASSERT_STREQ(buff, "100AAAAAA");
 
-   char buff1[4];
-   ASSERT_EQ(fix_utils_i64toa(77777, buff1, sizeof(buff1), 0), 5);
-   ASSERT_TRUE(!strncmp(buff1, "7777", 4));
+   char buff1[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_i64toa(77777, buff1, 4, 0), 5);
+   ASSERT_STREQ("7777AAAAA", buff1);
 
-   char buff2[3];
-   ASSERT_EQ(fix_utils_i64toa(99, buff2, sizeof(buff2), '0'), 3);
-   ASSERT_TRUE(!strncmp(buff2, "099", 3));
+   char buff2[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_i64toa(99, buff2, 3, '0'), 3);
+   ASSERT_STREQ("099AAAAAA", buff2);
 
-   char buff3[7];
-   ASSERT_EQ(fix_utils_i64toa(-77777, buff3, sizeof(buff3), 0), 6);
-   ASSERT_TRUE(!strncmp(buff3, "-77777", 6));
+   char buff3[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_i64toa(-77777, buff3, 7, 0), 6);
+   ASSERT_STREQ("-77777AAA", buff3);
 
-   char buff4[4];
-   ASSERT_EQ(fix_utils_i64toa(-37, buff4, sizeof(buff4), '0'), 4);
-   ASSERT_TRUE(!strncmp(buff4, "-037", 4));
+   char buff4[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_i64toa(-37, buff4, 4, '0'), 4);
+   ASSERT_STREQ("-037AAAAA", buff4);
 
-   char buff5[7];
-   ASSERT_EQ(fix_utils_i64toa(-37, buff5, sizeof(buff5), '0'), 7);
-   ASSERT_TRUE(!strncmp(buff5, "-000037", 7));
+   char buff5[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_i64toa(-37, buff5, 7, '0'), 7);
+   ASSERT_STREQ("-000037AA", buff5);
 }
 
 TEST(FixUtilsTests, dtoa_Test)
 {
-   char buff[10] = {};
-   ASSERT_EQ(fix_utils_dtoa(100.12, buff, sizeof(buff)), 6);
-   ASSERT_STREQ(buff, "100.12");
+   char buff[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_dtoa(100.12, buff, strlen(buff)), 6);
+   ASSERT_STREQ("100.12AAA", buff);
 
-   char buff1[10] = {};
-   ASSERT_EQ(fix_utils_dtoa(-3456.00, buff1, sizeof(buff1)), 5);
-   ASSERT_STREQ(buff1, "-3456");
+   char buff1[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_dtoa(-3456.00, buff1, strlen(buff1)), 5);
+   ASSERT_STREQ("-3456AAAA", buff1);
 
-   char buff2[3];
-   ASSERT_EQ(fix_utils_dtoa(-3456.12, buff2, sizeof(buff2)), 8);
-   ASSERT_TRUE(!strncmp(buff2, "-34", 3));
+   char buff2[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_dtoa(-3456.12, buff2, 3), 8);
+   ASSERT_STREQ("-34AAAAAA", buff2);
 
-   char buff3[2];
-   ASSERT_EQ(fix_utils_dtoa(3.12, buff3, sizeof(buff3)), 4);
-   ASSERT_TRUE(!strncmp(buff3, "3.", 2));
+   char buff3[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_dtoa(3.12, buff3, 2), 4);
+   ASSERT_STREQ("3.AAAAAAA", buff3);
 
-   char buff4[1];
-   ASSERT_EQ(fix_utils_dtoa(3.12, buff4, sizeof(buff4)), 4);
-   ASSERT_TRUE(!strncmp(buff4, "3", 1));
+   char buff4[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_dtoa(3.12, buff4, 1), 4);
+   ASSERT_STREQ("3AAAAAAAA", buff4);
 
-   char buff5[1];
-   ASSERT_EQ(fix_utils_dtoa(-3.12, buff5, sizeof(buff5)), 5);
-   ASSERT_TRUE(!strncmp(buff5, "-", 1));
+   char buff5[10] = {"AAAAAAAAA"};
+   ASSERT_EQ(fix_utils_dtoa(-3.12, buff5, 1), 5);
+   ASSERT_STREQ("-AAAAAAAA", buff5);
 }
 
 
