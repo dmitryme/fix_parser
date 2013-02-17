@@ -123,6 +123,7 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
       if (buffLen)
       {
          buff[i] = '.';
+		 --buffLen;
       }
       ++i;
    }

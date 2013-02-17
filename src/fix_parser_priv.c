@@ -291,7 +291,7 @@ FIXErrCode fix_parser_parse_group(
       {
          if (group && (parser->flags & PARSER_FLAG_CHECK_REQUIRED)) // previous group has already parsed, check it if needed
          {
-            for(int32_t i = 0; i < gdescr->group_count; ++i)
+            for(uint32_t i = 0; i < gdescr->group_count; ++i)
             {
                FIXFieldDescr* fdescr = &gdescr->group[i];
                if (fdescr->flags & FIELD_FLAG_REQUIRED)

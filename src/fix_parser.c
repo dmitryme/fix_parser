@@ -376,7 +376,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    }
    if (parser->flags & PARSER_FLAG_CHECK_REQUIRED)
    {
-      for(int32_t i = 0; i < msg->descr->field_count; ++i)
+      for(uint32_t i = 0; i < msg->descr->field_count; ++i)
       {
          FIXFieldDescr* fdescr = &msg->descr->fields[i];
          if (fdescr->flags & FIELD_FLAG_REQUIRED && !fix_field_get(msg, NULL, fdescr->type->tag))
