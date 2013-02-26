@@ -58,16 +58,24 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
  * @param[in] data - message to pre-parser
  * @param[in] len  - length of pre-parsed data
  * @param[in] delimiter - FIX SOH
+ * @param[out] beginString - pointer to BeginString data
+ * @param[out] beginStringLen - length of BeginString data
+ * @param[out] msgType - pointer to MsgType data
+ * @param[out] msgTypeLen - length of MsgType data
  * @param[out] senderCompID - pointer to SenderCompID data
  * @param[out] senderCompIDLen - length of senderCompID data
  * @param[out] targetCompID - pointer to TargetCompID data
  * @param[out] targetCompIDLen - length of  TargetCompID data
+ * @param[out] msgSeqNum - message sequence number
  * @param[out] error - error description, if any. If error is returned it must be destroyed by free(error)
  * @return FIX_SUCCESS - ok, FIX_FAILED - bad
  */
-FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t len, char delimiter,
+FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, char delimiter,
+      char const** beginString, uint32_t* beginStringLen,
+      char const** msgType, uint32_t *msgTypeLen,
       char const** senderCompID, uint32_t* senderCompIDLen,
-      char const** targetCompID, uint32_t* targetCompIDLen, FIXError** error);
+      char const** targetCompID, uint32_t* targetCompIDLen,
+      int64_t* msgSeqNum, FIXError** error);
 
 /**
  * get error code of failed operation
