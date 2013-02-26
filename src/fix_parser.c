@@ -108,15 +108,18 @@ FIX_PARSER_API char const* fix_parser_get_protocol_ver(FIXParser* parser)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t len, char delimiter,
+FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, char delimiter,
+      char const** beginString, uint32_t* beginStringLen,
+      char const** msgType, uint32_t *msgTypeLen,
       char const** senderCompID, uint32_t* senderCompIDLen,
       char const** targetCompID, uint32_t* targetCompIDLen,
-      FIXError** error)
+      int64_t* msgSeqNum, FIXError** error)
 {
    FIXError* err = (FIXError*)calloc(1, sizeof(FIXError));
-   if (!error || !data || !senderCompID || !targetCompID || !senderCompIDLen || !targetCompIDLen)
+   if (!error || !data || !beginString || !beginStringLen || !msgType || !msgTypeLen || !senderCompID ||
+         !targetCompID || !senderCompIDLen || !targetCompIDLen || !msgSeqNum)
    {
-      fix_error_set(err, FIX_ERROR_INVALID_ARGUMENT, "One of arguments is invalid (possible NULL).");
+      fix_error_set(err, FIX_ERROR_INVALID_ARGUMENT, "One of arguments is NULL.");
       goto failed;
    }
    FIXTagNum tag = 0;
@@ -133,6 +136,8 @@ FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t l
       fix_error_set(err, FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
       goto failed;
    }
+   *beginString = dbegin;
+   *beginStringLen = dend - dbegin;
    tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
@@ -167,8 +172,11 @@ FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t l
       fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
       goto failed;
    }
+   *msgType = dbegin;
+   *msgTypeLen = dend - dbegin;
    *senderCompID = NULL;
    *targetCompID = NULL;
+   *msgSeqNum = 0;
    while(dend != bodyEnd)
    {
       tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, err);
@@ -186,7 +194,15 @@ FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t l
          *targetCompID = dbegin;
          *targetCompIDLen = dend - dbegin;
       }
-      if (*senderCompID && *targetCompID)
+      else if (tag == FIXFieldTag_MsgSeqNum)
+      {
+         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum) == FIX_FAILED)
+         {
+            fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Wrong MsgSeqNum.");
+            goto failed;
+         }
+      }
+      if (*msgType && *senderCompID && *targetCompID && *msgSeqNum)
       {
          goto ok;
       }
@@ -199,6 +215,11 @@ FIX_PARSER_API FIXErrCode fix_parser_get_session_id(char const* data, uint32_t l
    if (!(*targetCompID))
    {
       fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
+      goto failed;
+   }
+   if (!(*msgSeqNum))
+   {
+      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find MsgSeqNum field.");
       goto failed;
    }
 failed:
