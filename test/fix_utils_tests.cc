@@ -68,84 +68,120 @@ TEST(FixUtilsTests, dtoa_Test)
 
 TEST(FixUtilsTests, atoi64_Test)
 {
-   char str[] = "1000";
-   int64_t val = 0;
-   ASSERT_EQ(fix_utils_atoi64(str, strlen(str), 0, &val), 4);
-   ASSERT_EQ(val, 1000);
+   {
+      char str[] = "1000";
+      int64_t val= 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), 0, &val), 4);
+      ASSERT_EQ(val, 1000);
+   }
 
-   char str1[] = "-123456";
-   int64_t val1 = 0;
-   ASSERT_EQ(fix_utils_atoi64(str1, strlen(str1), 0, &val1), 7);
-   ASSERT_EQ(val1, -123456);
+   {
+      char str[] = "-123456";
+      int64_t val= 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), 0, &val), 7);
+      ASSERT_EQ(val, -123456);
+   }
 
-   char str2[] = "00123";
-   int64_t val2 = 0;
-   ASSERT_EQ(fix_utils_atoi64(str2, strlen(str2), 0, &val2), 5);
-   ASSERT_EQ(val2, 123);
+   {
+      char str[] = "00123";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), 0, &val), 5);
+      ASSERT_EQ(val, 123);
+   }
 
-   char str3[] = "-00123";
-   int64_t val3 = 0;
-   ASSERT_EQ(fix_utils_atoi64(str3, strlen(str3), 0, &val3), 6);
-   ASSERT_EQ(val3, -123);
+   {
+      char str[] = "-00123";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), 0, &val), 6);
+      ASSERT_EQ(val, -123);
+   }
 
-   char str4[] = "1000=";
-   int64_t val4 = 0;
-   ASSERT_EQ(fix_utils_atoi64(str4, strlen(str4), '=', &val4), 4);
-   ASSERT_EQ(val4, 1000);
+   {
+      char str[] = "1000=";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), '=', &val), 4);
+      ASSERT_EQ(val, 1000);
+   }
 
-   char str5[] = "1000=";
-   int64_t val5 = 0;
-   ASSERT_EQ(fix_utils_atoi64(str5, 3, '=', &val5), 3);
-   ASSERT_EQ(val5, 100);
+   {
+      char str[] = "1000=";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, 3, '=', &val), 3);
+      ASSERT_EQ(val, 100);
+   }
 
-   char str6[] = "1000\00134=";
-   int64_t val6 = 0;
-   ASSERT_EQ(fix_utils_atoi64(str6, strlen(str6), '=', &val6), FIX_FAILED);
-   ASSERT_EQ(val6, 1000);
+   {
+      char str[] = "1000\00134=";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 1000);
+   }
+   {
+      char str[] = "";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 0);
+   }
 }
 
 
 TEST(FixUtilsTests, atod_Test)
 {
-   char str[] = "1000.12";
-   double val = 0;
-   ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 7);
-   ASSERT_EQ(val, 1000.12);
+   {
+      char str[] = "1000.12";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 7);
+      ASSERT_EQ(val, 1000.12);
+   }
 
-   char str1[] = "-123456.345";
-   double val1 = 0;
-   ASSERT_EQ(fix_utils_atod(str1, strlen(str1), 0, &val1), 11);
-   ASSERT_EQ(val1, -123456.345);
+   {
+      char str[] = "-123456.345";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 11);
+      ASSERT_EQ(val, -123456.345);
+   }
 
-   char str2[] = "00123.987";
-   double val2 = 0;
-   ASSERT_EQ(fix_utils_atod(str2, strlen(str2), 0, &val2), 9);
-   ASSERT_EQ(val2, 123.987);
+   {
+      char str[] = "00123.987";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 9);
+      ASSERT_EQ(val, 123.987);
+   }
 
-   char str3[] = "-00123.456";
-   double val3 = 0;
-   ASSERT_EQ(fix_utils_atod(str3, strlen(str3), 0, &val3), 10);
-   ASSERT_EQ(val3, -123.456);
+   {
+      char str[] = "-00123.456";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 10);
+      ASSERT_EQ(val, -123.456);
+   }
 
-   char str4[] = "123.456\00134=";
-   double val4 = 0;
-   ASSERT_EQ(fix_utils_atod(str4, strlen(str4), 1, &val4), 7);
-   ASSERT_EQ(val4, 123.456);
+   {
+      char str[] = "123.456\00134=";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 1, &val), 7);
+      ASSERT_EQ(val, 123.456);
+   }
 
-   char str5[] = "0000.987";
-   double val5 = 0;
-   ASSERT_EQ(fix_utils_atod(str5, strlen(str5), 0, &val5), 8);
-   ASSERT_EQ(val5, 0.987);
+   {
+      char str[] = "0000.987";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 8);
+      ASSERT_EQ(val, 0.987);
+   }
 
-   char str6[] = ".987";
-   double val6 = 0;
-   ASSERT_EQ(fix_utils_atod(str6, strlen(str6), 0, &val6), 4);
-   ASSERT_EQ(val6, 0.987);
+   {
+      char str[] = ".987";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 4);
+      ASSERT_EQ(val, 0.987);
+   }
 
-   char str7[] = "23.";
-   double val7 = 0;
-   ASSERT_EQ(fix_utils_atod(str7, strlen(str7), 0, &val7), 3);
-   ASSERT_EQ(val7, 23.0);
+   {
+      char str[] = "23.";
+      double val = 0;
+      ASSERT_EQ(fix_utils_atod(str, strlen(str), 0, &val), 3);
+      ASSERT_EQ(val, 23.0);
+   }
 }
 
 TEST(FixUtilsTests, MakePath)
