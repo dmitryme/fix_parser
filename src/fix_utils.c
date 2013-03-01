@@ -147,6 +147,10 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
 /*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val)
 {
+   if (!buff || !buffLen || !val)
+   {
+      return FIX_FAILED;
+   }
    *val = 0;
    uint32_t i = 0;
    int32_t sign = 1;
@@ -174,6 +178,10 @@ int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int3
 /*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val)
 {
+   if (!buff || !buffLen || !val)
+   {
+      return FIX_FAILED;
+   }
    *val = 0;
    uint32_t i = 0;
    int64_t sign = 1;
@@ -201,6 +209,10 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int6
 /*-----------------------------------------------------------------------------------------------------------------------*/
 int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val)
 {
+   if (!buff || !buffLen || !val)
+   {
+      return FIX_FAILED;
+   }
    *val = 0.0;
    uint32_t i = 0;
    int32_t sign = 1;
