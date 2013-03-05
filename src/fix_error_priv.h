@@ -22,11 +22,11 @@ extern "C"
 /**
  * hold error description
  */
-typedef struct FIXError
+struct FIXError_
 {
    FIXErrCode code;  ///< error code
    char       text[ERROR_TXT_SIZE]; ///< error description
-} FIXError;
+};
 
 /**
  * set error using variable arguments
