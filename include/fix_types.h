@@ -49,7 +49,7 @@ typedef struct FIXGroup_ FIXGroup;
 typedef struct FIXField_ FIXField;
 typedef struct FIXMsg_ FIXMsg;
 typedef struct FIXParser_ FIXParser;
-typedef struct FIXError FIXError;
+typedef struct FIXError_ FIXError;
 typedef int32_t FIXTagNum;  ///< FIX field tag type
 typedef int32_t FIXErrCode; ///< error code
 
