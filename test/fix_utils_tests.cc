@@ -66,6 +66,70 @@ TEST(FixUtilsTests, dtoa_Test)
 }
 
 
+TEST(FixUtilsTests, atoi32_Test)
+{
+   {
+      char str[] = "1000";
+      int32_t val= 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), 0, &val), 4);
+      ASSERT_EQ(val, 1000);
+   }
+
+   {
+      char str[] = "-123456";
+      int32_t val= 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), 0, &val), 7);
+      ASSERT_EQ(val, -123456);
+   }
+
+   {
+      char str[] = "00123";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), 0, &val), 5);
+      ASSERT_EQ(val, 123);
+   }
+
+   {
+      char str[] = "-00123";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), 0, &val), 6);
+      ASSERT_EQ(val, -123);
+   }
+
+   {
+      char str[] = "1000=";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), '=', &val), 4);
+      ASSERT_EQ(val, 1000);
+   }
+
+   {
+      char str[] = "1000=";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, 3, '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 0);
+   }
+
+   {
+      char str[] = "1000\00134=";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 1000);
+   }
+   {
+      char str[] = "";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 0);
+   }
+   {
+      char str[] = "100";
+      int32_t val = 0;
+      ASSERT_EQ(fix_utils_atoi32(str, strlen(str), '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 0);
+   }
+}
+
 TEST(FixUtilsTests, atoi64_Test)
 {
    {
@@ -106,8 +170,8 @@ TEST(FixUtilsTests, atoi64_Test)
    {
       char str[] = "1000=";
       int64_t val = 0;
-      ASSERT_EQ(fix_utils_atoi64(str, 3, '=', &val), 3);
-      ASSERT_EQ(val, 100);
+      ASSERT_EQ(fix_utils_atoi64(str, 3, '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 0);
    }
 
    {
@@ -122,8 +186,13 @@ TEST(FixUtilsTests, atoi64_Test)
       ASSERT_EQ(fix_utils_atoi64(str, strlen(str), '=', &val), FIX_FAILED);
       ASSERT_EQ(val, 0);
    }
+   {
+      char str[] = "100";
+      int64_t val = 0;
+      ASSERT_EQ(fix_utils_atoi64(str, strlen(str), '=', &val), FIX_FAILED);
+      ASSERT_EQ(val, 0);
+   }
 }
-
 
 TEST(FixUtilsTests, atod_Test)
 {

@@ -171,6 +171,11 @@ int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int3
       }
       *val = *val * 10 + (buff[i] - 48);
    }
+   if (stopChar && i == buffLen)
+   {
+      *val = 0;
+      return FIX_FAILED;
+   }
    *val *= sign;
    return i;
 }
@@ -201,6 +206,11 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int6
          return FIX_FAILED;
       }
       *val = *val * 10 + (buff[i] - 48);
+   }
+   if (stopChar && i == buffLen)
+   {
+      *val = 0;
+      return FIX_FAILED;
    }
    *val *= sign;
    return i;
