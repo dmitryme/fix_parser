@@ -157,7 +157,7 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(err, FIX_ERROR_BODY_TOO_SHORT, "Body too short.");
+      fix_error_set(err, FIX_ERROR_DATA_TOO_SHORT, "Data too short.");
       goto failed;
    }
    char const* bodyEnd = dend + bodyLen;
@@ -281,7 +281,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(&parser->error, FIX_ERROR_BODY_TOO_SHORT, "Body too short.");
+      fix_error_set(&parser->error, FIX_ERROR_DATA_TOO_SHORT, "Data too short.");
       *stop = data + len;
       return NULL;
    }
