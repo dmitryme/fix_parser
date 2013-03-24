@@ -241,7 +241,7 @@ TEST(FixParserPrivTests, ParseMandatoryField)
    {
       char const data[] = "8=FIX4.4|";
       ASSERT_EQ(FIX_FAILED, fix_parser_parse_mandatory_field(data, strlen(data), '\001', &dbegin, &dend, &parser->error));
-      ASSERT_EQ(FIX_ERROR_INVALID_ARGUMENT, fix_parser_get_error_code(parser));
+      ASSERT_EQ(FIX_ERROR_NO_MORE_DATA, fix_parser_get_error_code(parser));
    }
 
    fix_parser_free(parser);

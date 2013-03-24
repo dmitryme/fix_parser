@@ -145,123 +145,140 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val)
+FIXErrCode fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val, int32_t* cnt)
 {
-   if (!buff || !buffLen || !val)
+   if (stopChar && !buffLen)
    {
-      return FIX_FAILED;
+      return FIX_ERROR_NO_MORE_DATA;
+   }
+   else if (!buff || !buffLen || !val)
+   {
+      return FIX_ERROR_INVALID_ARGUMENT;
    }
    *val = 0;
-   uint32_t i = 0;
+   *cnt = 0;
    int32_t sign = 1;
-   if (buff[i] == '-')
+   if (buff[*cnt] == '-')
    {
       sign = -1;
-      ++i;
+      ++(*cnt);
    }
-   for(;i < buffLen; ++i)
+   for(;*cnt < buffLen; ++(*cnt))
    {
-      if (stopChar && stopChar == buff[i])
+      if (stopChar && stopChar == buff[*cnt])
       {
          break;
       }
-      if (buff[i] < '0' || buff[i] > '9')
+      if (buff[*cnt] < '0' || buff[*cnt] > '9')
       {
-         return FIX_FAILED;
+         return FIX_ERROR_INVALID_ARGUMENT;
       }
-      *val = *val * 10 + (buff[i] - 48);
+      *val = *val * 10 + (buff[*cnt] - 48);
    }
-   if (stopChar && i == buffLen)
+   if (stopChar && *cnt == buffLen)
    {
       *val = 0;
-      return FIX_FAILED;
+      return FIX_ERROR_NO_MORE_DATA;
    }
    *val *= sign;
-   return i;
+   return FIX_SUCCESS;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val)
+FIXErrCode fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val, int32_t* cnt)
 {
-   if (!buff || !buffLen || !val)
+   if (stopChar && !buffLen)
    {
-      return FIX_FAILED;
+      return FIX_ERROR_NO_MORE_DATA;
+   }
+   else if (!buff || !buffLen || !val)
+   {
+      return FIX_ERROR_INVALID_ARGUMENT;
    }
    *val = 0;
-   uint32_t i = 0;
+   *cnt = 0;
    int64_t sign = 1;
-   if (buff[i] == '-')
+   if (buff[*cnt] == '-')
    {
       sign = -1;
-      ++i;
+      ++(*cnt);
    }
-   for(;i < buffLen; ++i)
+   for(;*cnt < buffLen; ++(*cnt))
    {
-      if (stopChar && stopChar == buff[i])
+      if (stopChar && stopChar == buff[*cnt])
       {
          break;
       }
-      if (buff[i] < '0' || buff[i] > '9')
+      if (buff[*cnt] < '0' || buff[*cnt] > '9')
       {
-         return FIX_FAILED;
+         return FIX_ERROR_INVALID_ARGUMENT;
       }
-      *val = *val * 10 + (buff[i] - 48);
+      *val = *val * 10 + (buff[*cnt] - 48);
    }
-   if (stopChar && i == buffLen)
+   if (stopChar && *cnt == buffLen)
    {
       *val = 0;
-      return FIX_FAILED;
+      return FIX_ERROR_NO_MORE_DATA;
    }
    *val *= sign;
-   return i;
+   return FIX_SUCCESS;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val)
+FIXErrCode fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val, int32_t* cnt)
 {
-   if (!buff || !buffLen || !val)
+   if (stopChar && !buffLen)
    {
-      return FIX_FAILED;
+      return FIX_ERROR_NO_MORE_DATA;
+   }
+   else if (!buff || !buffLen || !val)
+   {
+      return FIX_ERROR_INVALID_ARGUMENT;
    }
    *val = 0.0;
-   uint32_t i = 0;
+   *cnt = 0;
    int32_t sign = 1;
-   if (buff[i] == '-')
+   if (buff[*cnt] == '-')
    {
       sign = -1;
-      ++i;
+      ++(*cnt);
    }
-   for(; i < buffLen; ++i)
+   for(; *cnt < buffLen; ++(*cnt))
    {
-      if (stopChar && stopChar == buff[i])
+      if (stopChar && stopChar == buff[*cnt])
       {
          break;
       }
-      if (buff[i] == '.')
+      if (buff[*cnt] == '.')
       {
-         ++i;
+         ++(*cnt);
          break;
       }
-      if ((buff[i] < '0' || buff[i] > '9'))
+      if ((buff[*cnt] < '0' || buff[*cnt] > '9'))
       {
          return FIX_FAILED;
       }
-      *val = *val * 10 + (buff[i] - 48);
+      *val = *val * 10 + (buff[*cnt] - 48);
    }
    double exp = 0.0;
-   for(int32_t j = 1;i < buffLen; ++i, ++j)
+   for(int32_t j = 1;*cnt < buffLen; ++(*cnt), ++j)
    {
-      if (stopChar && stopChar == buff[i])
+      if (stopChar && stopChar == buff[*cnt])
       {
          break;
       }
-      if ((buff[i] < '0' || buff[i] > '9'))
+      if ((buff[*cnt] < '0' || buff[*cnt] > '9'))
       {
          return FIX_FAILED;
       }
-      exp += (double)(buff[i] - 48) / fix_utils_lpow10(j);
+      exp += (double)(buff[*cnt] - 48) / fix_utils_lpow10(j);
+   }
+   if (stopChar && *cnt == buffLen)
+   {
+      *val = 0;
+      return FIX_ERROR_NO_MORE_DATA;
    }
    *val += exp;
    *val *= sign;
-   return i;
+   return FIX_SUCCESS;
 }

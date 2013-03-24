@@ -328,7 +328,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
       return FIX_FAILED;
    }
-   return fix_utils_atoi32((char const*)field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   int32_t cnt;
+   return fix_utils_atoi32((char const*)field->data, field->size, 0, val, &cnt);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -350,7 +351,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
-   return fix_utils_atoi64((char const*)field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   int32_t cnt;
+   return fix_utils_atoi64((char const*)field->data, field->size, 0, val, &cnt);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -372,7 +374,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
       fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Field %d is not a value", tag);
       return FIX_FAILED;
    }
-   return fix_utils_atod((char const*)field->data, field->size, 0, val) > 0 ? FIX_SUCCESS : FIX_FAILED;
+   int32_t cnt;
+   return fix_utils_atod((char const*)field->data, field->size, 0, val, &cnt);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/

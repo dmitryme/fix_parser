@@ -545,7 +545,7 @@ FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* typ
 }
 
 //------------------------------------------------------------------------------------------------------------------------//
-FIXFieldDescr const* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr const* msg, FIXTagNum tag)
+FIXFieldDescr const* fix_protocol_get_field_descr(FIXMsgDescr const* msg, FIXTagNum tag)
 {
    int32_t idx = tag % FIELD_DESCR_CNT;
    FIXFieldDescr const* fld = msg->field_index[idx];
@@ -561,7 +561,7 @@ FIXFieldDescr const* fix_protocol_get_field_descr(FIXError* error, FIXMsgDescr c
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXFieldDescr const* fix_protocol_get_group_descr(FIXError* error, FIXFieldDescr const* field, FIXTagNum tag)
+FIXFieldDescr const* fix_protocol_get_group_descr(FIXFieldDescr const* field, FIXTagNum tag)
 {
    int32_t idx = tag % FIELD_DESCR_CNT;
    FIXFieldDescr const* fld = field->group_index[idx];
@@ -582,7 +582,7 @@ FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, 
    FIXFieldDescr const* fdescr = NULL;
    if (group)
    {
-      fdescr = fix_protocol_get_group_descr(&msg->parser->error, group->parent_fdescr, tag);
+      fdescr = fix_protocol_get_group_descr(group->parent_fdescr, tag);
       if (!fdescr)
       {
          fix_error_set(&msg->parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s' description.",
@@ -591,7 +591,7 @@ FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, 
    }
    else
    {
-      fdescr = fix_protocol_get_field_descr(&msg->parser->error, msg->descr, tag);
+      fdescr = fix_protocol_get_field_descr(msg->descr, tag);
       if (!fdescr)
       {
          fix_error_set(&msg->parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",

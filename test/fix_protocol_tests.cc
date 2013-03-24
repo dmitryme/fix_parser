@@ -31,7 +31,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(msg->name, "ExecutionReport");
    ASSERT_EQ(msg->field_count, 247U);
 
-   FIXFieldDescr const* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
+   FIXFieldDescr const* field = fix_protocol_get_field_descr(msg, FIXFieldTag_BeginString);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_BeginString);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
@@ -39,7 +39,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "BeginString");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BodyLength);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_BodyLength);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_BodyLength);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_Length);
@@ -47,7 +47,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "BodyLength");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_MsgType);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_MsgType);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_MsgType);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
@@ -55,7 +55,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "MsgType");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_OrderID);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_OrderID);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_OrderID);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
@@ -63,7 +63,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "OrderID");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_ClOrdID);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_ClOrdID);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_ClOrdID);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
@@ -71,7 +71,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "ClOrdID");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_SignatureLength);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_SignatureLength);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_SignatureLength);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_Length);
@@ -79,7 +79,7 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "SignatureLength");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_CheckSum);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_CheckSum);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_CheckSum);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
@@ -87,12 +87,12 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
    ASSERT_STREQ(field->type->name, "CheckSum");
    ASSERT_TRUE(field->dataLenField == NULL);
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_OrdRejReason);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_OrdRejReason);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(1, fix_protocol_check_field_value(field, "10", 2));
    ASSERT_EQ(0, fix_protocol_check_field_value(field, "100", 3));
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_SecurityType);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_SecurityType);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(0, fix_protocol_check_field_value(field, "FAKE", 4));
    ASSERT_EQ(1, fix_protocol_check_field_value(field, "DEFLTED", 7));
@@ -116,7 +116,7 @@ TEST(FIXProtocolTests, FIXProtocolTest2)
    ASSERT_STREQ(msg->name, "Logon");
    ASSERT_EQ(msg->field_count, 41U);
 
-   FIXFieldDescr const* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_RawData);
+   FIXFieldDescr const* field = fix_protocol_get_field_descr(msg, FIXFieldTag_RawData);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_RawData);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_Data);
@@ -148,49 +148,49 @@ TEST(FIXProtocolTests, FIXProtocolTest3)
    ASSERT_STREQ(msg->name, "ExecutionReport");
    ASSERT_EQ(msg->field_count, 11U);
 
-   FIXFieldDescr const* field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BeginString);
+   FIXFieldDescr const* field = fix_protocol_get_field_descr(msg, FIXFieldTag_BeginString);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_BeginString);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "BeginString");
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_BodyLength);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_BodyLength);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_BodyLength);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_Length);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "BodyLength");
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_MsgType);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_MsgType);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_MsgType);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "MsgType");
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_OrderID);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_OrderID);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_OrderID);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "OrderID");
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_ClOrdID);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_ClOrdID);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_ClOrdID);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "ClOrdID");
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_SignatureLength);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_SignatureLength);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_SignatureLength);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_Length);
    ASSERT_EQ(field->category, FIXFieldCategory_Value);
    ASSERT_STREQ(field->type->name, "SignatureLength");
 
-   field = fix_protocol_get_field_descr(&p->error, msg, FIXFieldTag_CheckSum);
+   field = fix_protocol_get_field_descr(msg, FIXFieldTag_CheckSum);
    ASSERT_TRUE(field != NULL);
    ASSERT_EQ(field->type->tag, FIXFieldTag_CheckSum);
    ASSERT_EQ(field->type->valueType, FIXFieldValueType_String);

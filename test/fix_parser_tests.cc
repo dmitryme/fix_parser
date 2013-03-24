@@ -41,7 +41,7 @@ TEST(FixParserTests, ParseBeginStringTest)
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_INVALID_ARGUMENT);
    }
    {
       char buff[] = "1=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
@@ -73,6 +73,7 @@ TEST(FixParserTests, ParseBodyLengthTest)
    ASSERT_EQ(parser->error.code, 0);
 
    {
+      // second tag not 9
       char buff[] = "8=FIX.4.4|10=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
@@ -80,43 +81,48 @@ TEST(FixParserTests, ParseBodyLengthTest)
       ASSERT_EQ(parser->error.code, FIX_ERROR_WRONG_FIELD);
    }
    {
+      // second tag has wrong value
       char buff[] = "8=FIX.4.4|9=228A|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240|";
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_INVALID_ARGUMENT);
    }
 
    {
+      // body too short
       char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1";
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_DATA);
    }
 
    {
+      // body too short (no CRC field at end)
       char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12";
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_DATA);
    }
 
    {
+      // body too short (no CRC field at end)
       char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|";
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_BODY_TOO_SHORT);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_DATA);
    }
 
    {
+      // no SOH at end
       char buff[] = "8=FIX.4.4|9=228|35=8|49=QWERTY_12345678|56=ABCQWE_XYZ|34=34|57=srv-ivanov_ii1|52=20120716-06:00:16.230|37=1|11=CL_ORD_ID_1234567|17=FE_1_9494_1|150=0|39=1|1=ZUM|55=RTS-12.12|54=1|38=25|44=135155|59=0|32=0|31=0|151=25|14=0|6=0|21=1|58=COMMENT12|10=240";
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_NO_MORE_DATA);
    }
 }
 
@@ -131,7 +137,7 @@ TEST(FixParserTests, ParseCheckSumTest)
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_INVALID_ARGUMENT);
    }
 
    {
@@ -147,7 +153,7 @@ TEST(FixParserTests, ParseCheckSumTest)
       char const* stop = NULL;
       FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop);
       ASSERT_TRUE(msg == NULL);
-      ASSERT_EQ(parser->error.code, FIX_ERROR_PARSE_MSG);
+      ASSERT_EQ(parser->error.code, FIX_ERROR_INVALID_ARGUMENT);
    }
 
    {
@@ -195,7 +201,7 @@ TEST(FixParserTests, GetHeaderTest)
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
       ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_TRUE(!strcmp(error->text, "First field is '9', but must be BeginString."));
+      ASSERT_STREQ(error->text, "First field is '9', but must be BeginString.");
    }
    {
       char buff[] = "8=FIX.4.4\00120=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
@@ -203,7 +209,7 @@ TEST(FixParserTests, GetHeaderTest)
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
       ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_TRUE(!strcmp(error->text, "Second field is '20', but must be BodyLength."));
+      ASSERT_STREQ(error->text, "Second field is '20', but must be BodyLength.");
    }
    {
       char buff[] = "8=FIX.4.4\0019=A139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
@@ -211,14 +217,14 @@ TEST(FixParserTests, GetHeaderTest)
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
       ASSERT_EQ(error->code, FIX_ERROR_PARSE_MSG);
-      ASSERT_TRUE(!strcmp(error->text, "BodyLength value not a number."));
+      ASSERT_STREQ(error->text, "BodyLength value not a number.");
    }
    {
       char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001";
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_BODY_TOO_SHORT);
-      ASSERT_TRUE(!strcmp(error->text, "Body too short."));
+      ASSERT_EQ(error->code, FIX_ERROR_NO_MORE_DATA);
+      ASSERT_STREQ(error->text, "Body too short.");
    }
    {
       char buff[] = "8=FIX.4.4\0019=139\00136=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
@@ -226,7 +232,7 @@ TEST(FixParserTests, GetHeaderTest)
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
       ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_TRUE(!strcmp(error->text, "Field is '36', but must be MsgType."));
+      ASSERT_STREQ(error->text, "Field is '36', but must be MsgType.");
    }
    {
       char buff[] = "8=FIX.4.4\0019=113\00135=A\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
@@ -234,7 +240,7 @@ TEST(FixParserTests, GetHeaderTest)
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
       ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_TRUE(!strcmp(error->text, "Unable to find SenderCompID field."));
+      ASSERT_STREQ(error->text, "Unable to find SenderCompID field.");
    }
    {
       char buff[] = "8=FIX.4.4\0019=120\00135=A\00149=dmelnikov1_test_robot1\00134=1\00152=20130130-14:50:33.448\001"
@@ -242,7 +248,7 @@ TEST(FixParserTests, GetHeaderTest)
       ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
       ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_TRUE(!strcmp(error->text, "Unable to find TargetCompID field."));
+      ASSERT_STREQ(error->text, "Unable to find TargetCompID field.");
    }
    free(error);
 }
@@ -418,6 +424,8 @@ TEST(FixParserTests, ParseStringGroupTest)
             "54=1\00160=20120716-06:00:16.230\00138=25\00140=2\00110=088\001";
    char const* stop = NULL;
    FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), FIX_SOH, &stop);
+   ASSERT_STREQ(parser->error.text, "");
+   ASSERT_EQ(parser->error.code, 0);
    ASSERT_TRUE(msg != NULL);
 
    CHECK_STRING(msg, NULL, FIXFieldTag_BeginString,  "FIX.4.4");

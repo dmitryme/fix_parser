@@ -128,7 +128,6 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
    tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(err, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
       goto failed;
    }
    if (tag != FIXFieldTag_BeginString)
@@ -141,7 +140,6 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
    tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(err, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
       goto failed;
    }
    if (tag != FIXFieldTag_BodyLength)
@@ -150,21 +148,21 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       goto failed;
    }
    int64_t bodyLen;
-   if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen) == FIX_FAILED)
+   int32_t cnt;
+   if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen, &cnt) > 0)
    {
       fix_error_set(err, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
       goto failed;
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(err, FIX_ERROR_DATA_TOO_SHORT, "Data too short.");
+      fix_error_set(err, FIX_ERROR_NO_MORE_DATA, "Body too short.");
       goto failed;
    }
    char const* bodyEnd = dend + bodyLen;
    tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, err);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(err, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
       goto failed;
    }
    if (tag != FIXFieldTag_MsgType)
@@ -196,7 +194,7 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       }
       else if (tag == FIXFieldTag_MsgSeqNum)
       {
-         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum) == FIX_FAILED)
+         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) == FIX_FAILED)
          {
             fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Wrong MsgSeqNum.");
             goto failed;
@@ -243,7 +241,6 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, &parser->error);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BeginString field.");
       return NULL;
    }
    if (tag != FIXFieldTag_BeginString)
@@ -265,7 +262,6 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, &parser->error);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse BodyLength field.");
       return NULL;
    }
    if (tag != FIXFieldTag_BodyLength)
@@ -274,23 +270,24 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       return NULL;
    }
    int64_t bodyLen;
-   if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen) == FIX_FAILED)
+   int32_t cnt;
+   int32_t err = fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen, &cnt);
+   if (err > 0)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
+      fix_error_set(&parser->error, err, "BodyLength value not a number.");
       return NULL;
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(&parser->error, FIX_ERROR_DATA_TOO_SHORT, "Data too short.");
+      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_DATA, "Body too short.");
       *stop = data + len;
       return NULL;
    }
    char const* crcbeg = NULL;
    char const* bodyEnd = dend + bodyLen;
-   tag = fix_parser_parse_mandatory_field(bodyEnd + 1, CRC_FIELD_LEN, delimiter, &crcbeg, stop, &parser->error);
+   tag = fix_parser_parse_mandatory_field(bodyEnd + 1, len - (bodyEnd + 1 - data), delimiter, &crcbeg, stop, &parser->error);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse CrcSum field.");
       return NULL;
    }
    if (tag != FIXFieldTag_CheckSum)
@@ -301,9 +298,9 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
    {
       int64_t check_sum = 0;
-      if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum) == FIX_FAILED)
+      if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum, &cnt) > 0)
       {
-         fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "CheckSum value not a tagber.");
+         fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "CheckSum value not a number.");
          return NULL;
       }
       int64_t crc = 0;
@@ -323,7 +320,6 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, &parser->error);
    if (tag == FIX_FAILED)
    {
-      fix_error_set(&parser->error, FIX_ERROR_PARSE_MSG, "Unable to parse MsgType field.");
       return NULL;
    }
    if (tag != FIXFieldTag_MsgType)
@@ -343,7 +339,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    {
       goto error;
    }
-   FIXFieldDescr const* fdescr  = fix_protocol_get_field_descr(&parser->error, msg->descr, FIXFieldTag_CheckSum);
+   FIXFieldDescr const* fdescr  = fix_protocol_get_field_descr(msg->descr, FIXFieldTag_CheckSum);
    if (!fdescr)
    {
       fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
@@ -383,9 +379,10 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          else if (fdescr->category == FIXFieldCategory_Group)
          {
             int64_t numGroups = 0;
-            if (FIX_FAILED == fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &numGroups))
+            FIXErrCode err = fix_utils_atoi64(dbegin, dend - dbegin + 1, delimiter, &numGroups, &cnt);
+            if (err > 0)
             {
-               fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "Unable to get group tag %d value.", tag);
+               fix_error_set(&parser->error, err, "Unable to get group tag %d value.", tag);
                goto  error;
             }
             if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend, delimiter, &dend))

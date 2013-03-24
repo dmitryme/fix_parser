@@ -71,9 +71,10 @@ int32_t fix_utils_dtoa(double val, char* buff, uint32_t buffLen);
  * @param[in] buffLen - length of buffer
  * @param[in] stopChar - stop parsing on this char. If stopChar == 0, processed till buffer end
  * @param[out] val - converted value
- * @return how many characters processed
+ * @param[out] cnt - how many characters processed
+ * @return possible parsing error, FIX_SUCCESS - if no error
  */
-int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val);
+FIXErrCode fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int32_t* val, int32_t* cnt);
 
 /**
  * convert string to 64-bit number
@@ -81,9 +82,10 @@ int32_t fix_utils_atoi32(char const* buff, uint32_t buffLen, char stopChar, int3
  * @param[in] buffLen - length of buffer
  * @param[in] stopChar - stop parsing on this char. If stopChar == 0, processed till buffer end
  * @param[out] val - converted value
- * @return how many characters processed
+ * @param[out] cnt - how many characters processed
+ * @return possible parsing error, FIX_SUCCESS - if no error
  */
-int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val);
+FIXErrCode fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int64_t* val, int32_t* cnt);
 
 /**
  * convert string to double
@@ -91,9 +93,10 @@ int32_t fix_utils_atoi64(char const* buff, uint32_t buffLen, char stopChar, int6
  * @param[in] buffLen - length of buffer
  * @param[in] stopChar - stop parsing on this char. If stopChar == 0, processed till buffer end
  * @param[out] val - converted value
- * @return how many characters processed
+ * @param[out] cnt - how many characters processed
+ * @return possible parsing error, FIX_SUCCESS - if no error
  */
-int32_t fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val);
+FIXErrCode fix_utils_atod(char const* buff, uint32_t buffLen, char stopChar, double* val, int32_t* cnt);
 
 /**
  * fix transpFile path according to protocolFile path

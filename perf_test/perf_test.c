@@ -84,7 +84,7 @@ void create_msg(FIXParser* parser)
    printf("%12s%12d%12d%10.2f\n", "create_msg", count, total, (float)total/count);
 }
 
-void msg_to_fix(FIXParser* parser)
+void msg_to_str(FIXParser* parser)
 {
    TIMESTAMP_INIT;
    TIMESTAMP start, stop;
@@ -136,10 +136,10 @@ void msg_to_fix(FIXParser* parser)
    GET_TIMESTAMP(stop);
 
    int32_t const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
-   printf("%12s%12d%12d%10.2f\n", "msg_to_fix", count, total, (float)total/count);
+   printf("%12s%12d%12d%10.2f\n", "msg_to_str", count, total, (float)total/count);
 }
 
-void fix_to_msg(FIXParser* parser)
+void str_to_msg(FIXParser* parser)
 {
    TIMESTAMP_INIT;
    TIMESTAMP start, stop;
@@ -164,7 +164,7 @@ void fix_to_msg(FIXParser* parser)
    GET_TIMESTAMP(stop);
 
    int32_t const total = GET_TIMESTAMP_DIFF_USEC(stop, start);
-   printf("%12s%12d%12d%10.2f\n", "fix_to_msg", count, total, (float)total/count);
+   printf("%12s%12d%12d%10.2f\n", "str_to_msg", count, total, (float)total/count);
 }
 
 int main(int argc, char *argv[])
@@ -186,8 +186,8 @@ int main(int argc, char *argv[])
 
    printf("%12s%12s%12s%12s", "test", "count", "total", "per msg\n");
    create_msg(parser);
-   msg_to_fix(parser);
-   fix_to_msg(parser);
+   msg_to_str(parser);
+   str_to_msg(parser);
 
    fix_parser_free(parser);
 
