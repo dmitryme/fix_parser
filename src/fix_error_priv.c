@@ -8,27 +8,24 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_set_va(FIXError* error, FIXErrCode code, char const* text, va_list ap)
+FIXError* fix_error_create_va(FIXErrCode code, char const* text, va_list ap)
 {
+   FIXError* error = (FIXError*)calloc(1, sizeof(FIXError));
    error->code = code;
    int32_t n = vsnprintf(error->text, ERROR_TXT_SIZE, text, ap);
    error->text[n] = 0;
+   return error;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_set(FIXError* error, FIXErrCode code, char const* text, ...)
+FIXError* fix_error_create(FIXErrCode code, char const* text, ...)
 {
    va_list ap;
    va_start(ap, text);
-   fix_error_set_va(error, code, text, ap);
+   FIXError* error = fix_error_create_va(code, text, ap);
    va_end(ap);
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-void fix_error_reset(FIXError* error)
-{
-   error->code = 0;
-   error->text[0] = 0;
+   return error;
 }

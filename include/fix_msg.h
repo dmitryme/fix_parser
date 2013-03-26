@@ -21,10 +21,11 @@ extern "C"
  * create new FIX message
  * @param[in] parser - instance of parser
  * @param[in] msgType - type of message (e.g. "A", "D", "AE", etc.)
+ * @param[out] error - error description
  * @return pointer to created message, is NULL see fix_parser_get_error_code(parser) for error
  * @note all allocated messages must be destroyed with fix_msg_free
  */
-FIX_PARSER_API FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType);
+FIX_PARSER_API FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType, FIXError** error);
 /**
  * free allocated message
  * @param[in] msg - message, which should be destroyed.
@@ -51,27 +52,30 @@ FIX_PARSER_API char const* fix_msg_get_name(FIXMsg const* msg);
  * @param[in] grp - parent group. Can be NULL if group added to message tag, or not null is new nested group should be
  * created
  * @param[in] tagNum - field tag in which new group will be added
+ * @param[out] error - error description
  * @return pointer to new group, if NULL, see fix_parser_get_error_code(parser)
  */
-FIX_PARSER_API FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum);
+FIX_PARSER_API FIXGroup* fix_msg_add_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, FIXError** error);
 /**
  * get group by zero-based index
  * @param[in] msg - message with requested group
  * @param[in] grp - parent group, in case in nested group requested. Can be NULL.
  * @param[in] tagNum - field tag with requested group
  * @param[in] grpIdx - zero-based index of requested group
+ * @param[out] error - error description
  * @return requested group, if NULL see fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, uint32_t grpIdx);
+FIX_PARSER_API FIXGroup* fix_msg_get_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, uint32_t grpIdx, FIXError** error);
 /**
  * delete group by zero-based index
  * @param[in] msg - FIX message
  * @param[in] grp - parent group, if deleted group is a nested one, else can be NULL.
  * @param[in] tagNum - field tag with deleted group
  * @param[in] grpIdx - zero-based index of deleted group
+ * @param[out] error - error description
  * @return FIX_SUCCESS - is OK, FIX_FAILED - something goes wrong. See fix_parser_get_error_code(parser) for details
  * */
-FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, uint32_t grpIdx);
+FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, uint32_t grpIdx, FIXError** error);
 
 /**
  * set tag with string value
@@ -79,9 +83,10 @@ FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[in] val - string value (ends with zero)
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const* val);
+FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const* val, FIXError** error);
 
 /**
  * set tag with 32-bit numeric value
@@ -89,9 +94,10 @@ FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[in] val - 32-bit numeric value
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int32_t val);
+FIX_PARSER_API FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int32_t val, FIXError** error);
 
 /**
  * set tag with 64-bit numeric value
@@ -99,9 +105,10 @@ FIX_PARSER_API FIXErrCode fix_msg_set_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[in] val - 64-bit numeric value
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int64_t val);
+FIX_PARSER_API FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int64_t val, FIXError** error);
 
 /**
  * set tag with single char value
@@ -109,9 +116,10 @@ FIX_PARSER_API FIXErrCode fix_msg_set_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[in] val - char value
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char val);
+FIX_PARSER_API FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char val, FIXError** error);
 
 /**
  * set tag with double value
@@ -119,9 +127,10 @@ FIX_PARSER_API FIXErrCode fix_msg_set_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[in] val - double value
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, double val);
+FIX_PARSER_API FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, double val, FIXError** error);
 
 /**
  * set tag with data value
@@ -130,9 +139,10 @@ FIX_PARSER_API FIXErrCode fix_msg_set_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
  * @param[in] tagNum - field tag number
  * @param[in] data - data value
  * @param[in] dataLen - data value length
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const* data, uint32_t dataLen);
+FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const* data, uint32_t dataLen, FIXError** error);
 
 /**
  * get tag 32-bit value
@@ -140,9 +150,10 @@ FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(int32_t) allocated space required.
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int32_t* val);
+FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int32_t* val, FIXError** error);
 
 /**
  * get tag 64-bit value
@@ -150,9 +161,10 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(int64_t) allocated space required.
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int64_t* val);
+FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int64_t* val, FIXError** error);
 
 /**
  * get tag double value
@@ -160,9 +172,10 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(double) allocated space required.
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, double* val);
+FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, double* val, FIXError** error);
 
 /**
  * get tag char value
@@ -170,9 +183,10 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(char) allocated space required.
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char* val);
+FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char* val, FIXError** error);
 
 /**
  * get tag string value
@@ -181,9 +195,10 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
  * @param[in] tagNum - field tag number
  * @param[out] val - pointer to requested value
  * @param[out] len - length of requested value
+ * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
  */
-FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const** val, uint32_t* len);
+FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const** val, uint32_t* len, FIXError** error);
 
 /**
  * get tag data value
@@ -192,18 +207,20 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
  * @param[in] tagNum - field tag number
  * @param[out] val - pointer to requested value
  * @param[out] len - length of requested value
- * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - OK, FIX_FAILED - error description
  */
-FIX_PARSER_API FIXErrCode fix_msg_get_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const** val, uint32_t* len);
+FIX_PARSER_API FIXErrCode fix_msg_get_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const** val, uint32_t* len, FIXError** error);
 
 /**
  * delete field from message
  * @param[in] msg - message with tag, which will be deleted
  * @param[in] grp - not NULL group pointer, if tag is a part of group, else must be NULL
  * @param[in] tag - field tag, which should be removed
- * @return FIX_SUCCESS - OK, FIX_FAILED - deletion failed. See fix_parser_get_error_code(parser) for details
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - OK, FIX_FAILED - error description
  */
-FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
+FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, FIXError** error);
 
 /**
  * convert FIX message to string
@@ -212,9 +229,10 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[out] buff - buffer with converted message
  * @param[out] buffLen - length of output buffer
  * @param[out] reqBuffLen - if buff length too small, reqBuffLen returns length of needed space
- * @return FIX_SUCCESS - OK, FIX_FAILED - convertion failed. See fix_parser_get_error_code(parser) for details
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - OK, FIX_FAILED - error description
  */
-FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen);
+FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen, FIXError** error);
 
 #ifdef __cplusplus
 }

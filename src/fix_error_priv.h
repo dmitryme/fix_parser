@@ -17,7 +17,7 @@ extern "C"
 {
 #endif
 
-#define ERROR_TXT_SIZE 192 ///< maximum error description size
+#define ERROR_TXT_SIZE 96 ///< maximum error description size
 
 /**
  * hold error description
@@ -29,27 +29,21 @@ struct FIXError_
 };
 
 /**
- * set error using variable arguments
- * @param[in] error - error, which is being set
+ * create error using variable arguments
  * @param[in] code - new error code
  * @param[in] text - error description pattern
  * @param[in] ap - arguments
+ * @return error description
  */
-void fix_error_set_va(FIXError* error, FIXErrCode code, char const* text, va_list ap);
+FIXError* fix_error_create_va(FIXErrCode code, char const* text, va_list ap);
 
 /**
- * set error using variable arguments
- * @param[in] error - error, which is being set
+ * create error using variable arguments
  * @param[in] code - new error code
  * @param[in] text - error description pattern
+ * @return error description
  */
-void fix_error_set(FIXError* error, FIXErrCode code, char const* text, ...);
-
-/**
- * reset error
- * @param[in] error - error, which is begin reset
- */
-void fix_error_reset(FIXError* error);
+FIXError* fix_error_create(FIXErrCode code, char const* text, ...);
 
 #ifdef __cplusplus
 }

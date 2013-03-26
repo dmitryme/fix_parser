@@ -11,7 +11,7 @@
 #include <string.h>
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-void* fix_msg_alloc(FIXMsg* msg, uint32_t size)
+void* fix_msg_alloc(FIXMsg* msg, uint32_t size, FIXError** error)
 {
    FIXPage* curr_page = msg->curr_page;
    if (sizeof(uint32_t) + curr_page->size - curr_page->offset >= size)
@@ -23,19 +23,19 @@ void* fix_msg_alloc(FIXMsg* msg, uint32_t size)
    }
    else
    {
-      FIXPage* new_page = fix_parser_alloc_page(msg->parser, size);
+      FIXPage* new_page = fix_parser_alloc_page(msg->parser, size, error);
       if (!new_page)
       {
          return NULL;
       }
       curr_page->next = new_page;
       msg->curr_page = new_page;
-      return fix_msg_alloc(msg, size);
+      return fix_msg_alloc(msg, size, error);
    }
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size)
+void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size, FIXError** error)
 {
    if (*(uint32_t*)((char const*)ptr - sizeof(uint32_t)) >= size)
    {
@@ -43,27 +43,27 @@ void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size)
    }
    else
    {
-      return fix_msg_alloc(msg, size);
+      return fix_msg_alloc(msg, size, error);
    }
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* fdescr, unsigned char const* data, uint32_t len)
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* fdescr, unsigned char const* data, uint32_t len, FIXError** error)
 {
    if (grp)
    {
-      return fix_field_set(msg, grp, fdescr, data, len);
+      return fix_field_set(msg, grp, fdescr, data, len, error);
    }
    else
    {
-      return fix_field_set(msg, msg->fields, fdescr, data, len);
+      return fix_field_set(msg, msg->fields, fdescr, data, len, error);
    }
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_msg_alloc_group(FIXMsg* msg)
+FIXGroup* fix_msg_alloc_group(FIXMsg* msg, FIXError** error)
 {
-   FIXGroup* grp = fix_parser_alloc_group(msg->parser);
+   FIXGroup* grp = fix_parser_alloc_group(msg->parser, error);
    if (grp)
    {
       grp->next = msg->used_groups;
@@ -104,7 +104,6 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
    {
       return NULL;
    }
-   fix_error_reset(&msg->parser->error);
    if (grp)
    {
       return fix_field_get(msg, grp, tag);
@@ -116,11 +115,11 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen)
+FIXErrCode int32_to_str(FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen, FIXError** error)
 {
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    int32_t res = fix_utils_i64toa(tag, *buff, *buffLen, 0);
@@ -128,7 +127,7 @@ FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char deli
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = '=';
@@ -136,7 +135,7 @@ FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char deli
    *buffLen -= 1;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    res = fix_utils_i64toa(val, *buff, (width == 0) ? *buffLen : width, padSym);
@@ -144,7 +143,7 @@ FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char deli
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = delimiter;
@@ -154,11 +153,11 @@ FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char deli
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen)
+FIXErrCode field_to_str(FIXField const* field, char delimiter, char** buff, uint32_t* buffLen, FIXError** error)
 {
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    int32_t res = fix_utils_i64toa(field->descr->type->tag, *buff, *buffLen, 0);
@@ -166,7 +165,7 @@ FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter
    *buffLen -= res;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = '=';
@@ -174,7 +173,7 @@ FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter
    *buffLen -= 1;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    uint32_t const len = (*buffLen > field->size) ? field->size : *buffLen;
@@ -183,7 +182,7 @@ FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter
    *buffLen -= len;
    if (UNLIKE(*buffLen == 0))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_SPACE, "Not enough buffer space.");
       return FIX_FAILED;
    }
    *(*buff) = delimiter;
@@ -193,9 +192,10 @@ FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc)
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter,
+      char** buff, uint32_t* buffLen, int32_t* crc, FIXError** error)
 {
-   FIXErrCode res = int32_to_str(msg->parser, field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen);
+   FIXErrCode res = int32_to_str(field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen, error);
    (*crc) += (FIX_SOH - delimiter);
    for(uint32_t i = 0; i < field->size && res != FIX_FAILED; ++i)
    {
@@ -206,21 +206,21 @@ FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDesc
          FIXField* child_field = fix_field_get(msg, group, child_fdescr->type->tag);
          if ((msg->parser->flags & PARSER_FLAG_CHECK_REQUIRED) && !child_field && (child_fdescr->flags & FIELD_FLAG_REQUIRED))
          {
-            fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' is required", child_fdescr->type->tag);
+            *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' is required", child_fdescr->type->tag);
             return FIX_FAILED;
          }
          else if (!child_field && i == 0)
          {
-            fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' must be first field in group", child_fdescr->type->tag);
+            *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' must be first field in group", child_fdescr->type->tag);
             return FIX_FAILED;
          }
          else if (child_field && child_field->descr->category == FIXFieldCategory_Group)
          {
-            res = fix_groups_to_string(msg, child_field, child_fdescr, delimiter, buff, buffLen, crc);
+            res = fix_groups_to_string(msg, child_field, child_fdescr, delimiter, buff, buffLen, crc, error);
          }
          else if(child_field)
          {
-            res = field_to_str(msg->parser, child_field, delimiter, buff, buffLen);
+            res = field_to_str(child_field, delimiter, buff, buffLen, error);
             (*crc) += (FIX_SOH - delimiter);
          }
       }

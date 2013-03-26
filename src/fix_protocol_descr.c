@@ -9,6 +9,7 @@
 #include "fix_types.h"
 #include "fix_parser_priv.h"
 #include "fix_descr_xsd.h"
+#include "fix_error_priv.h"
 
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
@@ -25,19 +26,20 @@ static void xmlErrorHandler(void* ctx, char const* msg, ...)
 {
    va_list ap;
    va_start(ap, msg);
-   fix_error_set_va((FIXError*)ctx, FIX_ERROR_LIBXML, msg, ap);
+   FIXError** error = (FIXError**)ctx;
+   *error = fix_error_create_va(FIX_ERROR_LIBXML, msg, ap);
    va_end(ap);
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static int32_t initLibXml(FIXError* error)
+static int32_t initLibXml(FIXError** error)
 {
    xmlSetGenericErrorFunc(error, xmlErrorHandler);
    return 0;
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static FIXErrCode xml_validate(FIXError* error, xmlDoc* doc)
+static FIXErrCode xml_validate(xmlDoc* doc, FIXError** error)
 {
    xmlSchemaParserCtxtPtr pctx = xmlSchemaNewMemParserCtxt(fix_xsd, strlen(fix_xsd));
    xmlSchemaPtr schema = xmlSchemaParse(pctx);
@@ -139,7 +141,7 @@ static void free_message(FIXMsgDescr const* msg)
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root)
+static FIXErrCode load_field_types(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root, FIXError** error)
 {
    xmlNode const* field = get_first(get_first(root, "fields"), "field");
    while(field)
@@ -148,8 +150,7 @@ static FIXErrCode load_field_types(FIXError* error, FIXFieldType* (*ftypes)[FIEL
       {
          if (fix_protocol_get_field_type(ftypes, get_attr(field, "name", NULL)))
          {
-            fix_error_set(
-                  error, FIX_ERROR_FIELD_TYPE_EXISTS, "FIXFieldType '%s' already exists", (char const*)field->name);
+            *error = fix_error_create(FIX_ERROR_FIELD_TYPE_EXISTS, "FIXFieldType '%s' already exists", (char const*)field->name);
             return FIX_FAILED;
          }
          FIXFieldType* fld = (FIXFieldType*)calloc(1, sizeof(FIXFieldType));
@@ -222,8 +223,8 @@ static uint32_t count_msg_fields(xmlNode const* msg_node, xmlNode const* compone
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
 static FIXErrCode load_fields(
-      FIXError* error, FIXFieldDescr* fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* components,
-      FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
+      FIXFieldDescr* fields, uint32_t* count, xmlNode const* msg_node, xmlNode const* components,
+      FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], FIXError** error)
 {
    xmlNode const* field = msg_node->children;
    while(field)
@@ -237,7 +238,7 @@ static FIXErrCode load_fields(
          fld->category = FIXFieldCategory_Value;
          if (!fld->type)
          {
-            fix_error_set(error, FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
+            *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
             return FIX_FAILED;
          }
          if (!strcmp(required, "Y"))
@@ -248,14 +249,14 @@ static FIXErrCode load_fields(
          {
             if ((*count) < 2)
             {
-               fix_error_set(error, FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
+               *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
                return FIX_FAILED;
             }
             // get previous field. It must be Length data type
             FIXFieldDescr* prevFld = &fields[(*count) - 2];
             if (prevFld->type->valueType != FIXFieldValueType_Length)
             {
-               fix_error_set(error, FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
+               *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Previous field for field '%s' shall have Length type.", name);
                return FIX_FAILED;
             }
             fld->dataLenField = prevFld;
@@ -272,7 +273,7 @@ static FIXErrCode load_fields(
                char const* name = get_attr(component, "name", NULL);
                if (!strcmp(component_name, name))
                {
-                  if (FIX_FAILED == load_fields(error, fields, count, component, components, ftypes))
+                  if (FIX_FAILED == load_fields(fields, count, component, components, ftypes, error))
                   {
                      return FIX_FAILED;
                   }
@@ -291,7 +292,7 @@ static FIXErrCode load_fields(
          fld->category = FIXFieldCategory_Group;
          if (!fld->type)
          {
-            fix_error_set(error, FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
+            *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "FIXFieldType '%s' is unknown", name);
             return FIX_FAILED;
          }
          if (!strcmp(required, "Y"))
@@ -302,7 +303,7 @@ static FIXErrCode load_fields(
          fld->group_count = count_msg_fields(field, components);
          fld->group = (FIXFieldDescr*)calloc(fld->group_count, sizeof(FIXFieldDescr));
          uint32_t count1 = 0;
-         if (FIX_FAILED == load_fields(error, fld->group, &count1, field, components, ftypes))
+         if (FIX_FAILED == load_fields(fld->group, &count1, field, components, ftypes, error))
          {
             return FIX_FAILED;
          }
@@ -329,8 +330,8 @@ static void build_index(FIXFieldDescr* fields, uint32_t field_count, FIXFieldDes
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNode const* root,
-      FIXFieldType* (*ftypes)[FIELD_TYPE_CNT])
+static FIXMsgDescr* load_message(xmlNode const* msg_node, xmlNode const* root,
+      FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], FIXError** error)
 {
    FIXMsgDescr* msg = (FIXMsgDescr*)calloc(1, sizeof(FIXMsgDescr));
    msg->name = _strdup(get_attr(msg_node, "name", NULL));
@@ -338,7 +339,7 @@ static FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNo
    msg->field_count = count_msg_fields(msg_node, get_first(root, "components"));
    msg->fields = (FIXFieldDescr*)calloc(msg->field_count, sizeof(FIXFieldDescr));
    uint32_t count = 0;
-   if (FIX_FAILED == load_fields(error, msg->fields, &count, msg_node, get_first(root, "components"), ftypes))
+   if (FIX_FAILED == load_fields(msg->fields, &count, msg_node, get_first(root, "components"), ftypes, error))
    {
       return NULL;
    }
@@ -349,14 +350,15 @@ static FIXMsgDescr* load_message(FIXError* error, xmlNode const* msg_node, xmlNo
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static int32_t load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root)
+static int32_t load_messages(FIXProtocolDescr* prot, FIXFieldType* (*ftypes)[FIELD_TYPE_CNT], xmlNode const* root,
+      FIXError** error)
 {
    xmlNode* msg_node = get_first(get_first(root, "messages"), "message");
    while(msg_node)
    {
       if (msg_node->type == XML_ELEMENT_NODE && !strcmp((char const*)msg_node->name, "message"))
       {
-         FIXMsgDescr* msg = load_message(error, msg_node, root, ftypes);
+         FIXMsgDescr* msg = load_message(msg_node, root, ftypes, error);
          if (!msg)
          {
             return FIX_FAILED;
@@ -371,7 +373,7 @@ static int32_t load_messages(FIXError* error, FIXProtocolDescr* prot, FIXFieldTy
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, xmlNode* parentRoot, char const* parentFile)
+static int32_t load_transport_protocol(FIXProtocolDescr* prot, xmlNode* parentRoot, char const* parentFile, FIXError** error)
 {
    int32_t res = FIX_SUCCESS;
    xmlDoc* doc = NULL;
@@ -389,10 +391,10 @@ static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, 
    doc = xmlParseFile(path);
    if (!doc)
    {
-      fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      *error = fix_error_create(FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
       goto err;
    }
-   if (xml_validate(error, doc) == FIX_FAILED)
+   if (xml_validate(doc, error) == FIX_FAILED)
    {
       goto err;
    }
@@ -404,14 +406,14 @@ static int32_t load_transport_protocol(FIXError* error, FIXProtocolDescr* prot, 
    }
    if (!root)
    {
-      fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      *error = fix_error_create(FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
       goto err;
    }
-   if (load_field_types(error, &prot->transport_field_types, root) == FIX_FAILED)
+   if (load_field_types(&prot->transport_field_types, root, error) == FIX_FAILED)
    {
       goto err;
    }
-   if (load_messages(error, prot, &prot->transport_field_types, root) == FIX_FAILED)
+   if (load_messages(prot, &prot->transport_field_types, root, error) == FIX_FAILED)
    {
       goto err;
    }
@@ -429,37 +431,37 @@ ok:
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXProtocolDescr const* fix_protocol_descr_create(FIXError* error, char const* file)
+FIXProtocolDescr const* fix_protocol_descr_create(char const* file, FIXError** error)
 {
    FIXProtocolDescr* prot = NULL;
    initLibXml(error);
    xmlDoc* doc = xmlParseFile(file);
    if (!doc)
    {
-      fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      *error = fix_error_create(FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
       goto err;
    }
-   if (xml_validate(error, doc) == FIX_FAILED)
+   if (xml_validate(doc, error) == FIX_FAILED)
    {
       goto err;
    }
    xmlNode* root = xmlDocGetRootElement(doc);
    if (!root)
    {
-      fix_error_set(error, FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
+      *error = fix_error_create(FIX_ERROR_PROTOCOL_XML_LOAD_FAILED, xmlGetLastError()->message);
       goto err;
    }
    prot = (FIXProtocolDescr*)calloc(1, sizeof(FIXProtocolDescr));
    prot->version = _strdup(get_attr(root, "version", NULL));
-   if (prot && load_transport_protocol(error, prot, root, file) == FIX_FAILED)
+   if (prot && load_transport_protocol(prot, root, file, error) == FIX_FAILED)
    {
       goto err;
    }
-   else if (load_field_types(error, &prot->field_types, root) == FIX_FAILED)
+   else if (load_field_types(&prot->field_types, root, error) == FIX_FAILED)
    {
       goto err;
    }
-   else if (load_messages(error, prot, &prot->field_types, root) == FIX_FAILED)
+   else if (load_messages(prot, &prot->field_types, root, error) == FIX_FAILED)
    {
       goto err;
    }
@@ -528,7 +530,7 @@ FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT
 }
 
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type)
+FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type, FIXError** error)
 {
    int32_t idx = fix_utils_hash_string(type, strlen(type)) % MSG_CNT;
    FIXMsgDescr* msg = parser->protocol->messages[idx];
@@ -540,7 +542,7 @@ FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* typ
       }
       msg = msg->next;
    }
-   fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_MSG, "FIXMsgDescr with type '%s' not found", type);
+   *error = fix_error_create(FIX_ERROR_UNKNOWN_MSG, "FIXMsgDescr with type '%s' not found", type);
    return NULL;
 }
 
@@ -577,7 +579,7 @@ FIXFieldDescr const* fix_protocol_get_group_descr(FIXFieldDescr const* field, FI
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag)
+FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag, FIXError** error)
 {
    FIXFieldDescr const* fdescr = NULL;
    if (group)
@@ -585,7 +587,7 @@ FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, 
       fdescr = fix_protocol_get_group_descr(group->parent_fdescr, tag);
       if (!fdescr)
       {
-         fix_error_set(&msg->parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s' description.",
+         *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in group '%s' description.",
                tag, group->parent_fdescr->type->name);
       }
    }
@@ -594,7 +596,7 @@ FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, 
       fdescr = fix_protocol_get_field_descr(msg->descr, tag);
       if (!fdescr)
       {
-         fix_error_set(&msg->parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
+         *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
                tag, msg->descr->name);
       }
    }

@@ -19,22 +19,19 @@ static void fix_group_free(FIXMsg* msg, FIXGroup* group);
 /*-----------------------------------------------------------------------------------------------------------------------*/
 /* PUBLICS                                                                                                               */
 /*-----------------------------------------------------------------------------------------------------------------------*/
-FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len)
+FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len,
+      FIXError** error)
 {
    FIXField* field = fix_field_get(msg, grp, descr->type->tag);
-   if (!field && fix_parser_get_error_code(msg->parser))
-   {
-      return NULL;
-   }
    if (field && field->descr->category == FIXFieldCategory_Group)
    {
-      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
+      *error = fix_error_create(FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
       return NULL;
    }
    int32_t idx = descr->type->tag % GROUP_SIZE;
    if (!field)
    {
-      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField));
+      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField), error);
       if (!field)
       {
          return NULL;
@@ -44,13 +41,13 @@ FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
       field->next = group->fields[idx];
       group->fields[idx] = field;
       field->size = len;
-      field->data = (char*)fix_msg_alloc(msg, len);
+      field->data = (char*)fix_msg_alloc(msg, len, error);
       field->body_len = 0;
    }
    else
    {
       field->size = len;
-      field->data = (char*)fix_msg_realloc(msg, field->data, len);
+      field->data = (char*)fix_msg_realloc(msg, field->data, len, error);
       msg->body_len -= field->body_len;
    }
    if (!field->data)
@@ -85,7 +82,7 @@ FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
+FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, FIXError** error)
 {
    uint32_t const idx = tag % GROUP_SIZE;
    FIXGroup* group = grp ? grp : msg->fields;
@@ -108,28 +105,28 @@ FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag)
       prev = field;
       field = field->next;
    }
-   fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_NOT_FOUND, "FIXField not found");
+   *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "FIXField not found");
    return FIX_FAILED;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, FIXField** fld)
+FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, FIXField** fld, FIXError** error)
 {
    FIXField* field = fix_field_get(msg, grp, descr->type->tag);
    FIXGroup* group = grp ? grp : msg->fields;
    if (field && field->descr->category != FIXFieldCategory_Group)
    {
-      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
+      *error = fix_error_create(FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
       return NULL;
    }
    if (!field)
    {
       uint32_t const idx = descr->type->tag % GROUP_SIZE;
-      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField));
+      field = (FIXField*)fix_msg_alloc(msg, sizeof(FIXField), error);
       field->descr = descr;
       field->next = group->fields[idx];
       group->fields[idx] = field;
-      field->data = (char*)fix_msg_alloc(msg, sizeof(FIXGroups));
+      field->data = (char*)fix_msg_alloc(msg, sizeof(FIXGroups), error);
       if (!field->data)
       {
          return NULL;
@@ -137,7 +134,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
       FIXGroups* grps = (FIXGroups*)field->data;
       field->size = 1;
       field->body_len = 0;
-      grps->group[0] = fix_msg_alloc_group(msg);
+      grps->group[0] = fix_msg_alloc_group(msg, error);
       if (!grps->group[0])
       {
          return NULL;
@@ -146,9 +143,9 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
    else
    {
       FIXGroups* grps = (FIXGroups*)field->data;
-      FIXGroups* new_grps = (FIXGroups*)fix_msg_realloc(msg, field->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * (field->size + 1));
+      FIXGroups* new_grps = (FIXGroups*)fix_msg_realloc(msg, field->data, sizeof(FIXGroups) + sizeof(FIXGroup*) * (field->size + 1), error);
       memcpy(new_grps->group, grps->group, sizeof(FIXGroup*) * (field->size));
-      new_grps->group[field->size] = fix_msg_alloc_group(msg);
+      new_grps->group[field->size] = fix_msg_alloc_group(msg, error);
       if (!new_grps->group[field->size])
       {
          return NULL;
@@ -171,7 +168,7 @@ FIXGroup* fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, 
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
+FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx, FIXError** error)
 {
    int32_t const idx = tag % GROUP_SIZE;
    FIXGroup* group = (grp ? grp : msg->fields);
@@ -182,13 +179,13 @@ FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpI
       {
          if (it->descr->category != FIXFieldCategory_Group)
          {
-            fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
+            *error = fix_error_create(FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
             return NULL;
          }
          FIXGroups* grps = (FIXGroups*)it->data;
          if (grpIdx >= it->size)
          {
-            fix_error_set(&msg->parser->error, FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
+            *error = fix_error_create(FIX_ERROR_GROUP_WRONG_INDEX, "Wrong index");
             return NULL;
          }
          return grps->group[grpIdx];
@@ -202,7 +199,7 @@ FIXGroup* fix_group_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpI
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx)
+FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grpIdx, FIXError** error)
 {
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
@@ -211,7 +208,7 @@ FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grp
    }
    if (field->descr->category != FIXFieldCategory_Group)
    {
-      fix_error_set(&msg->parser->error, FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
+      *error = fix_error_create(FIX_ERROR_FIELD_HAS_WRONG_TYPE, "FIXField has wrong type");
       return FIX_FAILED;
    }
    FIXGroups* grps = (FIXGroups*)field->data;
@@ -229,7 +226,7 @@ FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, uint32_t grp
    }
    if (!field->size) // all groups has been deleted, so tag will be deleted either
    {
-      return fix_field_del(msg, grp, tag);
+      return fix_field_del(msg, grp, tag, error);
    }
    else
    {

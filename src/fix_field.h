@@ -55,14 +55,15 @@ typedef struct FIXGroups_
 
 /**
  * set FIX field value
- * @param[in] msg   - FIX message
- * @param[in] grp   - FIX group, if FIX field is a part of FIX group, else must be NULL
- * @param[in] descr - FIX field description
- * @param[in] data  - FIX field value
- * @param[in] len   - value length
+ * @param[in] msg    - FIX message
+ * @param[in] grp    - FIX group, if FIX field is a part of FIX group, else must be NULL
+ * @param[in] descr  - FIX field description
+ * @param[in] data   - FIX field value
+ * @param[in] len    - value length
+ * @param[out] error - error description
  * @return pointer to changed FIX field, NULL in case of error
  */
-FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len);
+FIXField* fix_field_set(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, unsigned char const* data, uint32_t len, FIXError** error);
 
 /**
  * return FIX field by tag number
@@ -78,24 +79,25 @@ FIXField* fix_field_get(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
  * @param[in] msg - FIX message, with deleted FIX field
  * @param[in] grp - FIX group with deleted FIX field. Can be NULL
  * @param[in] tag - FIX field tag num
+ * @param[out] error - error description
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
+FIXErrCode fix_field_del(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, FIXError** error);
 
 /**
  * add new FIX group
  */
-FIXGroup*  fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, FIXField** fld);
+FIXGroup*  fix_group_add(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* descr, FIXField** fld, FIXError** error);
 
 /**
  * return FIX group bu zer-based index
  */
-FIXGroup*  fix_group_get(FIXMsg* msg, FIXGroup* tbl, FIXTagNum tag, uint32_t grpIdx);
+FIXGroup*  fix_group_get(FIXMsg* msg, FIXGroup* tbl, FIXTagNum tag, uint32_t grpIdx, FIXError** error);
 
 /**
  * remove FIX group
  */
-FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* tbl, FIXTagNum tag, uint32_t grpIdx);
+FIXErrCode fix_group_del(FIXMsg* msg, FIXGroup* tbl, FIXTagNum tag, uint32_t grpIdx, FIXError** error);
 
 #ifdef __cplusplus
 }
