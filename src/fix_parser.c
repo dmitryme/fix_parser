@@ -29,15 +29,14 @@ FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs
       memcpy(&myattrs, attrs, sizeof(myattrs));
    }
    FIXParser* parser = NULL;
-   FIXError* err = (FIXError*)calloc(1, sizeof(FIXError));
-   if (fix_parser_validate_attrs(err, &myattrs) == FIX_FAILED)
+   if (fix_parser_validate_attrs(&myattrs, error) == FIX_FAILED)
    {
       goto failed;
    }
    parser = (FIXParser*)calloc(1, sizeof(FIXParser));
    memcpy(&parser->attrs, &myattrs, sizeof(parser->attrs));
    parser->flags = flags;
-   parser->protocol = fix_protocol_descr_create(err, protFile);
+   parser->protocol = fix_protocol_descr_create(protFile, error);
    if (!parser->protocol)
    {
       goto failed;
@@ -57,10 +56,6 @@ FIX_PARSER_API FIXParser* fix_parser_create(char const* protFile, FIXParserAttrs
    }
    goto ok;
 failed:
-   if (error)
-   {
-      *error = err;
-   }
    if (parser)
    {
       free(parser);
@@ -115,59 +110,58 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       char const** targetCompID, uint32_t* targetCompIDLen,
       int64_t* msgSeqNum, FIXError** error)
 {
-   FIXError* err = (FIXError*)calloc(1, sizeof(FIXError));
    if (!error || !data || !beginString || !beginStringLen || !msgType || !msgTypeLen || !senderCompID ||
          !targetCompID || !senderCompIDLen || !targetCompIDLen || !msgSeqNum)
    {
-      fix_error_set(err, FIX_ERROR_INVALID_ARGUMENT, "One of arguments is NULL.");
+      *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "One of arguments is NULL.");
       goto failed;
    }
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, err);
+   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, error);
    if (tag == FIX_FAILED)
    {
       goto failed;
    }
    if (tag != FIXFieldTag_BeginString)
    {
-      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
       goto failed;
    }
    *beginString = dbegin;
    *beginStringLen = dend - dbegin;
-   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, err);
+   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, error);
    if (tag == FIX_FAILED)
    {
       goto failed;
    }
    if (tag != FIXFieldTag_BodyLength)
    {
-      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
       goto failed;
    }
    int64_t bodyLen;
    int32_t cnt;
    if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen, &cnt) > 0)
    {
-      fix_error_set(err, FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
+      *error = fix_error_create(FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
       goto failed;
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(err, FIX_ERROR_NO_MORE_DATA, "Body too short.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_DATA, "Body too short.");
       goto failed;
    }
    char const* bodyEnd = dend + bodyLen;
-   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, err);
+   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, error);
    if (tag == FIX_FAILED)
    {
       goto failed;
    }
    if (tag != FIXFieldTag_MsgType)
    {
-      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
       goto failed;
    }
    *msgType = dbegin;
@@ -177,7 +171,7 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
    *msgSeqNum = 0;
    while(dend != bodyEnd)
    {
-      tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, err);
+      tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, error);
       if (tag == FIX_FAILED)
       {
          goto failed;
@@ -196,7 +190,7 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       {
          if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) == FIX_FAILED)
          {
-            fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Wrong MsgSeqNum.");
+            *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Wrong MsgSeqNum.");
             goto failed;
          }
       }
@@ -207,66 +201,64 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
    }
    if (!(*senderCompID))
    {
-      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
       goto failed;
    }
    if (!(*targetCompID))
    {
-      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
       goto failed;
    }
    if (!(*msgSeqNum))
    {
-      fix_error_set(err, FIX_ERROR_WRONG_FIELD, "Unable to find MsgSeqNum field.");
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find MsgSeqNum field.");
       goto failed;
    }
 failed:
-   *error = err;
    return FIX_FAILED;
 ok:
    return FIX_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop)
+FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter,
+      char const** stop, FIXError** error)
 {
    if (!parser || !data)
    {
       return NULL;
    }
-   fix_error_reset(&parser->error);
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, &parser->error);
+   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, error);
    if (tag == FIX_FAILED)
    {
       return NULL;
    }
    if (tag != FIXFieldTag_BeginString)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
       return NULL;
    }
    if (strncmp(parser->protocol->transportVersion, dbegin, dend - dbegin))
    {
       char* actualVer = (char*)calloc(dend - dbegin + 1, 1);
       memcpy(actualVer, dbegin, dend - dbegin);
-      fix_error_set(
-            &parser->error,
+      *error = fix_error_create(
             FIX_ERROR_WRONG_PROTOCOL_VER,
             "Wrong protocol. Expected '%s', actual '%s'.", parser->protocol->transportVersion, actualVer);
       free(actualVer);
       return NULL;
    }
-   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, &parser->error);
+   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, error);
    if (tag == FIX_FAILED)
    {
       return NULL;
    }
    if (tag != FIXFieldTag_BodyLength)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
       return NULL;
    }
    int64_t bodyLen;
@@ -274,25 +266,25 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    int32_t err = fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen, &cnt);
    if (err > 0)
    {
-      fix_error_set(&parser->error, err, "BodyLength value not a number.");
+      *error = fix_error_create(err, "BodyLength value not a number.");
       return NULL;
    }
    if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
    {
-      fix_error_set(&parser->error, FIX_ERROR_NO_MORE_DATA, "Body too short.");
+      *error = fix_error_create(FIX_ERROR_NO_MORE_DATA, "Body too short.");
       *stop = data + len;
       return NULL;
    }
    char const* crcbeg = NULL;
    char const* bodyEnd = dend + bodyLen;
-   tag = fix_parser_parse_mandatory_field(bodyEnd + 1, len - (bodyEnd + 1 - data), delimiter, &crcbeg, stop, &parser->error);
+   tag = fix_parser_parse_mandatory_field(bodyEnd + 1, len - (bodyEnd + 1 - data), delimiter, &crcbeg, stop, error);
    if (tag == FIX_FAILED)
    {
       return NULL;
    }
    if (tag != FIXFieldTag_CheckSum)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
       return NULL;
    }
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
@@ -300,7 +292,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       int64_t check_sum = 0;
       if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum, &cnt) > 0)
       {
-         fix_error_set(&parser->error, FIX_ERROR_INVALID_ARGUMENT, "CheckSum value not a number.");
+         *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "CheckSum value not a number.");
          return NULL;
       }
       int64_t crc = 0;
@@ -311,51 +303,50 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       crc %= 256;
       if (crc != check_sum)
       {
-         fix_error_set(
-               &parser->error,
+         *error = fix_error_create(
                FIX_ERROR_INTEGRITY_CHECK, "CheckSum check failed. Expected '%d', actual '%d'.", check_sum, crc);
          return NULL;
       }
    }
-   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, &parser->error);
+   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, error);
    if (tag == FIX_FAILED)
    {
       return NULL;
    }
    if (tag != FIXFieldTag_MsgType)
    {
-      fix_error_set(&parser->error, FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
       return NULL;
    }
    char* msgType = (char*)calloc(dend - dbegin + 1, 1);
    memcpy(msgType, dbegin, dend - dbegin);
-   FIXMsg* msg = fix_msg_create(parser, msgType);
+   FIXMsg* msg = fix_msg_create(parser, msgType, error);
    free(msgType);
    if (!msg)
    {
       return NULL;
    }
-   if (fix_msg_set_int32(msg, NULL, FIXFieldTag_BodyLength, bodyLen) != FIX_SUCCESS)
+   if (fix_msg_set_int32(msg, NULL, FIXFieldTag_BodyLength, bodyLen, error) != FIX_SUCCESS)
    {
       goto error;
    }
    FIXFieldDescr const* fdescr  = fix_protocol_get_field_descr(msg->descr, FIXFieldTag_CheckSum);
    if (!fdescr)
    {
-      fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
+      *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "Field with tag %d not found in message '%s' description.",
             tag, msg->descr->name);
       goto error;
    }
    char crc[4] = {};
    memcpy(crc, crcbeg, *stop - crcbeg);
-   if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)crcbeg, *stop - crcbeg))
+   if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)crcbeg, *stop - crcbeg, error))
    {
       goto error;
    }
    while(dend != bodyEnd)
    {
       fdescr = NULL;
-      tag = fix_parser_parse_field(parser, msg, NULL, dend + 1, bodyEnd - dend, delimiter, &fdescr, &dbegin, &dend);
+      tag = fix_parser_parse_field(parser, msg, NULL, dend + 1, bodyEnd - dend, delimiter, &fdescr, &dbegin, &dend, error);
       if (tag == FIX_FAILED)
       {
          goto error;
@@ -364,14 +355,14 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       {
          if (parser->flags & PARSER_FLAG_CHECK_VALUE)
          {
-            if (fix_parser_check_value(&parser->error, fdescr, dbegin, dend, delimiter) == FIX_FAILED)
+            if (fix_parser_check_value(fdescr, dbegin, dend, delimiter, error) == FIX_FAILED)
             {
                goto error;
             }
          }
          if (fdescr->category == FIXFieldCategory_Value)
          {
-            if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin))
+            if (!fix_field_set(msg, NULL, fdescr, (unsigned char*)dbegin, dend - dbegin, error))
             {
                goto error;
             }
@@ -382,10 +373,10 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
             FIXErrCode err = fix_utils_atoi64(dbegin, dend - dbegin + 1, delimiter, &numGroups, &cnt);
             if (err > 0)
             {
-               fix_error_set(&parser->error, err, "Unable to get group tag %d value.", tag);
+               *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
                goto  error;
             }
-            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend, delimiter, &dend))
+            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend, delimiter, &dend, error))
             {
                goto error;
             }
@@ -399,7 +390,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          FIXFieldDescr* fdescr = &msg->descr->fields[i];
          if (fdescr->flags & FIELD_FLAG_REQUIRED && !fix_field_get(msg, NULL, fdescr->type->tag))
          {
-            fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Required field '%s' not found.", fdescr->type->name);
+            *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "Required field '%s' not found.", fdescr->type->name);
             goto error;
          }
       }
@@ -412,16 +403,4 @@ error:
       msg = NULL;
    }
    return msg;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_parser_get_error_code(FIXParser* parser)
-{
-   return parser->error.code;
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API char const* fix_parser_get_error_text(FIXParser* parser)
-{
-   return parser->error.text;
 }
