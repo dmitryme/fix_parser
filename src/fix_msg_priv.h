@@ -39,24 +39,26 @@ struct FIXMsg_
  * allocate data for this message
  * @param[in] msg - pointer to message
  * @param[in] size - size of data being allocated
- * @return pointer to allocated space
+ * @param[out] error - error description
+ * @return pointer to allocated space, NULL - see error description
  */
-void* fix_msg_alloc(FIXMsg* msg, uint32_t size);
+void* fix_msg_alloc(FIXMsg* msg, uint32_t size, FIXError** error);
 
 /**
  * realloc previous allocated space
  * @param[in] msg - msg with allocated space
  * @param[in] ptr - pointer to data previously allocated
  * @param[in] size - new size of allocated space. If new size greater, new space will be allocated, else no new space allocated
- * @return pointer to reallocated space
+ * @param[out] error - error description
+ * @return pointer to reallocated space, NULL - see error description
  */
-void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size);
+void* fix_msg_realloc(FIXMsg* msg, void* ptr, uint32_t size, FIXError** error);
 
 /**
  * return FIX field by tag num
  * @param[in] msg - FIX message with required FIX field
  * @param[in] grp - pointer to FIX group, if tag is a part of FIX groups, else must be NULL
- * @param[in] tag - FIX field tag num
+ * @param[in] tag - FIX field tag numeric
  * @return required FIX field or NULL in case of error
  */
 FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
@@ -68,15 +70,17 @@ FIXField* fix_msg_get_field(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag);
  * @param[in] fdescr - FIX field description
  * @param[in] data - new FIX field value
  * @param[in] len - length of data
+ * @param[out] error - error description
  */
-FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* fdescr, unsigned char const* data, uint32_t len);
+FIXField* fix_msg_set_field(FIXMsg* msg, FIXGroup* grp, FIXFieldDescr const* fdescr, unsigned char const* data, uint32_t len, FIXError** error);
 
 /**
  * create new FIX group
  * @param[in] msg - FIX message
+ * @param[out] error - error description
  * @return new FIX group
  */
-FIXGroup* fix_msg_alloc_group(FIXMsg* msg);
+FIXGroup* fix_msg_alloc_group(FIXMsg* msg, FIXError** error);
 
 /**
  * destroy FIX group
@@ -94,13 +98,13 @@ void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
  * @param[out] buff - space with converted data
  * @param[out] buffLen - size of converted data
  * @param[out] crc - ajustment of crc. Can be differ from 0, if delimiter is not a FIX_SOH
- * @return FIX_SUCCESS - ok, FIX_FAILED - error
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - ok, FIX_FAILED - see error description
  */
-FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc);
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc, FIXError** error);
 
 /**
  * convert numeric value to string
- * @param[in] parser - FIX parser
  * @param[in] tag - FIX field tag value
  * @param[in] val - converted value
  * @param[in] delimiter - FIX field delimiter
@@ -108,20 +112,21 @@ FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDesc
  * @param[in] padSym - char for padding value width. E.g. tag = 35, width = 5, padSym = '0' and value is 10, so converted data is '35=00010'
  * @param[out] buff - buffer with converted data
  * @param[out] buffLen - size of converted data
- * @return FIX_SUCCESS - ok, FIX_FAILED - error
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - ok, FIX_FAILED - see error description
  */
-FIXErrCode int32_to_str(FIXParser* parser, FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen);
+FIXErrCode int32_to_str(FIXTagNum tag, int32_t val, char delimiter, uint32_t width, char padSym, char** buff, uint32_t* buffLen, FIXError** error);
 
 /**
  * convert FIX field to string
- * @param[in] parser - FIX parser
  * @param[in] field - FIX field being converted
  * @param[in] delimiter - FIX field SOH
  * @param[out] buff - buffer with converted data
  * @param[out] buffLen - size of converted data
- * @return FIX_SUCCESS - ok, FIX_FAILED - error
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - ok, FIX_FAILED - see error description
  */
-FIXErrCode field_to_str(FIXParser* parser, FIXField const* field, char delimiter, char** buff, uint32_t* buffLen);
+FIXErrCode field_to_str(FIXField const* field, char delimiter, char** buff, uint32_t* buffLen, FIXError** error);
 
 #ifdef __cplusplus
 }
