@@ -12,11 +12,11 @@
 #include <string.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize)
+FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize, FIXError** error)
 {
    if (parser->attrs.maxPages > 0 && parser->attrs.maxPages == parser->used_pages)
    {
-      fix_error_set(&parser->error,
+      *error = fix_error_create(
          FIX_ERROR_NO_MORE_PAGES, "No more pages available. MaxPages = %d, UsedPages = %d", parser->attrs.maxPages, parser->used_pages);
       return NULL;
    }
@@ -26,8 +26,7 @@ FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize)
       uint32_t psize = (parser->attrs.pageSize > pageSize ? parser->attrs.pageSize : pageSize);
       if (parser->attrs.maxPageSize > 0 && psize > parser->attrs.maxPageSize)
       {
-         fix_error_set(
-               &parser->error,
+         *error = fix_error_create(
                FIX_ERROR_TOO_BIG_PAGE, "Requested new page is too big. MaxPageSize = %d, RequestedPageSize = %d",
                parser->attrs.maxPageSize, psize);
          return NULL;
@@ -57,12 +56,11 @@ FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXGroup* fix_parser_alloc_group(FIXParser* parser)
+FIXGroup* fix_parser_alloc_group(FIXParser* parser, FIXError** error)
 {
    if (parser->attrs.maxGroups > 0 && parser->attrs.maxGroups == parser->used_groups)
    {
-      fix_error_set(&parser->error,
-         FIX_ERROR_NO_MORE_GROUPS,
+      *error = fix_error_create(FIX_ERROR_NO_MORE_GROUPS,
          "No more groups available. MaxGroups = %d, UsedGroups = %d", parser->attrs.maxGroups, parser->used_groups);
       return NULL;
    }
@@ -93,7 +91,7 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group)
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-int32_t fix_parser_validate_attrs(FIXError* error, FIXParserAttrs* attrs)
+int32_t fix_parser_validate_attrs(FIXParserAttrs* attrs, FIXError** error)
 {
    if (!attrs->pageSize)
    {
@@ -109,28 +107,29 @@ int32_t fix_parser_validate_attrs(FIXError* error, FIXParserAttrs* attrs)
    }
    if (attrs->maxPageSize > 0 && attrs->maxPageSize < attrs->pageSize)
    {
-      fix_error_set(error, FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
+      *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "ERROR: Parser attbutes are invalid: MaxPageSize < PageSize.");
       return FIX_FAILED;
    }
    if (attrs->maxPages > 0 && attrs->maxPages < attrs->numPages)
    {
-      fix_error_set(error, FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
+      *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxPages < NumPages.");
       return FIX_FAILED;
    }
    if (attrs->maxGroups > 0 && attrs->maxGroups < attrs->numGroups)
    {
-      fix_error_set(error, FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
+      *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "Parser attbutes are invalid: MaxGroups < NumGroups.");
       return FIX_FAILED;
    }
    return FIX_SUCCESS;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter)
+FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter,
+      FIXError** error)
 {
    if (!fix_protocol_check_field_value(fdescr, dbegin, dend - dbegin))
    {
-      fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+      *error = fix_error_create(FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
       return FIX_FAILED;
    }
    if (IS_INT_TYPE(fdescr->type->valueType))
@@ -139,7 +138,7 @@ FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, 
       int32_t cnt;
       if(FIX_FAILED == fix_utils_atoi64(dbegin, dend - dbegin, delimiter, &res, &cnt))
       {
-         fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+         *error = fix_error_create(FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
          return FIX_FAILED;
       }
    }
@@ -149,7 +148,7 @@ FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, 
       int32_t cnt;
       if (!fix_utils_atod(dbegin, dend - dbegin, delimiter, &res, &cnt))
       {
-         fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+         *error = fix_error_create(FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
          return FIX_FAILED;
       }
    }
@@ -157,7 +156,7 @@ FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, 
    {
       if (dend - dbegin != 1)
       {
-         fix_error_set(error, FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
+         *error = fix_error_create(FIX_ERROR_WRONG_FIELD_VALUE, "Wrong field '%s' value.", fdescr->type->name);
          return FIX_FAILED;
       }
    }
@@ -166,18 +165,16 @@ FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, 
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 static FIXErrCode fix_parser_parse_value(FIXMsg* msg, FIXGroup* group, FIXFieldDescr const* fdescr,
-      char const* dbegin, uint32_t len, char delimiter, char const** dend, FIXError* error)
+      char const* dbegin, uint32_t len, char delimiter, char const** dend, FIXError** error)
 {
    *dend = dbegin;
    if (msg && fdescr && fdescr->type->valueType == FIXFieldValueType_Data) // Data field
    {
       int32_t dataLength;
-      int32_t err = fix_msg_get_int32(msg, group, fdescr->dataLenField->type->tag, &dataLength);
+      int32_t err = fix_msg_get_int32(msg, group, fdescr->dataLenField->type->tag, &dataLength, error);
       if (err > 0)
       {
-         fix_error_set(
-               error, err,
-               "Unable to get length field '%d'.", fdescr->dataLenField->type->tag);
+         *error = fix_error_create(err, "Unable to get length field '%d'.", fdescr->dataLenField->type->tag);
          return FIX_FAILED;
       }
       *dend = dbegin + dataLength;
@@ -197,7 +194,7 @@ static FIXErrCode fix_parser_parse_value(FIXMsg* msg, FIXGroup* group, FIXFieldD
       }
       if (!len)
       {
-         fix_error_set(error, FIX_ERROR_NO_MORE_DATA, "Field value must be terminated with '%c' delimiter.", delimiter);
+         *error = fix_error_create(FIX_ERROR_NO_MORE_DATA, "Field value must be terminated with '%c' delimiter.", delimiter);
          return FIX_FAILED;
       }
    }
@@ -207,13 +204,13 @@ static FIXErrCode fix_parser_parse_value(FIXMsg* msg, FIXGroup* group, FIXFieldD
 /*------------------------------------------------------------------------------------------------------------------------*/
 static FIXTagNum fix_parser_parse_tag(
       FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, FIXTagNum* tag, FIXFieldDescr const** fdescr,
-      char const** dbegin, FIXError* error)
+      char const** dbegin, FIXError** error)
 {
    int32_t cnt;
    FIXErrCode res = fix_utils_atoi32(data, len, '=', tag, &cnt);
    if (res > 0)
    {
-      fix_error_set(error, res, "Unable to extract field number.");
+      *error = fix_error_create(res, "Unable to extract field number.");
       return FIX_FAILED;
    }
    *dbegin = data + cnt + 1;
@@ -227,7 +224,7 @@ static FIXTagNum fix_parser_parse_tag(
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXTagNum fix_parser_parse_mandatory_field(
-      char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend, FIXError* error)
+      char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend, FIXError** error)
 {
    FIXTagNum tag = 0;
    if(FIX_FAILED == fix_parser_parse_tag(NULL, NULL, data, len, &tag, NULL, dbegin, error))
@@ -244,10 +241,10 @@ FIXTagNum fix_parser_parse_mandatory_field(
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXTagNum fix_parser_parse_field(
       FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr const** fdescr,
-      char const** dbegin, char const** dend)
+      char const** dbegin, char const** dend, FIXError** error)
 {
    FIXTagNum tag = 0;
-   if (FIX_FAILED == fix_parser_parse_tag(msg, group, data, len, &tag, fdescr, dbegin, &parser->error))
+   if (FIX_FAILED == fix_parser_parse_tag(msg, group, data, len, &tag, fdescr, dbegin, error))
    {
       return FIX_FAILED;
    }
@@ -255,18 +252,18 @@ FIXTagNum fix_parser_parse_field(
    {
       if (parser->flags & PARSER_FLAG_CHECK_UNKNOWN_FIELDS)
       {
-         fix_error_set(&parser->error, FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in description.", tag);
+         *error = fix_error_create(FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in description.", tag);
          return FIX_FAILED;
       }
       else // just skip field value
       {
-         if (FIX_FAILED == fix_parser_parse_value(NULL, NULL, NULL, *dbegin, len - (*dbegin - data), delimiter, dend, &parser->error))
+         if (FIX_FAILED == fix_parser_parse_value(NULL, NULL, NULL, *dbegin, len - (*dbegin - data), delimiter, dend, error))
          {
             return FIX_FAILED;
          }
       }
    }
-   if (FIX_FAILED == fix_parser_parse_value(msg, group, *fdescr, *dbegin, len - (*dbegin - data), delimiter, dend, &parser->error))
+   if (FIX_FAILED == fix_parser_parse_value(msg, group, *fdescr, *dbegin, len - (*dbegin - data), delimiter, dend, error))
    {
       return FIX_FAILED;
    }
@@ -276,7 +273,7 @@ FIXTagNum fix_parser_parse_field(
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode fix_parser_parse_group(
       FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups, char const* data,
-      uint32_t len, char delimiter, char const** stop)
+      uint32_t len, char delimiter, char const** stop, FIXError** error)
 {
    FIXFieldDescr* first_req_field = &gdescr->group[0]; // first required field MUST be present in string
    FIXGroup* group = NULL;
@@ -287,7 +284,7 @@ FIXErrCode fix_parser_parse_group(
       FIXTagNum tag = 0;
       char const* dbegin = NULL;
       FIXFieldDescr const* fdescr = NULL;
-      if(FIX_FAILED == fix_parser_parse_tag(NULL, NULL, *stop + 1, len, &tag, NULL, &dbegin, &parser->error))
+      if(FIX_FAILED == fix_parser_parse_tag(NULL, NULL, *stop + 1, len, &tag, NULL, &dbegin, error))
       {
          return FIX_FAILED;
       }
@@ -302,7 +299,7 @@ FIXErrCode fix_parser_parse_group(
                {
                   if (!fix_field_get(msg, group, fdescr->type->tag))
                   {
-                     fix_error_set(&parser->error, FIX_ERROR_FIELD_NOT_FOUND,
+                     *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND,
                            "Required field '%s' not found in group '%s'.",
                            fdescr->type->name, group->parent_fdescr->type->name);
                      return FIX_FAILED;
@@ -310,7 +307,7 @@ FIXErrCode fix_parser_parse_group(
                }
             }
          }
-         group = fix_msg_add_group(msg, parentGroup, gdescr->type->tag);
+         group = fix_msg_add_group(msg, parentGroup, gdescr->type->tag, error);
          if (!group)
          {
             return FIX_FAILED;
@@ -329,27 +326,26 @@ FIXErrCode fix_parser_parse_group(
             }
             else
             {
-               fix_error_set(
-                     &parser->error,
+               *error = fix_error_create(
                      FIX_ERROR_UNKNOWN_FIELD, "Field '%d' not found in group '%s' description.", tag, gdescr->type->name);
                return FIX_FAILED;
             }
          }
       }
-      if (FIX_FAILED == fix_parser_parse_value(msg, group, fdescr, dbegin, len - (dbegin - data), delimiter, stop, &parser->error))
+      if (FIX_FAILED == fix_parser_parse_value(msg, group, fdescr, dbegin, len - (dbegin - data), delimiter, stop, error))
       {
          return FIX_FAILED;
       }
       if (parser->flags & PARSER_FLAG_CHECK_VALUE)
       {
-         if (fix_parser_check_value(&parser->error, fdescr, dbegin, *stop, delimiter) == FIX_FAILED)
+         if (fix_parser_check_value(fdescr, dbegin, *stop, delimiter, error) == FIX_FAILED)
          {
             return FIX_FAILED;
          }
       }
       if (fdescr->category == FIXFieldCategory_Value)
       {
-         if (!fix_field_set(msg, group, fdescr, (unsigned char*)dbegin, *stop - dbegin))
+         if (!fix_field_set(msg, group, fdescr, (unsigned char*)dbegin, *stop - dbegin, error))
          {
             return FIX_FAILED;
          }
@@ -361,10 +357,10 @@ FIXErrCode fix_parser_parse_group(
          FIXErrCode err = fix_utils_atoi32(dbegin, *stop - dbegin, delimiter, &numGroups, &cnt);
          if (err > 0)
          {
-            fix_error_set(&parser->error, err, "Unable to get group tag %d value.", tag);
+            *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
             return FIX_FAILED;
          }
-         err = fix_parser_parse_group(parser, msg, group, fdescr, numGroups, *stop, data + len - *stop, delimiter, stop);
+         err = fix_parser_parse_group(parser, msg, group, fdescr, numGroups, *stop, data + len - *stop, delimiter, stop, error);
          if (err == FIX_FAILED)
          {
             return FIX_FAILED;
