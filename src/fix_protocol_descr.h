@@ -88,10 +88,10 @@ typedef struct FIXProtocolDescr_
 
 /**
  * parse protocol xml file and create protocol description
- * @param[out] error - in case of parse error, this error is set
  * @param[in] file - protocol xml file
+ * @param[out] error - in case of parse error, this error is set
  */
-FIXProtocolDescr const* fix_protocol_descr_create(FIXError* error, char const* file);
+FIXProtocolDescr const* fix_protocol_descr_create(char const* file, FIXError** error);
 
 /**
  * destroy protocol description
@@ -111,9 +111,10 @@ FIXFieldType* fix_protocol_get_field_type(FIXFieldType* (*ftypes)[FIELD_TYPE_CNT
  * get FIX message description by type
  * @param[in] parser - only used for setting parser error
  * @param[in] type - FIX message type
- * @return FIX message description, NULL - error
+ * @param[out] error - error description
+ * @return FIX message description, NULL - see error description
  */
-FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type);
+FIXMsgDescr const* fix_protocol_get_msg_descr(FIXParser* parser, char const* type, FIXError** error);
 
 /**
  * get FIX field description by tag number
@@ -136,9 +137,10 @@ FIXFieldDescr const* fix_protocol_get_group_descr(FIXFieldDescr const* field, FI
  * @param[in] msg - message with description
  * @param[in] group - group with description, can be NULL
  * @param[in] tag - required FIX field tag number
- * @return FIX field description, NULL - error, not found
+ * @param[out] error - error description
+ * @return FIX field description, NULL - seee error description for details
  */
-FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag);
+FIXFieldDescr const* fix_protocol_get_descr(FIXMsg* msg, FIXGroup const* group, FIXTagNum tag, FIXError** error);
 
 /**
  * check field value
