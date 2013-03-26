@@ -26,7 +26,6 @@ extern "C"
 struct FIXParser_
 {
    FIXProtocolDescr const* protocol;   ///< FIX protocol
-   FIXError error;                     ///< own error
    FIXParserAttrs attrs;               ///< attributes
    int32_t  flags;                     ///< flags
    FIXPage* page;                      ///< list of allocated memory pages
@@ -39,9 +38,10 @@ struct FIXParser_
  * allocate new page by parser
  * @param[in] parser   - FIX parser
  * @param[in] pageSize - size of page
+ * @param[out] error - error description
  * @return allocated page, NULL - if allocated page exceeded parser attributes
  */
-FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize);
+FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize, FIXError** error);
 
 /**
  * free allocated page
@@ -54,9 +54,10 @@ FIXPage* fix_parser_free_page(FIXParser* parser, FIXPage* page);
 /**
  * allocate new FIX group
  * @param[in] parser - group allocator
+ * @param[out] error - error description
  * @return allocated group pr NULL if parser attributes are exceeded
  */
-FIXGroup* fix_parser_alloc_group(FIXParser* parser);
+FIXGroup* fix_parser_alloc_group(FIXParser* parser, FIXError** error);
 
 /**
  * free allocated group
@@ -73,11 +74,11 @@ FIXGroup* fix_parser_free_group(FIXParser* parser, FIXGroup* group);
  * @param[in] delimiter - FIX field SOH
  * @param[out] dbegin - points to begin of field value
  * @param[out] dend - points to end of field value
- * @param[out] error - error description, if any
+ * @param[out] error - error description
  * @return FIX field tag number or FIX_FAILED
  */
 FIXTagNum fix_parser_parse_mandatory_field(
-      char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend, FIXError* error);
+      char const* data, uint32_t len, char delimiter, char const** dbegin, char const** dend, FIXError** error);
 
 /**
  * parser string with FIX field
@@ -90,19 +91,20 @@ FIXTagNum fix_parser_parse_mandatory_field(
  * @param[out] fdescr - description of field
  * @param[out] dbegin - points to begin of field value
  * @param[out] dend - points to end of field value
+ * @param[out] error - error description
  * @return FIX field tag number or FIX_FAILED
  */
 FIXTagNum fix_parser_parse_field(
       FIXParser* parser, FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, char delimiter, FIXFieldDescr const** fdescr,
-      char const** dbegin, char const** dend);
+      char const** dbegin, char const** dend, FIXError** error);
 
 /**
  * validate parser attributes
- * @param[in] error - filled, if validation failed
  * @param[in] attrs - attributes to validate
+ * @param[out] error - error description
  * @return FIX_SUCCESS - ok, FIX_FAILED - invalid attributes, discover error for details
  */
-FIXErrCode fix_parser_validate_attrs(FIXError* error, FIXParserAttrs* attrs);
+FIXErrCode fix_parser_validate_attrs(FIXParserAttrs* attrs, FIXError** error);
 
 /**
  * extract field value from string
@@ -117,14 +119,14 @@ FIXErrCode fix_parser_get_value(char const* dbegin, uint32_t len, char delimiter
 
 /**
  * test field value
- * @param[in] error - error pointer to set, if any
  * @param[in] fdescr - FIX field description
  * @param[in] dbegin - begin of value to validate
  * @param[in] dend - end of value to validate
  * @param[in] delimiter - FIX field SOH
+ * @param[out] error - error description
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
-FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter);
+FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegin, char const* dend, char delimiter, FIXError** error);
 
 /**
  * parse string with group
@@ -135,10 +137,11 @@ FIXErrCode fix_parser_check_value(FIXError* error, FIXFieldDescr const* fdescr, 
  * @param[in] data - string to parser
  * @param[in] len - length of data
  * @param[out] stop - parse stop pointer
+ * @param[out] error - error description
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
 FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups,
-      char const* data, uint32_t len, char delimiter, char const** stop);
+      char const* data, uint32_t len, char delimiter, char const** stop, FIXError** error);
 
 #ifdef __cplusplus
 }

@@ -13,23 +13,31 @@
 
 TEST(FIXProtocolTests, FIXProtocolTest1)
 {
-   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, NULL);
+   FIXError* error = NULL;
+   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, &error);
    ASSERT_TRUE(p != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "8") != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "0") != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "1") != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "A") != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "D") != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "AE") != NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "8", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "0", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "1", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "A", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "D", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "AE", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
 
    ASSERT_STREQ("FIX.4.4", p->protocol->version);
    ASSERT_STREQ("FIX.4.4", p->protocol->transportVersion);
 
-   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "8");
+   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "8", &error);
    ASSERT_TRUE(msg != NULL);
    ASSERT_STREQ(msg->type, "8");
    ASSERT_STREQ(msg->name, "ExecutionReport");
    ASSERT_EQ(msg->field_count, 247U);
+   ASSERT_TRUE(error == NULL);
 
    FIXFieldDescr const* field = fix_protocol_get_field_descr(msg, FIXFieldTag_BeginString);
    ASSERT_TRUE(field != NULL);
@@ -103,14 +111,16 @@ TEST(FIXProtocolTests, FIXProtocolTest1)
 
 TEST(FIXProtocolTests, FIXProtocolTest2)
 {
-   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, NULL);
+   FIXError* error = NULL;
+   FIXParser* p = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, &error);
    ASSERT_TRUE(p != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "A") != NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "A", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
 
    ASSERT_STREQ("FIX.4.4", p->protocol->version);
    ASSERT_STREQ("FIX.4.4", p->protocol->transportVersion);
 
-   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "A");
+   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "A", &error);
    ASSERT_TRUE(msg != NULL);
    ASSERT_STREQ(msg->type, "A");
    ASSERT_STREQ(msg->name, "Logon");
@@ -133,16 +143,24 @@ TEST(FIXProtocolTests, FIXProtocolTest2)
 
 TEST(FIXProtocolTests, FIXProtocolTest3)
 {
-   FIXParser* p = fix_parser_create("./test_data/fix2.xml", NULL, PARSER_FLAG_CHECK_ALL, NULL);
+   FIXError* error = NULL;
+   FIXParser* p = fix_parser_create("./test_data/fix2.xml", NULL, PARSER_FLAG_CHECK_ALL, &error);
    ASSERT_TRUE(p != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "8") != NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "0") == NULL);
-   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "1") == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "8", &error) != NULL);
+   ASSERT_TRUE(error == NULL);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "0", &error) == NULL);
+   ASSERT_TRUE(error != NULL);
+   ASSERT_EQ(error->code, FIX_ERROR_UNKNOWN_MSG);
+   fix_error_free(error);
+   ASSERT_TRUE(fix_protocol_get_msg_descr(p, "1", &error) == NULL);
+   ASSERT_TRUE(error != NULL);
+   ASSERT_EQ(error->code, FIX_ERROR_UNKNOWN_MSG);
+   fix_error_free(error);
 
    ASSERT_STREQ("FIX2", p->protocol->version);
    ASSERT_STREQ("FIX2", p->protocol->transportVersion);
 
-   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "8");
+   FIXMsgDescr const* msg = fix_protocol_get_msg_descr(p, "8", &error);
    ASSERT_TRUE(msg != NULL);
    ASSERT_STREQ(msg->type, "8");
    ASSERT_STREQ(msg->name, "ExecutionReport");

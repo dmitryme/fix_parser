@@ -49,9 +49,10 @@ FIX_PARSER_API char const* fix_parser_get_protocol_ver(FIXParser* parser);
  * @param[in] len - length of parsed data
  * @param[in] delimiter - FIX SOH
  * @param[in] stop - pointer to position in data, where parsing is stopped
+ * @param[out] error - error descritption
  * @return new instance of parsed message
  */
-FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop);
+FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data, uint32_t len, char delimiter, char const** stop, FIXError** error);
 
 /**
  * pre-parse string and return pair SenderCompID and TargetCompID
@@ -67,7 +68,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
  * @param[out] targetCompID - pointer to TargetCompID data
  * @param[out] targetCompIDLen - length of  TargetCompID data
  * @param[out] msgSeqNum - message sequence number
- * @param[out] error - error description, if any. If error is returned it must be destroyed by free(error)
+ * @param[out] error - error description, if any. If error is returned it must be destroyed by fix_error_free(error)
  * @return FIX_SUCCESS - ok, FIX_FAILED - bad
  */
 FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, char delimiter,
@@ -76,20 +77,6 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       char const** senderCompID, uint32_t* senderCompIDLen,
       char const** targetCompID, uint32_t* targetCompIDLen,
       int64_t* msgSeqNum, FIXError** error);
-
-/**
- * get error code of failed operation
- * @param[in] parser - FIX parser instance
- * @return error code - see FIX_ERROR_* for possible error values
- */
-FIX_PARSER_API FIXErrCode fix_parser_get_error_code(FIXParser* parser);
-
-/**
- * get error description of failed operation
- * @param[in] parser - FIX parser instance
- * @return error description
- */
-FIX_PARSER_API char const* fix_parser_get_error_text(FIXParser* parser);
 
 #ifdef __cplusplus
 }

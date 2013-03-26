@@ -12,6 +12,15 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+//------------------------------------------------------------------------------------------------------------------------//
+FIX_PARSER_API void fix_error_free(FIXError* error)
+{
+   if (error)
+   {
+      free(error);
+   }
+}
+
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_error_get_code(FIXError* error)
 {

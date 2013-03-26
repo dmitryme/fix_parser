@@ -18,6 +18,12 @@ extern "C"
 #endif
 
 /**
+ * destroy error description
+ * @param[in] error - error description to destroy
+ */
+FIX_PARSER_API void fix_error_free(FIXError* error);
+
+/**
  * return error code during new parser instance creation
  * @param[in] error - pointer to memory with error description
  */

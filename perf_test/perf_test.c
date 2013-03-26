@@ -45,36 +45,38 @@ void create_msg(FIXParser* parser)
 
    for(int32_t i = 0; i < count; ++i)
    {
-      FIXMsg* msg = fix_msg_create(parser, "8");
+      FIXError* error = NULL;
+      FIXMsg* msg = fix_msg_create(parser, "8", &error);
       if (!msg)
       {
-         printf("ERROR: %s\n", fix_parser_get_error_text(parser));
+         printf("ERROR: %s\n", fix_error_get_text(error));
+         fix_error_free(error);
          return;
       }
 
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ"));
-      assert(FIX_SUCCESS == fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1"));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0'));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1'));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12"));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1'));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0'));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1'));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12"));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ", &error));
+      assert(FIX_SUCCESS == fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34, &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1", &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0', &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1', &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12", &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1', &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0', &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1', &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12", &error));
 
       fix_msg_free(msg);
    }
@@ -95,40 +97,42 @@ void msg_to_str(FIXParser* parser)
 
    for(int32_t i = 0; i < count; ++i)
    {
-      FIXMsg* msg = fix_msg_create(parser, "8");
+      FIXError* error = NULL;
+      FIXMsg* msg = fix_msg_create(parser, "8", &error);
       if (!msg)
       {
-         printf("ERROR: %s\n", fix_parser_get_error_text(parser));
+         printf("ERROR: %s\n", fix_error_get_text(error));
+         fix_error_free(error);
          return;
       }
 
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ"));
-      assert(FIX_SUCCESS == fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1"));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0'));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1'));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM"));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12"));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1'));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0'));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0));
-      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0));
-      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1'));
-      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12"));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetCompID, "ABCQWE_XYZ", &error));
+      assert(FIX_SUCCESS == fix_msg_set_int32(msg, NULL, FIXFieldTag_MsgSeqNum, 34, &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_TargetSubID, "srv-ivanov_ii1", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_SendingTime, "20120716-06:00:16.230", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_OrderID, "1", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ClOrdID, "CL_ORD_ID_1234567", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_ExecID, "FE_1_9494_1", &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_ExecType, '0', &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_OrdStatus, '1', &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Account, "ZUM", &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Symbol, "RTS-12.12", &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_Side, '1', &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_OrderQty, 25, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_Price, 135155.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_TimeInForce, '0', &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastQty, 0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LastPx, 0.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_LeavesQty, 25.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_CumQty, 0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_double(msg, NULL, FIXFieldTag_AvgPx, 0.0, &error));
+      assert(FIX_SUCCESS == fix_msg_set_char(msg, NULL, FIXFieldTag_HandlInst, '1', &error));
+      assert(FIX_SUCCESS == fix_msg_set_string(msg, NULL, FIXFieldTag_Text, "COMMENT12", &error));
 
       char buff[1024];
       uint32_t reqBuffLen = 0;
-      fix_msg_to_str(msg, '|', buff, sizeof(buff), &reqBuffLen);
+      fix_msg_to_str(msg, '|', buff, sizeof(buff), &reqBuffLen, &error);
 
       fix_msg_free(msg);
    }
@@ -155,8 +159,9 @@ void str_to_msg(FIXParser* parser)
 
    for(int32_t i = 0; i < count; ++i)
    {
+      FIXError* error = NULL;
       char const* stop = NULL;
-      msg = fix_parser_str_to_msg(parser, buff, len, '|', &stop);
+      msg = fix_parser_str_to_msg(parser, buff, len, '|', &stop, &error);
       assert(msg != NULL);
       fix_msg_free(msg);
    }
