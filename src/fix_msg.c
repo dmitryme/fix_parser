@@ -164,7 +164,8 @@ FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNu
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* val, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_set_string_len(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* val, uint32_t len,
+   FIXError** error)
 {
    if (!msg)
    {
@@ -180,8 +181,14 @@ FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
       *error = fix_error_create(FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag '%d' type is not compatible with value '%s'", tag, val);
       return FIX_FAILED;
    }
-   FIXField* field = fix_msg_set_field(msg, grp, fdescr, (unsigned char*)val, strlen(val), error);
+   FIXField* field = fix_msg_set_field(msg, grp, fdescr, (unsigned char*)val, len, error);
    return field != NULL ? FIX_SUCCESS : FIX_FAILED;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
+FIX_PARSER_API FIXErrCode fix_msg_set_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const* val, FIXError** error)
+{
+   return fix_msg_set_string_len(msg, grp, tag, val, strlen(val), error);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
