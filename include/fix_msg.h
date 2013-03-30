@@ -82,6 +82,19 @@ FIX_PARSER_API FIXErrCode fix_msg_del_group(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] msg - FIX message
  * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
  * @param[in] tagNum - field tag number
+ * @param[in] val - string value
+ * @param[in] len - string length
+ * @param[out] error - error description
+ * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ */
+FIX_PARSER_API FIXErrCode fix_msg_set_string_len(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const* val, uint32_t len,
+      FIXError** error);
+
+/**
+ * set tag with string value
+ * @param[in] msg - FIX message
+ * @param[in] grp - non NULL group, if tag is a part of group, else must be NULL
+ * @param[in] tagNum - field tag number
  * @param[in] val - string value (ends with zero)
  * @param[out] error - error description
  * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
