@@ -56,7 +56,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
 
 /**
  * pre-parse string and return pair SenderCompID and TargetCompID
- * @param[in] data - message to pre-parser
+ * @param[in] data - message for pre-parsing
  * @param[in] len  - length of pre-parsed data
  * @param[in] delimiter - FIX SOH
  * @param[out] beginString - pointer to BeginString data

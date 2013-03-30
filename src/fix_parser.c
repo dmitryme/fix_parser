@@ -110,12 +110,6 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       char const** targetCompID, uint32_t* targetCompIDLen,
       int64_t* msgSeqNum, FIXError** error)
 {
-   if (!error || !data || !beginString || !beginStringLen || !msgType || !msgTypeLen || !senderCompID ||
-         !targetCompID || !senderCompIDLen || !targetCompIDLen || !msgSeqNum)
-   {
-      *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "One of arguments is NULL.");
-      goto failed;
-   }
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
@@ -176,17 +170,17 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       {
          goto failed;
       }
-      if (tag == FIXFieldTag_SenderCompID)
+      if (tag == FIXFieldTag_SenderCompID && senderCompID)
       {
          *senderCompID = dbegin;
          *senderCompIDLen = dend - dbegin;
       }
-      else if (tag == FIXFieldTag_TargetCompID)
+      else if (tag == FIXFieldTag_TargetCompID && targetCompID)
       {
          *targetCompID = dbegin;
          *targetCompIDLen = dend - dbegin;
       }
-      else if (tag == FIXFieldTag_MsgSeqNum)
+      else if (tag == FIXFieldTag_MsgSeqNum && msgSeqNum)
       {
          if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) == FIX_FAILED)
          {
@@ -194,22 +188,25 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
             goto failed;
          }
       }
-      if (*msgType && *senderCompID && *targetCompID && *msgSeqNum)
+      if ((*msgType || !msgType) &&
+            (*senderCompID || !senderCompID) &&
+            (*targetCompID || !targetCompID) &&
+            (*msgSeqNum || !msgSeqNum))
       {
          goto ok;
       }
    }
-   if (!(*senderCompID))
+   if (senderCompID && !(*senderCompID))
    {
       *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
       goto failed;
    }
-   if (!(*targetCompID))
+   if (targetCompID && !(*targetCompID))
    {
       *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
       goto failed;
    }
-   if (!(*msgSeqNum))
+   if (msgSeqNum && !(*msgSeqNum))
    {
       *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find MsgSeqNum field.");
       goto failed;
