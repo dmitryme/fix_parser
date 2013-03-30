@@ -113,64 +113,24 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
    char const* dend = NULL;
-   tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, error);
-   if (tag == FIX_FAILED)
+   while(len)
    {
-      goto failed;
-   }
-   if (tag != FIXFieldTag_BeginString)
-   {
-      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "First field is '%d', but must be BeginString.", tag);
-      goto failed;
-   }
-   *beginString = dbegin;
-   *beginStringLen = dend - dbegin;
-   tag = fix_parser_parse_mandatory_field(dend + 1, len - (dend + 1 - data), delimiter, &dbegin, &dend, error);
-   if (tag == FIX_FAILED)
-   {
-      goto failed;
-   }
-   if (tag != FIXFieldTag_BodyLength)
-   {
-      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Second field is '%d', but must be BodyLength.", tag);
-      goto failed;
-   }
-   int64_t bodyLen;
-   int32_t cnt;
-   if (fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen, &cnt) > 0)
-   {
-      *error = fix_error_create(FIX_ERROR_PARSE_MSG, "BodyLength value not a number.");
-      goto failed;
-   }
-   if (bodyLen + CRC_FIELD_LEN > len - (dend - data))
-   {
-      *error = fix_error_create(FIX_ERROR_NO_MORE_DATA, "Body too short.");
-      goto failed;
-   }
-   char const* bodyEnd = dend + bodyLen;
-   tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, error);
-   if (tag == FIX_FAILED)
-   {
-      goto failed;
-   }
-   if (tag != FIXFieldTag_MsgType)
-   {
-      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be MsgType.", tag);
-      goto failed;
-   }
-   *msgType = dbegin;
-   *msgTypeLen = dend - dbegin;
-   *senderCompID = NULL;
-   *targetCompID = NULL;
-   *msgSeqNum = 0;
-   while(dend != bodyEnd)
-   {
-      tag = fix_parser_parse_mandatory_field(dend + 1, bodyEnd - dend, delimiter, &dbegin, &dend, error);
+      tag = fix_parser_parse_mandatory_field(data, len, delimiter, &dbegin, &dend, error);
       if (tag == FIX_FAILED)
       {
-         goto failed;
+         return FIX_FAILED;
       }
-      if (tag == FIXFieldTag_SenderCompID && senderCompID)
+      if (tag == FIXFieldTag_BeginString && beginString)
+      {
+         *beginString = dbegin;
+         *beginStringLen = dend - dbegin;
+      }
+      else if (tag == FIXFieldTag_MsgType && msgType)
+      {
+         *msgType = dbegin;
+         *msgTypeLen = dend - dbegin;
+      }
+      else if (tag == FIXFieldTag_SenderCompID && senderCompID)
       {
          *senderCompID = dbegin;
          *senderCompIDLen = dend - dbegin;
@@ -182,38 +142,24 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       }
       else if (tag == FIXFieldTag_MsgSeqNum && msgSeqNum)
       {
-         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) == FIX_FAILED)
+         int cnt = 0;
+         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) > 0)
          {
             *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Wrong MsgSeqNum.");
-            goto failed;
+            return FIX_FAILED;
          }
       }
-      if ((*msgType || !msgType) &&
-            (*senderCompID || !senderCompID) &&
-            (*targetCompID || !targetCompID) &&
-            (*msgSeqNum || !msgSeqNum))
+      if ((!beginString  || *beginString  ) &&
+          (!msgType      || *msgType      ) &&
+          (!senderCompID || *senderCompID ) &&
+          (!targetCompID || *targetCompID ) &&
+          (!msgSeqNum    || *msgSeqNum    ))
       {
-         goto ok;
+         return FIX_SUCCESS;
       }
+      len -= (dend - data + 1);
+      data = dend + 1;
    }
-   if (senderCompID && !(*senderCompID))
-   {
-      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find SenderCompID field.");
-      goto failed;
-   }
-   if (targetCompID && !(*targetCompID))
-   {
-      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find TargetCompID field.");
-      goto failed;
-   }
-   if (msgSeqNum && !(*msgSeqNum))
-   {
-      *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Unable to find MsgSeqNum field.");
-      goto failed;
-   }
-failed:
-   return FIX_FAILED;
-ok:
    return FIX_SUCCESS;
 }
 

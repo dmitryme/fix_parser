@@ -194,8 +194,6 @@ TEST(FixParserTests, ParseCheckSumTest)
 TEST(FixParserTests, GetHeaderTest)
 {
    FIXError* error = NULL;
-   char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
-                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
    char const* beginString = NULL;
    uint32_t beginStringLen = 0;
    char const* msgType = NULL;
@@ -205,73 +203,100 @@ TEST(FixParserTests, GetHeaderTest)
    char const* targetCompID = NULL;
    uint32_t targetCompIDLen = 0;
    int64_t msgSeqNum = 0;
-   FIXErrCode err = fix_parser_get_header(buff, strlen(buff), FIX_SOH,
-         &beginString, &beginStringLen, &msgType, &msgTypeLen, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error);
-   ASSERT_EQ(err, FIX_SUCCESS);
-   ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
-   ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
-   ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
-   ASSERT_EQ(msgSeqNum, 1);
    {
+      char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      FIXErrCode err = fix_parser_get_header(buff, strlen(buff), FIX_SOH,
+         &beginString, &beginStringLen, &msgType, &msgTypeLen, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error);
+      ASSERT_EQ(err, FIX_SUCCESS);
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+      ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+      ASSERT_EQ(msgSeqNum, 1);
+   }
+   {
+      beginString = msgType = senderCompID = targetCompID = NULL;
+      beginStringLen = msgTypeLen = senderCompIDLen = targetCompIDLen = msgSeqNum = 0;
       char buff[] = "9=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
                  "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
+      ASSERT_EQ(FIX_SUCCESS, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_STREQ(error->text, "First field is '9', but must be BeginString.");
-      fix_error_free(error);
+      ASSERT_EQ(beginString, (char*)NULL);
+      ASSERT_EQ(beginStringLen, 0);
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+      ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+      ASSERT_EQ(msgSeqNum, 1);
    }
    {
-      char buff[] = "8=FIX.4.4\00120=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
-                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
-               &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_STREQ(error->text, "Second field is '20', but must be BodyLength.");
-      fix_error_free(error);
-   }
-   {
-      char buff[] = "8=FIX.4.4\0019=A139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
-                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
-               &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_PARSE_MSG);
-      ASSERT_STREQ(error->text, "BodyLength value not a number.");
-      fix_error_free(error);
-   }
-   {
-      char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
-               &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_NO_MORE_DATA);
-      ASSERT_STREQ(error->text, "Body too short.");
-      fix_error_free(error);
-   }
-   {
+      beginString = msgType = senderCompID = targetCompID = NULL;
+      beginStringLen = msgTypeLen = senderCompIDLen = targetCompIDLen = msgSeqNum = 0;
       char buff[] = "8=FIX.4.4\0019=139\00136=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
                  "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
+      ASSERT_EQ(FIX_SUCCESS, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_STREQ(error->text, "Field is '36', but must be MsgType.");
-      fix_error_free(error);
+      ASSERT_TRUE(!strncmp("FIX.4.4", beginString, beginStringLen));
+      ASSERT_EQ(msgType, (char*)NULL);
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+      ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+      ASSERT_EQ(msgSeqNum, 1);
    }
    {
+      beginString = msgType = senderCompID = targetCompID = NULL;
+      beginStringLen = msgTypeLen = senderCompIDLen = targetCompIDLen = msgSeqNum = 0;
       char buff[] = "8=FIX.4.4\0019=113\00135=A\00156=crossing_engine\00134=1\00152=20130130-14:50:33.448\001"
                  "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
+      ASSERT_EQ(FIX_SUCCESS, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_STREQ(error->text, "Unable to find SenderCompID field.");
-      fix_error_free(error);
+      ASSERT_TRUE(!strncmp("FIX.4.4", beginString, beginStringLen));
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_EQ(senderCompID, (char*)NULL);
+      ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+      ASSERT_EQ(msgSeqNum, 1);
    }
    {
+      beginString = msgType = senderCompID = targetCompID = NULL;
+      beginStringLen = msgTypeLen = senderCompIDLen = targetCompIDLen = msgSeqNum = 0;
       char buff[] = "8=FIX.4.4\0019=120\00135=A\00149=dmelnikov1_test_robot1\00134=1\00152=20130130-14:50:33.448\001"
                  "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
-      ASSERT_EQ(FIX_FAILED, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
+      ASSERT_EQ(FIX_SUCCESS, fix_parser_get_header(buff, strlen(buff), FIX_SOH, &beginString, &beginStringLen, &msgType, &msgTypeLen,
                &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error));
-      ASSERT_EQ(error->code, FIX_ERROR_WRONG_FIELD);
-      ASSERT_STREQ(error->text, "Unable to find TargetCompID field.");
+      ASSERT_TRUE(!strncmp("FIX.4.4", beginString, beginStringLen));
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+      ASSERT_EQ(targetCompID, (char*)NULL);
+      ASSERT_EQ(msgSeqNum, 1);
+   }
+   {
+      beginString = msgType = senderCompID = targetCompID = NULL;
+      beginStringLen = msgTypeLen = senderCompIDLen = targetCompIDLen = msgSeqNum = 0;
+      char buff[] = "8=FIX.4.4\0019=134\00135=A\00149=dmelnikov1_test_robot1\00156=crossing_engine\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      FIXErrCode err = fix_parser_get_header(buff, strlen(buff), FIX_SOH,
+         &beginString, &beginStringLen, &msgType, &msgTypeLen, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error);
+      ASSERT_EQ(err, FIX_SUCCESS);
+      ASSERT_TRUE(!strncmp("FIX.4.4", beginString, beginStringLen));
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+      ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+      ASSERT_EQ(msgSeqNum, 0);
+   }
+   {
+      beginString = msgType = senderCompID = targetCompID = NULL;
+      beginStringLen = msgTypeLen = senderCompIDLen = targetCompIDLen = msgSeqNum = 0;
+      char buff[] = "8=FIX.4.4\0019=139\00135=A\00149=dmelnikov1_test_robot1\00134=A\00156=crossing_engine\00152=20130130-14:50:33.448\001"
+                 "98=0\001108=30\001141=Y\001553=dmelnikov\001554=xlltlib(1.0):dmelnikov\00110=196\001";
+      FIXErrCode err = fix_parser_get_header(buff, strlen(buff), FIX_SOH,
+         &beginString, &beginStringLen, &msgType, &msgTypeLen, &senderCompID, &senderCompIDLen, &targetCompID, &targetCompIDLen, &msgSeqNum, &error);
+      ASSERT_EQ(err, FIX_FAILED);
+      ASSERT_TRUE(!strncmp("FIX.4.4", beginString, beginStringLen));
+      ASSERT_TRUE(!strncmp("A", msgType, msgTypeLen));
+      ASSERT_TRUE(!strncmp("dmelnikov1_test_robot1", senderCompID, senderCompIDLen));
+      ASSERT_TRUE(!strncmp("crossing_engine", targetCompID, targetCompIDLen));
+      ASSERT_EQ(msgSeqNum, 0);
+      ASSERT_EQ(fix_error_get_code(error), FIX_ERROR_WRONG_FIELD);
+      ASSERT_STREQ(fix_error_get_text(error), "Wrong MsgSeqNum.");
       fix_error_free(error);
    }
 }
