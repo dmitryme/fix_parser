@@ -96,13 +96,37 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0d66d0b707cbf632c1233598ebb793dd"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error_8h.html#a0d66d0b707cbf632c1233598ebb793dd">fix_error_get_code</a> (<a class="el" href="structFIXError.html">FIXError</a> *error)</td></tr>
-<tr class="memitem:a9944d63b6f8d68601b3108914c2880a9"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error_8h.html#a9944d63b6f8d68601b3108914c2880a9">fix_error_get_text</a> (<a class="el" href="structFIXError.html">FIXError</a> *error)</td></tr>
+<tr class="memitem:ae28521595167b94c21cfc770cd1dd75f"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error_8h.html#ae28521595167b94c21cfc770cd1dd75f">fix_error_free</a> (<a class="el" href="structFIXError__.html">FIXError</a> *error)</td></tr>
+<tr class="memitem:a0d66d0b707cbf632c1233598ebb793dd"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error_8h.html#a0d66d0b707cbf632c1233598ebb793dd">fix_error_get_code</a> (<a class="el" href="structFIXError__.html">FIXError</a> *error)</td></tr>
+<tr class="memitem:a9944d63b6f8d68601b3108914c2880a9"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error_8h.html#a9944d63b6f8d68601b3108914c2880a9">fix_error_get_text</a> (<a class="el" href="structFIXError__.html">FIXError</a> *error)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on: 07/30/2012 10:54:30 AM </dd></dl>
 </div><h2>Function Documentation</h2>
+<a class="anchor" id="ae28521595167b94c21cfc770cd1dd75f"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIX_PARSER_API void fix_error_free </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> *&#160;</td>
+          <td class="paramname"><em>error</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>destroy error description </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">error</td><td>- error description to destroy </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="a0d66d0b707cbf632c1233598ebb793dd"></a>
 <div class="memitem">
 <div class="memproto">
@@ -110,7 +134,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_error_get_code </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> *&#160;</td>
           <td class="paramname"><em>error</em></td><td>)</td>
           <td></td>
         </tr>
@@ -133,7 +157,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">FIX_PARSER_API char const* fix_error_get_text </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> *&#160;</td>
           <td class="paramname"><em>error</em></td><td>)</td>
           <td></td>
         </tr>
@@ -152,7 +176,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:27 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

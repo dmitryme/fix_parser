@@ -100,30 +100,28 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;{</div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00020"></a><span class="lineno"><a class="code" href="fix__error__priv_8h.html#a1c134e2d62664a0aebbc4cffcdbdfeee">   20</a></span>&#160;<span class="preprocessor">#define ERROR_TXT_SIZE 192 </span></div>
+<div class="line"><a name="l00020"></a><span class="lineno"><a class="code" href="fix__error__priv_8h.html#a1c134e2d62664a0aebbc4cffcdbdfeee">   20</a></span>&#160;<span class="preprocessor">#define ERROR_TXT_SIZE 96 </span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="code" href="structFIXError.html">   25</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structFIXError.html">FIXError</a></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="code" href="structFIXError__.html">   25</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structFIXError__.html">FIXError_</a></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="code" href="structFIXError.html#a3fee5cc19c03c413426bf73b24fd81f4">   27</a></span>&#160;   <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="structFIXError.html#a3fee5cc19c03c413426bf73b24fd81f4" title="error code">code</a>;  </div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="code" href="structFIXError.html#a0353d70fe1add2ff18e301b20e8fd65a">   28</a></span>&#160;   <span class="keywordtype">char</span>       <a class="code" href="structFIXError.html#a0353d70fe1add2ff18e301b20e8fd65a" title="error description">text</a>[<a class="code" href="fix__error__priv_8h.html#a1c134e2d62664a0aebbc4cffcdbdfeee" title="maximum error description size">ERROR_TXT_SIZE</a>]; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;} <a class="code" href="fix__error__priv_8h.html#ab624d8c722ea0254364b7d1f35877971">FIXError</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="code" href="structFIXError__.html#afc620213d557f4231ea2b4a910130809">   27</a></span>&#160;   <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> <a class="code" href="structFIXError__.html#afc620213d557f4231ea2b4a910130809" title="error code">code</a>;  </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="code" href="structFIXError__.html#a672825a67a0eb297d44031ec45ee0b24">   28</a></span>&#160;   <span class="keywordtype">char</span>       <a class="code" href="structFIXError__.html#a672825a67a0eb297d44031ec45ee0b24" title="error description">text</a>[<a class="code" href="fix__error__priv_8h.html#a1c134e2d62664a0aebbc4cffcdbdfeee" title="maximum error description size">ERROR_TXT_SIZE</a>]; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;};</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keywordtype">void</span> <a class="code" href="fix__error__priv_8c.html#ae194139f4dafc4c730e7ccb15f0fd279">fix_error_set_va</a>(<a class="code" href="structFIXError.html">FIXError</a>* error, <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> code, <span class="keywordtype">char</span> <span class="keyword">const</span>* text, va_list ap);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<a class="code" href="structFIXError__.html">FIXError</a>* <a class="code" href="fix__error__priv_8c.html#af588a3f6bb09304600418976f31e61bb">fix_error_create_va</a>(<a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> code, <span class="keywordtype">char</span> <span class="keyword">const</span>* text, va_list ap);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keywordtype">void</span> <a class="code" href="fix__error__priv_8c.html#aa512eb0c882c309a4fb212cad8315f72">fix_error_set</a>(<a class="code" href="structFIXError.html">FIXError</a>* error, <a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> code, <span class="keywordtype">char</span> <span class="keyword">const</span>* text, ...);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<a class="code" href="structFIXError__.html">FIXError</a>* <a class="code" href="fix__error__priv_8c.html#a958026fb549245d32d80e0a1f57e3d8f">fix_error_create</a>(<a class="code" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63" title="error code">FIXErrCode</a> code, <span class="keywordtype">char</span> <span class="keyword">const</span>* text, ...);</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">void</span> <a class="code" href="fix__error__priv_8c.html#afa497c913afd83f4efcb5516abb7e72f">fix_error_reset</a>(<a class="code" href="structFIXError.html">FIXError</a>* error);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif // FIX_PARSER_FIX_ERROR_PRIV_H</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#endif // FIX_PARSER_FIX_ERROR_PRIV_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:27 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

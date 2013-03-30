@@ -93,6 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;<a class="el" href="fix__types_8h_source.html">fix_types.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="fix__parser__priv_8h_source.html">fix_parser_priv.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="fix__descr__xsd_8h_source.html">fix_descr_xsd.h</a>&quot;</code><br/>
+<code>#include &quot;<a class="el" href="fix__error__priv_8h_source.html">fix_error_priv.h</a>&quot;</code><br/>
 <code>#include &lt;libxml/parser.h&gt;</code><br/>
 <code>#include &lt;libxml/xmlschemas.h&gt;</code><br/>
 <code>#include &lt;libxml/tree.h&gt;</code><br/>
@@ -103,13 +104,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8c0595dccdc50fae655656f89335d9b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#a9f4d2431000810669af8976b264253cd">FIXProtocolDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a8c0595dccdc50fae655656f89335d9b5">fix_protocol_descr_create</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, char const *file)</td></tr>
+<tr class="memitem:a9adc3ad52b3f6888d623a9d1c427c8e7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#a9f4d2431000810669af8976b264253cd">FIXProtocolDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a9adc3ad52b3f6888d623a9d1c427c8e7">fix_protocol_descr_create</a> (char const *file, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
 <tr class="memitem:a5c16c85cc4c652a35f4f908efefe0c8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a5c16c85cc4c652a35f4f908efefe0c8f">fix_protocol_descr_free</a> (<a class="el" href="fix__protocol__descr_8h.html#a9f4d2431000810669af8976b264253cd">FIXProtocolDescr</a> const *prot)</td></tr>
 <tr class="memitem:a7b1469775af69d501e6e1a5bdc8c52f7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#adb3ae68cc20aa4d970b130668ef12f77">FIXFieldType</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a7b1469775af69d501e6e1a5bdc8c52f7">fix_protocol_get_field_type</a> (<a class="el" href="fix__protocol__descr_8h.html#adb3ae68cc20aa4d970b130668ef12f77">FIXFieldType</a> *(*ftypes)[FIELD_TYPE_CNT], char const *name)</td></tr>
-<tr class="memitem:a991f4e68e60736b11001b0a922f2f282"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#af9b235af15a7ea5bc82e943eb5a6b9cb">FIXMsgDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a991f4e68e60736b11001b0a922f2f282">fix_protocol_get_msg_descr</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *type)</td></tr>
-<tr class="memitem:a68a78d4e1d2aa7b864889cfa93dfe877"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a68a78d4e1d2aa7b864889cfa93dfe877">fix_protocol_get_field_descr</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__protocol__descr_8h.html#af9b235af15a7ea5bc82e943eb5a6b9cb">FIXMsgDescr</a> const *msg, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
-<tr class="memitem:a7b8064870ae4f8db91ee6c29d73f8db2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a7b8064870ae4f8db91ee6c29d73f8db2">fix_protocol_get_group_descr</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *field, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
-<tr class="memitem:a6133ce10f5c1000362a3a809dde062a9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a6133ce10f5c1000362a3a809dde062a9">fix_protocol_get_descr</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> const *group, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
+<tr class="memitem:a8da4b30ff95e2ec1013fb8391d81a6fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#af9b235af15a7ea5bc82e943eb5a6b9cb">FIXMsgDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a8da4b30ff95e2ec1013fb8391d81a6fa">fix_protocol_get_msg_descr</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *type, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a5611c47d26827f31b9c0b6a38b84672d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a5611c47d26827f31b9c0b6a38b84672d">fix_protocol_get_field_descr</a> (<a class="el" href="fix__protocol__descr_8h.html#af9b235af15a7ea5bc82e943eb5a6b9cb">FIXMsgDescr</a> const *msg, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
+<tr class="memitem:aa6944249ea48dba1fe6ac4a765e59055"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#aa6944249ea48dba1fe6ac4a765e59055">fix_protocol_get_group_descr</a> (<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *field, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
+<tr class="memitem:afabdd89d424cbf2da17c5d2f172d5a13"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#afabdd89d424cbf2da17c5d2f172d5a13">fix_protocol_get_descr</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> const *group, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
 <tr class="memitem:a6f84b4bb6c8ebc5c24ec35b54b83947f"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__protocol__descr_8c.html#a6f84b4bb6c8ebc5c24ec35b54b83947f">fix_protocol_check_field_value</a> (<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *fdescr, char const *value, uint32_t len)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
@@ -158,21 +159,21 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8c0595dccdc50fae655656f89335d9b5"></a>
+<a class="anchor" id="a9adc3ad52b3f6888d623a9d1c427c8e7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="fix__protocol__descr_8h.html#a9f4d2431000810669af8976b264253cd">FIXProtocolDescr</a> const* fix_protocol_descr_create </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
-          <td class="paramname"><em>error</em>, </td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>file</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>file</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -184,8 +185,8 @@ Functions</h2></td></tr>
 <p>parse protocol xml file and create protocol description </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- in case of parse error, this error is set </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">file</td><td>- protocol xml file </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- in case of parse error, this error is set </td></tr>
   </table>
   </dd>
 </dl>
@@ -215,7 +216,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6133ce10f5c1000362a3a809dde062a9"></a>
+<a class="anchor" id="afabdd89d424cbf2da17c5d2f172d5a13"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -235,7 +236,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td>
-          <td class="paramname"><em>tag</em>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -250,26 +257,21 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- message with description </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">group</td><td>- group with description, can be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tag</td><td>- required FIX field tag number </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX field description, NULL - error, not found </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX field description, NULL - seee error description for details </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a68a78d4e1d2aa7b864889cfa93dfe877"></a>
+<a class="anchor" id="a5611c47d26827f31b9c0b6a38b84672d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const* fix_protocol_get_field_descr </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
-          <td class="paramname"><em>error</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#af9b235af15a7ea5bc82e943eb5a6b9cb">FIXMsgDescr</a> const *&#160;</td>
           <td class="paramname"><em>msg</em>, </td>
         </tr>
@@ -289,7 +291,6 @@ Functions</h2></td></tr>
 <p>get FIX field description by tag number </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- return an error, if any </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- FIX message description </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tag</td><td>- FIX field tag </td></tr>
   </table>
@@ -334,19 +335,13 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7b8064870ae4f8db91ee6c29d73f8db2"></a>
+<a class="anchor" id="aa6944249ea48dba1fe6ac4a765e59055"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const* fix_protocol_get_group_descr </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
-          <td class="paramname"><em>error</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td>
           <td class="paramname"><em>field</em>, </td>
         </tr>
@@ -366,7 +361,6 @@ Functions</h2></td></tr>
 <p>get FIX field description from FIX group description </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- return error if any </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">field</td><td>- FIX field description (group) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tag</td><td>- required FIX field tag number </td></tr>
   </table>
@@ -376,7 +370,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a991f4e68e60736b11001b0a922f2f282"></a>
+<a class="anchor" id="a8da4b30ff95e2ec1013fb8391d81a6fa"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -390,7 +384,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>type</em>&#160;</td>
+          <td class="paramname"><em>type</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -404,17 +404,18 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- only used for setting parser error </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">type</td><td>- FIX message type </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX message description, NULL - error </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX message description, NULL - see error description </dd></dl>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:28 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

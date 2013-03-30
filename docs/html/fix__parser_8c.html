@@ -109,13 +109,11 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3581067845d10c2533bb67f04e748354"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a3581067845d10c2533bb67f04e748354">fix_parser_create</a> (char const *protFile, <a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> const *attrs, int32_t flags, <a class="el" href="structFIXError.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a3581067845d10c2533bb67f04e748354"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a3581067845d10c2533bb67f04e748354">fix_parser_create</a> (char const *protFile, <a class="el" href="structFIXParserAttrs.html">FIXParserAttrs</a> const *attrs, int32_t flags, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
 <tr class="memitem:acc19059cf6668376e28af45dafb61d50"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#acc19059cf6668376e28af45dafb61d50">fix_parser_free</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
 <tr class="memitem:ae5a5b285eac777bf1d994461ba3dc698"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#ae5a5b285eac777bf1d994461ba3dc698">fix_parser_get_protocol_ver</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
-<tr class="memitem:abb36b085113af133ffcb3723e389f54c"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#abb36b085113af133ffcb3723e389f54c">fix_parser_get_session_id</a> (char const *data, uint32_t len, char delimiter, char const **senderCompID, uint32_t *senderCompIDLen, char const **targetCompID, uint32_t *targetCompIDLen, <a class="el" href="structFIXError.html">FIXError</a> **error)</td></tr>
-<tr class="memitem:a7d62e18114535d16bbcbbc9492a381dc"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a7d62e18114535d16bbcbbc9492a381dc">fix_parser_str_to_msg</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *data, uint32_t len, char delimiter, char const **stop)</td></tr>
-<tr class="memitem:a88b2874470c88028d80763a6783b28b8"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a88b2874470c88028d80763a6783b28b8">fix_parser_get_error_code</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
-<tr class="memitem:adadb7a9835878ecba21fcf965f7129b1"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#adadb7a9835878ecba21fcf965f7129b1">fix_parser_get_error_text</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser)</td></tr>
+<tr class="memitem:a7cb4d4f95387a580aa178a152c8c063a"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a7cb4d4f95387a580aa178a152c8c063a">fix_parser_get_header</a> (char const *data, uint32_t len, char delimiter, char const **beginString, uint32_t *beginStringLen, char const **msgType, uint32_t *msgTypeLen, char const **senderCompID, uint32_t *senderCompIDLen, char const **targetCompID, uint32_t *targetCompIDLen, int64_t *msgSeqNum, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a95745624f69b6a6e78af986dfa0cdea4"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__parser_8c.html#a95745624f69b6a6e78af986dfa0cdea4">fix_parser_str_to_msg</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *data, uint32_t len, char delimiter, char const **stop, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
@@ -146,7 +144,7 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> **&#160;</td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
           <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
@@ -193,83 +191,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a88b2874470c88028d80763a6783b28b8"></a>
+<a class="anchor" id="a7cb4d4f95387a580aa178a152c8c063a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_parser_get_error_code </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
-          <td class="paramname"><em>parser</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>get error code of failed operation </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- FIX parser instance </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>error code - see FIX_ERROR_* for possible error values </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="adadb7a9835878ecba21fcf965f7129b1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">FIX_PARSER_API char const* fix_parser_get_error_text </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
-          <td class="paramname"><em>parser</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>get error description of failed operation </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- FIX parser instance </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>error description </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ae5a5b285eac777bf1d994461ba3dc698"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">FIX_PARSER_API char const* fix_parser_get_protocol_ver </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
-          <td class="paramname"><em>parser</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>return FIX protocol verision of the parser instance </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- pointer to parser instance return FIX protocol version, NULL - in case of error </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="abb36b085113af133ffcb3723e389f54c"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_parser_get_session_id </td>
+          <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_parser_get_header </td>
           <td>(</td>
           <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>data</em>, </td>
@@ -285,6 +212,30 @@ Functions</h2></td></tr>
           <td></td>
           <td class="paramtype">char&#160;</td>
           <td class="paramname"><em>delimiter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const **&#160;</td>
+          <td class="paramname"><em>beginString</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>beginStringLen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const **&#160;</td>
+          <td class="paramname"><em>msgType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>msgTypeLen</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -313,7 +264,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> **&#160;</td>
+          <td class="paramtype">int64_t *&#160;</td>
+          <td class="paramname"><em>msgSeqNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
           <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
@@ -329,11 +286,16 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>- message to pre-parser </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- length of pre-parsed data </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">delimiter</td><td>- FIX SOH </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">beginString</td><td>- pointer to BeginString data </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">beginStringLen</td><td>- length of BeginString data </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">msgType</td><td>- pointer to MsgType data </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">msgTypeLen</td><td>- length of MsgType data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">senderCompID</td><td>- pointer to SenderCompID data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">senderCompIDLen</td><td>- length of senderCompID data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">targetCompID</td><td>- pointer to TargetCompID data </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">targetCompIDLen</td><td>- length of TargetCompID data </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description, if any. If error is returned it must be destroyed by free(error) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">msgSeqNum</td><td>- message sequence number </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description, if any. If error is returned it must be destroyed by fix_error_free(error) </td></tr>
   </table>
   </dd>
 </dl>
@@ -341,7 +303,30 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a7d62e18114535d16bbcbbc9492a381dc"></a>
+<a class="anchor" id="ae5a5b285eac777bf1d994461ba3dc698"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIX_PARSER_API char const* fix_parser_get_protocol_ver </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXParser__.html">FIXParser</a> *&#160;</td>
+          <td class="paramname"><em>parser</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>return FIX protocol verision of the parser instance </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- pointer to parser instance return FIX protocol version, NULL - in case of error </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a95745624f69b6a6e78af986dfa0cdea4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -373,7 +358,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char const **&#160;</td>
-          <td class="paramname"><em>stop</em>&#160;</td>
+          <td class="paramname"><em>stop</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -390,6 +381,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- length of parsed data </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">delimiter</td><td>- FIX SOH </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">stop</td><td>- pointer to position in data, where parsing is stopped </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error descritption </td></tr>
   </table>
   </dd>
 </dl>
@@ -400,7 +392,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:28 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

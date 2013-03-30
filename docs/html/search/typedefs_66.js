@@ -1,7 +1,6 @@
 var searchData=
 [
   ['fixerrcode',['FIXErrCode',['../fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63',1,'fix_types.h']]],
-  ['fixerror',['FIXError',['../fix__error__priv_8h.html#ab624d8c722ea0254364b7d1f35877971',1,'fix_error_priv.h']]],
   ['fixfieldcategoryenum',['FIXFieldCategoryEnum',['../fix__types_8h.html#a4574caeb4808e813b6897e66127bbbc7',1,'fix_types.h']]],
   ['fixfielddescr',['FIXFieldDescr',['../fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b',1,'fix_protocol_descr.h']]],
   ['fixfieldtagenum',['FIXFieldTagEnum',['../fix__field__tag_8h.html#aaa08a0eb9ea494eb057c0a74ece4027b',1,'fix_field_tag.h']]],

@@ -105,20 +105,20 @@ Functions</h2></td></tr>
 <tr class="memitem:ad4ec727ddf47a526d9fc0b7b20dbbbee"><td class="memItemLeft" align="right" valign="top">int64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#ad4ec727ddf47a526d9fc0b7b20dbbbee">fix_utils_lpow10</a> (int32_t n)</td></tr>
 <tr class="memitem:a9927794b603005a98fbc87ff1b2f5b8a"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a9927794b603005a98fbc87ff1b2f5b8a">fix_utils_i64toa</a> (int64_t val, char *buff, uint32_t buffLen, char padSym)</td></tr>
 <tr class="memitem:aa02533854dd38ae33170843e5f83b01b"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#aa02533854dd38ae33170843e5f83b01b">fix_utils_dtoa</a> (double val, char *buff, uint32_t buffLen)</td></tr>
-<tr class="memitem:ae347fecfd86455a3a8d69067dc1c9587"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#ae347fecfd86455a3a8d69067dc1c9587">fix_utils_atoi32</a> (char const *buff, uint32_t buffLen, char stopChar, int32_t *val)</td></tr>
-<tr class="memitem:a9a4919ff990bf9b5c8314898906da751"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a9a4919ff990bf9b5c8314898906da751">fix_utils_atoi64</a> (char const *buff, uint32_t buffLen, char stopChar, int64_t *val)</td></tr>
-<tr class="memitem:af1b87ba9ee02c4c06bf5b32839583e46"><td class="memItemLeft" align="right" valign="top">int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#af1b87ba9ee02c4c06bf5b32839583e46">fix_utils_atod</a> (char const *buff, uint32_t buffLen, char stopChar, double *val)</td></tr>
+<tr class="memitem:af8c87cb550e8bdf177f4f4a5b287d348"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#af8c87cb550e8bdf177f4f4a5b287d348">fix_utils_atoi32</a> (char const *buff, uint32_t buffLen, char stopChar, int32_t *val, int32_t *cnt)</td></tr>
+<tr class="memitem:a7639150a084cc12542223cf07fb9e0f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a7639150a084cc12542223cf07fb9e0f4">fix_utils_atoi64</a> (char const *buff, uint32_t buffLen, char stopChar, int64_t *val, int32_t *cnt)</td></tr>
+<tr class="memitem:a70ce75f31955f6a151fc06803773a778"><td class="memItemLeft" align="right" valign="top"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__utils_8c.html#a70ce75f31955f6a151fc06803773a778">fix_utils_atod</a> (char const *buff, uint32_t buffLen, char stopChar, double *val, int32_t *cnt)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on: 08/02/2012 01:05:17 PM </dd></dl>
 </div><h2>Function Documentation</h2>
-<a class="anchor" id="af1b87ba9ee02c4c06bf5b32839583e46"></a>
+<a class="anchor" id="a70ce75f31955f6a151fc06803773a778"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int32_t fix_utils_atod </td>
+          <td class="memname"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_utils_atod </td>
           <td>(</td>
           <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>buff</em>, </td>
@@ -139,7 +139,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramname"><em>cnt</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -155,19 +161,20 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">buffLen</td><td>- length of buffer </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">stopChar</td><td>- stop parsing on this char. If stopChar == 0, processed till buffer end </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- converted value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">cnt</td><td>- how many characters processed </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>how many characters processed </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>possible parsing error, FIX_SUCCESS - if no error </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae347fecfd86455a3a8d69067dc1c9587"></a>
+<a class="anchor" id="af8c87cb550e8bdf177f4f4a5b287d348"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int32_t fix_utils_atoi32 </td>
+          <td class="memname"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_utils_atoi32 </td>
           <td>(</td>
           <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>buff</em>, </td>
@@ -188,7 +195,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int32_t *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramname"><em>cnt</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -204,19 +217,20 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">buffLen</td><td>- length of buffer </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">stopChar</td><td>- stop parsing on this char. If stopChar == 0, processed till buffer end </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- converted value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">cnt</td><td>- how many characters processed </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>how many characters processed </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>possible parsing error, FIX_SUCCESS - if no error </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a9a4919ff990bf9b5c8314898906da751"></a>
+<a class="anchor" id="a7639150a084cc12542223cf07fb9e0f4"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int32_t fix_utils_atoi64 </td>
+          <td class="memname"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_utils_atoi64 </td>
           <td>(</td>
           <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>buff</em>, </td>
@@ -237,7 +251,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int64_t *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *&#160;</td>
+          <td class="paramname"><em>cnt</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -253,10 +273,11 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">buffLen</td><td>- length of buffer </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">stopChar</td><td>- stop parsing on this char. If stopChar == 0, processed till buffer end </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- converted value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">cnt</td><td>- how many characters processed </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>how many characters processed </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>possible parsing error, FIX_SUCCESS - if no error </dd></dl>
 
 </div>
 </div>
@@ -430,7 +451,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:28 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

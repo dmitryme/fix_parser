@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['fixerror',['FIXError',['../structFIXError.html',1,'']]],
+  ['fixerror_5f',['FIXError_',['../structFIXError__.html',1,'']]],
   ['fixfield_5f',['FIXField_',['../structFIXField__.html',1,'']]],
   ['fixfielddescr_5f',['FIXFieldDescr_',['../structFIXFieldDescr__.html',1,'']]],
   ['fixfieldtype_5f',['FIXFieldType_',['../structFIXFieldType__.html',1,'']]],

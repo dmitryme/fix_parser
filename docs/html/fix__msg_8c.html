@@ -105,33 +105,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae2658ef8459766951b1ac671f757a8bf"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ae2658ef8459766951b1ac671f757a8bf">fix_msg_create</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *msgType)</td></tr>
+<tr class="memitem:a9cd5e39b177a0d14e319db35fccf84b2"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a9cd5e39b177a0d14e319db35fccf84b2">fix_msg_create</a> (<a class="el" href="structFIXParser__.html">FIXParser</a> *parser, char const *msgType, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
 <tr class="memitem:a5bfbb8f954ef5c8d1e4741c12a236131"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a5bfbb8f954ef5c8d1e4741c12a236131">fix_msg_free</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg)</td></tr>
 <tr class="memitem:ace8976bee20a15e114dc3397c53dd757"><td class="memItemLeft" align="right" valign="top">char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ace8976bee20a15e114dc3397c53dd757">fix_msg_get_type</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> const *msg)</td></tr>
 <tr class="memitem:afeac19f2fba64c46f30185a16fbbd1e4"><td class="memItemLeft" align="right" valign="top">char const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#afeac19f2fba64c46f30185a16fbbd1e4">fix_msg_get_name</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> const *msg)</td></tr>
-<tr class="memitem:a3710ca02342390e362194046eaca9ed8"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a3710ca02342390e362194046eaca9ed8">fix_msg_add_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
-<tr class="memitem:ab38f325e276e71dfd7ebcfd124a42907"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ab38f325e276e71dfd7ebcfd124a42907">fix_msg_get_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, uint32_t grpIdx)</td></tr>
-<tr class="memitem:ae7364b62d95189e9da6d218eca5e78c0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ae7364b62d95189e9da6d218eca5e78c0">fix_msg_del_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, uint32_t grpIdx)</td></tr>
-<tr class="memitem:a748e5fecd3a6b21bd05162d3c6167f8f"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a748e5fecd3a6b21bd05162d3c6167f8f">fix_msg_set_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const *val)</td></tr>
-<tr class="memitem:a6ec4dd4fa0a0ae593489eb76d3ffbba2"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a6ec4dd4fa0a0ae593489eb76d3ffbba2">fix_msg_set_int32</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int32_t val)</td></tr>
-<tr class="memitem:a473cf8e7c984524029b34e2d97e5d99c"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a473cf8e7c984524029b34e2d97e5d99c">fix_msg_set_int64</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int64_t val)</td></tr>
-<tr class="memitem:a37956c3e71a14a750ca11ce3c4500f56"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a37956c3e71a14a750ca11ce3c4500f56">fix_msg_set_char</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char val)</td></tr>
-<tr class="memitem:a8a3885f71fe1208b0c85472b3668a7fe"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a8a3885f71fe1208b0c85472b3668a7fe">fix_msg_set_double</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, double val)</td></tr>
-<tr class="memitem:a88ffcc58fb83d8b8c4a86683e9dce61f"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a88ffcc58fb83d8b8c4a86683e9dce61f">fix_msg_set_data</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const *data, uint32_t dataLen)</td></tr>
-<tr class="memitem:a64a9168c5099f4206e862c0205684f7a"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a64a9168c5099f4206e862c0205684f7a">fix_msg_get_int32</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int32_t *val)</td></tr>
-<tr class="memitem:a15932e20700fbb4b2f7a9ab13aa2da1a"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a15932e20700fbb4b2f7a9ab13aa2da1a">fix_msg_get_int64</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int64_t *val)</td></tr>
-<tr class="memitem:a6f8efed4f79c48cbce6839368b0f1703"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a6f8efed4f79c48cbce6839368b0f1703">fix_msg_get_double</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, double *val)</td></tr>
-<tr class="memitem:a701369b7472fd23485886a7d31139257"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a701369b7472fd23485886a7d31139257">fix_msg_get_char</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char *val)</td></tr>
-<tr class="memitem:a869041431c53a482f9b45853dfdc4105"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a869041431c53a482f9b45853dfdc4105">fix_msg_get_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const **val, uint32_t *len)</td></tr>
-<tr class="memitem:a9effd0725521fabfc6fb409c51ece65d"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a9effd0725521fabfc6fb409c51ece65d">fix_msg_get_data</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const **val, uint32_t *len)</td></tr>
-<tr class="memitem:ac53a7ddd95f780c18b8bf9558ff4d4c9"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ac53a7ddd95f780c18b8bf9558ff4d4c9">fix_msg_del_field</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag)</td></tr>
-<tr class="memitem:ae6714d081df1c5a316826ec3017236d0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ae6714d081df1c5a316826ec3017236d0">fix_msg_to_str</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, char delimiter, char *buff, uint32_t buffLen, uint32_t *reqBuffLen)</td></tr>
+<tr class="memitem:ae2f289d9363b95d1f9db11bda52b9c65"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#ae2f289d9363b95d1f9db11bda52b9c65">fix_msg_add_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a9608ae9bc5b0635913bca3d1f71679b5"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a9608ae9bc5b0635913bca3d1f71679b5">fix_msg_get_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, uint32_t grpIdx, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:aaa0fc1d01df9d48d8155420c877a14ff"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#aaa0fc1d01df9d48d8155420c877a14ff">fix_msg_del_group</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, uint32_t grpIdx, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a931f20673af078adafb816b2450cf43c"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a931f20673af078adafb816b2450cf43c">fix_msg_set_string_len</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const *val, uint32_t len, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a6bad6bfa705aea093338763eeff02c1b"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a6bad6bfa705aea093338763eeff02c1b">fix_msg_set_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const *val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a562b1c19007c70c52964a4cca62589ca"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a562b1c19007c70c52964a4cca62589ca">fix_msg_set_int32</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int32_t val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:afdcc022878d61f38f3a5d806c30428eb"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#afdcc022878d61f38f3a5d806c30428eb">fix_msg_set_int64</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int64_t val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:af33381966b634eb96ebbea61c81d54e0"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#af33381966b634eb96ebbea61c81d54e0">fix_msg_set_char</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a3261aa5f434e74cd93deff3c087f8a8a"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a3261aa5f434e74cd93deff3c087f8a8a">fix_msg_set_double</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, double val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:aef00bae01737d91568159e1dab360871"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#aef00bae01737d91568159e1dab360871">fix_msg_set_data</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const *data, uint32_t dataLen, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a92fdb74b1b348a6198a8a599088ef6b2"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a92fdb74b1b348a6198a8a599088ef6b2">fix_msg_get_int32</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int32_t *val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a837a898d61064200bf9dd79e24531634"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a837a898d61064200bf9dd79e24531634">fix_msg_get_int64</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, int64_t *val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:af3694207fd0f91c4d6ef5f0b523a8342"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#af3694207fd0f91c4d6ef5f0b523a8342">fix_msg_get_double</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, double *val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a1824768342e95f2f308781270b620d53"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a1824768342e95f2f308781270b620d53">fix_msg_get_char</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char *val, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a6a2b44bb224cc5f964c8189a536b3b5d"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a6a2b44bb224cc5f964c8189a536b3b5d">fix_msg_get_string</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const **val, uint32_t *len, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:a235ee4f4382621f6d1fb626004c6dae3"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#a235ee4f4382621f6d1fb626004c6dae3">fix_msg_get_data</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, char const **val, uint32_t *len, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:aac027255bd24cacc7f6be7a63f10d6b3"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#aac027255bd24cacc7f6be7a63f10d6b3">fix_msg_del_field</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, <a class="el" href="structFIXGroup__.html">FIXGroup</a> *grp, <a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a> tag, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
+<tr class="memitem:aca895e3d1bbffa6517ec766f0cf08275"><td class="memItemLeft" align="right" valign="top">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__msg_8c.html#aca895e3d1bbffa6517ec766f0cf08275">fix_msg_to_str</a> (<a class="el" href="structFIXMsg__.html">FIXMsg</a> *msg, char delimiter, char *buff, uint32_t buffLen, uint32_t *reqBuffLen, <a class="el" href="structFIXError__.html">FIXError</a> **error)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on: 07/30/2012 06:35:11 PM </dd></dl>
 </div><h2>Function Documentation</h2>
-<a class="anchor" id="a3710ca02342390e362194046eaca9ed8"></a>
+<a class="anchor" id="ae2f289d9363b95d1f9db11bda52b9c65"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -151,7 +152,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td>
-          <td class="paramname"><em>tagNum</em>&#160;</td>
+          <td class="paramname"><em>tagNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -166,6 +173,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- FIX message </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- parent group. Can be NULL if group added to message tag, or not null is new nested group should be created </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag in which new group will be added </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -173,7 +181,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae2658ef8459766951b1ac671f757a8bf"></a>
+<a class="anchor" id="a9cd5e39b177a0d14e319db35fccf84b2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -187,7 +195,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>msgType</em>&#160;</td>
+          <td class="paramname"><em>msgType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -201,6 +215,7 @@ Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">parser</td><td>- instance of parser </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">msgType</td><td>- type of message (e.g. "A", "D", "AE", etc.) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -209,7 +224,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac53a7ddd95f780c18b8bf9558ff4d4c9"></a>
+<a class="anchor" id="aac027255bd24cacc7f6be7a63f10d6b3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -229,7 +244,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td>
-          <td class="paramname"><em>tag</em>&#160;</td>
+          <td class="paramname"><em>tag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -244,14 +265,15 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- message with tag, which will be deleted </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- not NULL group pointer, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tag</td><td>- field tag, which should be removed </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - deletion failed. See fix_parser_get_error_code(parser) for details </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - error description </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae7364b62d95189e9da6d218eca5e78c0"></a>
+<a class="anchor" id="aaa0fc1d01df9d48d8155420c877a14ff"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -277,7 +299,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>grpIdx</em>&#160;</td>
+          <td class="paramname"><em>grpIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -293,6 +321,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- parent group, if deleted group is a nested one, else can be NULL. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag with deleted group </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grpIdx</td><td>- zero-based index of deleted group </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -323,7 +352,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a701369b7472fd23485886a7d31139257"></a>
+<a class="anchor" id="a1824768342e95f2f308781270b620d53"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -349,7 +378,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -365,6 +400,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- requested value. Pointer to sizeof(char) allocated space required. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -372,7 +408,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9effd0725521fabfc6fb409c51ece65d"></a>
+<a class="anchor" id="a235ee4f4382621f6d1fb626004c6dae3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -404,7 +440,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t *&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
+          <td class="paramname"><em>len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -421,14 +463,15 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- pointer to requested value </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">len</td><td>- length of requested value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - error description </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a6f8efed4f79c48cbce6839368b0f1703"></a>
+<a class="anchor" id="af3694207fd0f91c4d6ef5f0b523a8342"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -454,7 +497,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -470,6 +519,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- requested value. Pointer to sizeof(double) allocated space required. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -477,7 +527,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ab38f325e276e71dfd7ebcfd124a42907"></a>
+<a class="anchor" id="a9608ae9bc5b0635913bca3d1f71679b5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -503,7 +553,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>grpIdx</em>&#160;</td>
+          <td class="paramname"><em>grpIdx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -519,6 +575,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- parent group, in case in nested group requested. Can be NULL. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag with requested group </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grpIdx</td><td>- zero-based index of requested group </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -526,7 +583,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a64a9168c5099f4206e862c0205684f7a"></a>
+<a class="anchor" id="a92fdb74b1b348a6198a8a599088ef6b2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -552,7 +609,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int32_t *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -568,6 +631,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- requested value. Pointer to sizeof(int32_t) allocated space required. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -575,7 +639,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a15932e20700fbb4b2f7a9ab13aa2da1a"></a>
+<a class="anchor" id="a837a898d61064200bf9dd79e24531634"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -601,7 +665,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int64_t *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -617,6 +687,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- requested value. Pointer to sizeof(int64_t) allocated space required. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -648,7 +719,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a869041431c53a482f9b45853dfdc4105"></a>
+<a class="anchor" id="a6a2b44bb224cc5f964c8189a536b3b5d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -680,7 +751,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t *&#160;</td>
-          <td class="paramname"><em>len</em>&#160;</td>
+          <td class="paramname"><em>len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -697,6 +774,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">val</td><td>- pointer to requested value </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">len</td><td>- length of requested value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -728,7 +806,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a37956c3e71a14a750ca11ce3c4500f56"></a>
+<a class="anchor" id="af33381966b634eb96ebbea61c81d54e0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -754,7 +832,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -770,6 +854,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- char value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -777,7 +862,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a88ffcc58fb83d8b8c4a86683e9dce61f"></a>
+<a class="anchor" id="aef00bae01737d91568159e1dab360871"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -809,7 +894,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>dataLen</em>&#160;</td>
+          <td class="paramname"><em>dataLen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -826,6 +917,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>- data value </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dataLen</td><td>- data value length </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -833,7 +925,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8a3885f71fe1208b0c85472b3668a7fe"></a>
+<a class="anchor" id="a3261aa5f434e74cd93deff3c087f8a8a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -859,7 +951,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -875,6 +973,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- double value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -882,7 +981,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6ec4dd4fa0a0ae593489eb76d3ffbba2"></a>
+<a class="anchor" id="a562b1c19007c70c52964a4cca62589ca"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -908,7 +1007,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int32_t&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -924,6 +1029,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- 32-bit numeric value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -931,7 +1037,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a473cf8e7c984524029b34e2d97e5d99c"></a>
+<a class="anchor" id="afdcc022878d61f38f3a5d806c30428eb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -957,7 +1063,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int64_t&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -973,6 +1085,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- 64-bit numeric value </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -980,7 +1093,7 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a748e5fecd3a6b21bd05162d3c6167f8f"></a>
+<a class="anchor" id="a6bad6bfa705aea093338763eeff02c1b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1006,7 +1119,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char const *&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1022,6 +1141,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- string value (ends with zero) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
@@ -1029,7 +1149,70 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ae6714d081df1c5a316826ec3017236d0"></a>
+<a class="anchor" id="a931f20673af078adafb816b2450cf43c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">FIX_PARSER_API <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> fix_msg_set_string_len </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structFIXMsg__.html">FIXMsg</a> *&#160;</td>
+          <td class="paramname"><em>msg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXGroup__.html">FIXGroup</a> *&#160;</td>
+          <td class="paramname"><em>grp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="fix__types_8h.html#aa5d5418dce6a1cc4021bb71647beb38f">FIXTagNum</a>&#160;</td>
+          <td class="paramname"><em>tagNum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char const *&#160;</td>
+          <td class="paramname"><em>val</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>set tag with string value </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">msg</td><td>- FIX message </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">grp</td><td>- non NULL group, if tag is a part of group, else must be NULL </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">tagNum</td><td>- field tag number </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">val</td><td>- string value </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">len</td><td>- string length </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aca895e3d1bbffa6517ec766f0cf08275"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -1061,7 +1244,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint32_t *&#160;</td>
-          <td class="paramname"><em>reqBuffLen</em>&#160;</td>
+          <td class="paramname"><em>reqBuffLen</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structFIXError__.html">FIXError</a> **&#160;</td>
+          <td class="paramname"><em>error</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1078,17 +1267,18 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">buff</td><td>- buffer with converted message </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">buffLen</td><td>- length of output buffer </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">reqBuffLen</td><td>- if buff length too small, reqBuffLen returns length of needed space </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">error</td><td>- error description </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - convertion failed. See fix_parser_get_error_code(parser) for details </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>FIX_SUCCESS - OK, FIX_FAILED - error description </dd></dl>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:28 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

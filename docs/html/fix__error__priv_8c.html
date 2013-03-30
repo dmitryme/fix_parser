@@ -91,53 +91,24 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="textblock"><code>#include &quot;<a class="el" href="fix__error__priv_8h_source.html">fix_error_priv.h</a>&quot;</code><br/>
 <code>#include &lt;stdarg.h&gt;</code><br/>
 <code>#include &lt;stdio.h&gt;</code><br/>
+<code>#include &lt;stdlib.h&gt;</code><br/>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae194139f4dafc4c730e7ccb15f0fd279"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error__priv_8c.html#ae194139f4dafc4c730e7ccb15f0fd279">fix_error_set_va</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> code, char const *text, va_list ap)</td></tr>
-<tr class="memitem:aa512eb0c882c309a4fb212cad8315f72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error__priv_8c.html#aa512eb0c882c309a4fb212cad8315f72">fix_error_set</a> (<a class="el" href="structFIXError.html">FIXError</a> *error, <a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> code, char const *text,...)</td></tr>
-<tr class="memitem:afa497c913afd83f4efcb5516abb7e72f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error__priv_8c.html#afa497c913afd83f4efcb5516abb7e72f">fix_error_reset</a> (<a class="el" href="structFIXError.html">FIXError</a> *error)</td></tr>
+<tr class="memitem:af588a3f6bb09304600418976f31e61bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXError__.html">FIXError</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error__priv_8c.html#af588a3f6bb09304600418976f31e61bb">fix_error_create_va</a> (<a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> code, char const *text, va_list ap)</td></tr>
+<tr class="memitem:a958026fb549245d32d80e0a1f57e3d8f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structFIXError__.html">FIXError</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fix__error__priv_8c.html#a958026fb549245d32d80e0a1f57e3d8f">fix_error_create</a> (<a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a> code, char const *text,...)</td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><dl class="section author"><dt>Author</dt><dd>Dmitry S. Melnikov, <a href="#" onclick="location.href='mai'+'lto:'+'dmi'+'tr'+'yme'+'@g'+'mai'+'l.'+'com'; return false;">dmitr<span style="display: none;">.nosp@m.</span>yme@<span style="display: none;">.nosp@m.</span>gmail<span style="display: none;">.nosp@m.</span>.com</a> </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>Created on: 07/30/2012 10:26:54 AM </dd></dl>
 </div><h2>Function Documentation</h2>
-<a class="anchor" id="afa497c913afd83f4efcb5516abb7e72f"></a>
+<a class="anchor" id="a958026fb549245d32d80e0a1f57e3d8f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void fix_error_reset </td>
+          <td class="memname"><a class="el" href="structFIXError__.html">FIXError</a>* fix_error_create </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
-          <td class="paramname"><em>error</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>reset error </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">error</td><td>- error, which is begin reset </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="aa512eb0c882c309a4fb212cad8315f72"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void fix_error_set </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
-          <td class="paramname"><em>error</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td>
           <td class="paramname"><em>code</em>, </td>
         </tr>
@@ -160,31 +131,25 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>set error using variable arguments </p>
+<p>create error using variable arguments </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">error</td><td>- error, which is being set </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">code</td><td>- new error code </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">text</td><td>- error description pattern </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>error description </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae194139f4dafc4c730e7ccb15f0fd279"></a>
+<a class="anchor" id="af588a3f6bb09304600418976f31e61bb"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void fix_error_set_va </td>
+          <td class="memname"><a class="el" href="structFIXError__.html">FIXError</a>* fix_error_create_va </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structFIXError.html">FIXError</a> *&#160;</td>
-          <td class="paramname"><em>error</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype"><a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td>
           <td class="paramname"><em>code</em>, </td>
         </tr>
@@ -207,23 +172,23 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>set error using variable arguments </p>
+<p>create error using variable arguments </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">error</td><td>- error, which is being set </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">code</td><td>- new error code </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">text</td><td>- error description pattern </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ap</td><td>- arguments </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>error description </dd></dl>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Feb 16 2013 21:21:53 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Mar 30 2013 10:00:28 for fix_parser by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>

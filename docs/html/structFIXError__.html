@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>fix_parser: FIXField_ Struct Reference</title>
+<title>fix_parser: FIXError_ Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -81,36 +81,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structFIXField__-members.html">List of all members</a>  </div>
+<a href="structFIXError__-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">FIXField_ Struct Reference</div>  </div>
+<div class="title">FIXError_ Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="fix__field_8h_source.html">fix_field.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="fix__error__priv_8h_source.html">fix_error_priv.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1e3b2075babe6c0b4a34b4dc75db511a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e3b2075babe6c0b4a34b4dc75db511a"></a>
-<a class="el" href="fix__protocol__descr_8h.html#ab35cc4a0724519f869fdf96aa4fa146b">FIXFieldDescr</a> const *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXField__.html#a1e3b2075babe6c0b4a34b4dc75db511a">descr</a></td></tr>
-<tr class="memdesc:a1e3b2075babe6c0b4a34b4dc75db511a"><td class="mdescLeft">&#160;</td><td class="mdescRight">FIX field description. <br/></td></tr>
-<tr class="memitem:a3d2b342f7c9a882f92ba87e260a2034c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d2b342f7c9a882f92ba87e260a2034c"></a>
-struct <a class="el" href="structFIXField__.html">FIXField_</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXField__.html#a3d2b342f7c9a882f92ba87e260a2034c">next</a></td></tr>
-<tr class="memdesc:a3d2b342f7c9a882f92ba87e260a2034c"><td class="mdescLeft">&#160;</td><td class="mdescRight">next FIX field with the same hash key <br/></td></tr>
-<tr class="memitem:a1b4f1278b4adf2e64d16af721710ad0b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1b4f1278b4adf2e64d16af721710ad0b"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXField__.html#a1b4f1278b4adf2e64d16af721710ad0b">body_len</a></td></tr>
-<tr class="memdesc:a1b4f1278b4adf2e64d16af721710ad0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of field, if it is converted to string <br/></td></tr>
-<tr class="memitem:a06ad9198cce0ff257aeb05ff3b556ce0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a06ad9198cce0ff257aeb05ff3b556ce0"></a>
-uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXField__.html#a06ad9198cce0ff257aeb05ff3b556ce0">size</a></td></tr>
-<tr class="memdesc:a06ad9198cce0ff257aeb05ff3b556ce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">size of field data <br/></td></tr>
-<tr class="memitem:aa4a957832f7f38df909896cb3b066727"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4a957832f7f38df909896cb3b066727"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXField__.html#aa4a957832f7f38df909896cb3b066727">data</a></td></tr>
-<tr class="memdesc:aa4a957832f7f38df909896cb3b066727"><td class="mdescLeft">&#160;</td><td class="mdescRight">field value. All values converted to string <br/></td></tr>
+<tr class="memitem:afc620213d557f4231ea2b4a910130809"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc620213d557f4231ea2b4a910130809"></a>
+<a class="el" href="fix__types_8h.html#a25786b987c643bb3c265beaa5fedde63">FIXErrCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXError__.html#afc620213d557f4231ea2b4a910130809">code</a></td></tr>
+<tr class="memdesc:afc620213d557f4231ea2b4a910130809"><td class="mdescLeft">&#160;</td><td class="mdescRight">error code <br/></td></tr>
+<tr class="memitem:a672825a67a0eb297d44031ec45ee0b24"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a672825a67a0eb297d44031ec45ee0b24"></a>
+char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structFIXError__.html#a672825a67a0eb297d44031ec45ee0b24">text</a> [<a class="el" href="fix__error__priv_8h.html#a1c134e2d62664a0aebbc4cffcdbdfeee">ERROR_TXT_SIZE</a>]</td></tr>
+<tr class="memdesc:a672825a67a0eb297d44031ec45ee0b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">error description <br/></td></tr>
 </table>
 <a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>FIX field </p>
+<div class="textblock"><p>hold error description </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/home/dmitryme/dev/fix_parser/src/<a class="el" href="fix__field_8h_source.html">fix_field.h</a></li>
+<li>/home/dmitryme/dev/fix_parser/src/<a class="el" href="fix__error__priv_8h_source.html">fix_error_priv.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
