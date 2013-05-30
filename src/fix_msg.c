@@ -320,13 +320,16 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
       return FIX_FAILED;
    }
-   if (field->descr->category != FIXFieldCategory_Value)
+   if (field->descr->category == FIXFieldCategory_Group)
    {
-      *error = fix_error_create(FIX_ERROR_FIELD_HAS_WRONG_TYPE, "Tag %d is not a value", tag);
-      return FIX_FAILED;
+      *val = field->size;
+      return FIX_SUCCESS;
    }
-   int32_t cnt;
-   return fix_utils_atoi32((char const*)field->data, field->size, 0, val, &cnt);
+   else // value
+   {
+      int32_t cnt;
+      return fix_utils_atoi32((char const*)field->data, field->size, 0, val, &cnt);
+   }
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -452,6 +455,13 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+uint32_t calc_required_space(FIXMsg* msg)
+{
+   // 8= + FIX.4.4 + SOH + 9= LEN + SON + BODY_LEN + 10=XXX|
+   return 2 + strlen(msg->parser->protocol->version) + 1 + 2 + fix_utils_numdigits(msg->body_len) + 1 + msg->body_len + 7;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff, uint32_t buffLen, uint32_t* reqBuffLen,
       FIXError** error)
 {
@@ -459,9 +469,13 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
    {
       return FIX_FAILED;
    }
+   *reqBuffLen = calc_required_space(msg);
+   if (*reqBuffLen > buffLen)
+   {
+      return FIX_FAILED;
+   }
    FIXMsgDescr const* descr = msg->descr;
    int32_t crc = 0;
-   uint32_t buffLenBefore = buffLen;
    for(uint32_t i = 0; i < descr->field_count; ++i)
    {
       char* prev = buff;
@@ -471,12 +485,6 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
       if (fdescr->type->tag == FIXFieldTag_BodyLength)
       {
          res = int32_to_str(fdescr->type->tag, msg->body_len, delimiter, 0, 0, &buff, &buffLen, error);
-         *reqBuffLen = buffLenBefore - buffLen + msg->body_len + 7;
-         if (*reqBuffLen > buffLenBefore)
-         {
-            return FIX_FAILED;
-         }
-         crc += (FIX_SOH - delimiter); // adjust CRC, if delimiter is not equal to FIX_SOH
       }
       else if(fdescr->type->tag == FIXFieldTag_CheckSum)
       {
@@ -502,7 +510,6 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
             }
          }
          res = field_to_str(field, delimiter, &buff, &buffLen, error);
-         crc += (FIX_SOH - delimiter); // adjust CRC, if delimiter is not equal to FIX_SOH
       }
       if (res == FIX_FAILED)
       {
