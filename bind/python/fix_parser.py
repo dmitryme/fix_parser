@@ -1,6 +1,5 @@
 from ctypes import *
 from types import *
-from fix_types import *
 lib = cdll.LoadLibrary('./libfix_parser.so')
 
 FIX_SOH = 1
