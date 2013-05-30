@@ -1,3 +1,9 @@
 ==FIX protocol parser (beta)==
 
+=== Bindings ===
+
+==== Erlang ====
+
+==== Python ====
+
 === Examples of usage ===
