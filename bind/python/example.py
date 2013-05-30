@@ -41,7 +41,7 @@ print( "MSG = {0}").format(str)
 # parse input string and create FIX message
 m1 = p.parse(str, 124)
 
-# just print several fields of m1
+# just print several fields of m1, to make sure str parsed ok
 print("MSG1 TYPE = {0}").format(m1.getType())
 print("MSG1 NAME = {0}").format(m1.getName())
 print("SenderCompID = {0}").format(m1.getFieldAsString(FIXFieldTag_SenderCompID))
