@@ -1,28 +1,42 @@
 ==FIX protocol parser (beta)==
 
+This is an implementation of [[http://www.fixprotocol.org|FIX protocol]] parser for parsing/constructing FIX messages.
+The main reason to implement another one FIX parser is a performance issue of well
+known open-source FIX parser [[http://quickfixengine.org/|quickFIX]]
+
 === Dependencies ===
 * [[http://www.cmake.org|cmake]]
 * libxml2-dev
 * gcc - for Linux
 * MS Visual Studio 2010 - for Windows
 
-=== Build (linux) ===
+=== Build ===
 
-<code>
-cd build
-./build.sh</code>
+==== Build (linux) ====
 
-=== Build (Windows) ===
+ cd build
+ ./build.sh
+libs directory will contain built libraries (both static and shared)
+==== Build (Windows) ====
 
-<code>
-cd build
-./build_vs10.bat
-</code>
+ cd build
+ ./build_vs10.bat
 
-=== Bindings ===
+==== Build Erlang binding ====
+
+ cd bind/erlang/fix_parser
+ ./rebar compile
+
+==== Build Python binding ====
+ cd bind/python
+ cp ../../fix_descr/fix.4.4.xml .
+ cp ../../build/libs/libfix_parser.so .
+ python example.py
+
+=== Examples of usage ===
+
+==== С ====
 
 ==== Erlang ====
 
 ==== Python ====
-
-=== Examples of usage ===
