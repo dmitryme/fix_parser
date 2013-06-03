@@ -2,13 +2,17 @@
 
 === Build (linux) ===
 
+<code>
 cd build
 ./build.sh
+</code>
 
 === Build (Windows) ===
 
+<code>
 cd build
 ./build_vs10.bat
+</code>
 
 === Bindings ===
 
