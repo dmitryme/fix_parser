@@ -1,11 +1,16 @@
 ==FIX protocol parser (beta)==
 
+=== Dependencies ===
+* [[http://www.cmake.org|cmake]]
+* libxml2-dev
+* gcc - for Linux
+* MS Visual Studio 2010 - for Windows
+
 === Build (linux) ===
 
 <code>
 cd build
-./build.sh
-</code>
+./build.sh</code>
 
 === Build (Windows) ===
 
