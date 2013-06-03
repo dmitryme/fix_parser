@@ -1,5 +1,15 @@
 ==FIX protocol parser (beta)==
 
+=== Build (linux) ===
+
+cd build
+./build.sh
+
+=== Build (Windows) ===
+
+cd build
+./build_vs10.bat
+
 === Bindings ===
 
 ==== Erlang ====
