@@ -584,7 +584,9 @@ static ERL_NIF_TERM set_double_field(ErlNifEnv* env, int32_t argc, ERL_NIF_TERM 
    double val = 0.0;
    if (!enif_get_double(env, argv[2], &val))
    {
-      enif_get_int64(env, argv[2], (int64_t*)&val);
+      int64_t lval = 0;
+      enif_get_int64(env, argv[2], &lval);
+      val = lval;
    }
    ERL_NIF_TERM ret = ok_atom;
    FIXError* error = NULL;
