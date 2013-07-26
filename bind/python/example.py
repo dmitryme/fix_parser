@@ -5,7 +5,7 @@ p = FixParser("fix.4.4.xml", PARSER_FLAG_CHECK_ALL)
 print("PROT VERSION = {0}").format(p.getProtocolVer())
 # create Exec Report
 m = p.createMsg("8")
-# ccheck its params
+# check its params
 print("MSG TYPE = {0}").format(m.getType())
 print("MSG NAME = {0}").format(m.getName())
 
