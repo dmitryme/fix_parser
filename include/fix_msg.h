@@ -164,7 +164,9 @@ FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(int32_t) allocated space required.
  * @param[out] error - error description
- * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ * @return FIX_SUCCESS - OK
+ *         FIX_ERROR_FIELD_NOT_FOUND - field not found
+ *         FIX_FAILED - error description
  */
 FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int32_t* val, FIXError** error);
 
@@ -175,7 +177,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(int64_t) allocated space required.
  * @param[out] error - error description
- * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ * @return FIX_SUCCESS - OK
+ *         FIX_ERROR_FIELD_NOT_FOUND - field not found
+ *         FIX_FAILED - error description
  */
 FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, int64_t* val, FIXError** error);
 
@@ -186,7 +190,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(double) allocated space required.
  * @param[out] error - error description
- * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ * @return FIX_SUCCESS - OK
+ *         FIX_ERROR_FIELD_NOT_FOUND - field not found
+ *         FIX_FAILED - error description
  */
 FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, double* val, FIXError** error);
 
@@ -197,7 +203,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
  * @param[in] tagNum - field tag number
  * @param[out] val - requested value. Pointer to sizeof(char) allocated space required.
  * @param[out] error - error description
- * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ * @return FIX_SUCCESS - OK
+ *         FIX_ERROR_FIELD_NOT_FOUND - field not found
+ *         FIX_FAILED - error description
  */
 FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char* val, FIXError** error);
 
@@ -209,7 +217,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
  * @param[out] val - pointer to requested value
  * @param[out] len - length of requested value
  * @param[out] error - error description
- * @return FIX_SUCCESS - OK, FIX_FAILED - not set. See fix_parser_get_error_code(parser) for details
+ * @return FIX_SUCCESS - OK
+ *         FIX_ERROR_FIELD_NOT_FOUND - field not found
+ *         FIX_FAILED - not get. See fix_parser_get_error_code(parser) for details
  */
 FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const** val, uint32_t* len, FIXError** error);
 
@@ -221,7 +231,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
  * @param[out] val - pointer to requested value
  * @param[out] len - length of requested value
  * @param[out] error - error description
- * @return FIX_SUCCESS - OK, FIX_FAILED - error description
+ * @return FIX_SUCCESS - OK
+ *         FIX_ERROR_FIELD_NOT_FOUND - field not found
+ *         FIX_FAILED - error description
  */
 FIX_PARSER_API FIXErrCode fix_msg_get_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tagNum, char const** val, uint32_t* len, FIXError** error);
 

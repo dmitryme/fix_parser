@@ -143,7 +143,7 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       else if (tag == FIXFieldTag_MsgSeqNum && msgSeqNum)
       {
          int cnt = 0;
-         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) > 0)
+         if (fix_utils_atoi64(dbegin, dend - dbegin, 0, msgSeqNum, &cnt) < 0)
          {
             *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Wrong MsgSeqNum.");
             return FIX_FAILED;
@@ -207,7 +207,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    int64_t bodyLen;
    int32_t cnt;
    int32_t err = fix_utils_atoi64(dbegin, dend - dbegin, 0, &bodyLen, &cnt);
-   if (err > 0)
+   if (err < 0)
    {
       *error = fix_error_create(err, "BodyLength value not a number.");
       return NULL;
@@ -233,7 +233,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
    {
       int64_t check_sum = 0;
-      if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum, &cnt) > 0)
+      if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum, &cnt) < 0)
       {
          *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "CheckSum value not a number.");
          return NULL;
@@ -314,7 +314,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
          {
             int64_t numGroups = 0;
             FIXErrCode err = fix_utils_atoi64(dbegin, dend - dbegin + 1, delimiter, &numGroups, &cnt);
-            if (err > 0)
+            if (err < 0)
             {
                *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
                goto  error;

@@ -172,7 +172,7 @@ static FIXErrCode fix_parser_parse_value(FIXMsg* msg, FIXGroup* group, FIXFieldD
    {
       int32_t dataLength;
       int32_t err = fix_msg_get_int32(msg, group, fdescr->dataLenField->type->tag, &dataLength, error);
-      if (err > 0)
+      if (err < 0)
       {
          *error = fix_error_create(err, "Unable to get length field '%d'.", fdescr->dataLenField->type->tag);
          return FIX_FAILED;
@@ -208,7 +208,7 @@ static FIXTagNum fix_parser_parse_tag(
 {
    int32_t cnt;
    FIXErrCode res = fix_utils_atoi32(data, len, '=', tag, &cnt);
-   if (res > 0)
+   if (res < 0)
    {
       *error = fix_error_create(res, "Unable to extract field number.");
       return FIX_FAILED;
@@ -355,7 +355,7 @@ FIXErrCode fix_parser_parse_group(
          int32_t numGroups = 0;
          int32_t cnt;
          FIXErrCode err = fix_utils_atoi32(dbegin, *stop - dbegin, delimiter, &numGroups, &cnt);
-         if (err > 0)
+         if (err < 0)
          {
             *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
             return FIX_FAILED;

@@ -21,6 +21,13 @@
 #include <string.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
+static uint32_t calc_required_space(FIXMsg* msg)
+{
+   // 8= + FIX.4.4 + SOH + 9= LEN + SON + BODY_LEN + 10=XXX|
+   return 2 + strlen(msg->parser->protocol->version) + 1 + 2 + fix_utils_numdigits(msg->body_len) + 1 + msg->body_len + 7;
+}
+
+/*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXMsg* fix_msg_create(FIXParser* parser, char const* msgType, FIXError** error)
 {
    if (!parser)
@@ -317,8 +324,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
-      return FIX_FAILED;
+      return FIX_ERROR_FIELD_NOT_FOUND;
    }
    if (field->descr->category == FIXFieldCategory_Group)
    {
@@ -342,8 +348,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
-      return FIX_FAILED;
+      return FIX_ERROR_FIELD_NOT_FOUND;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -364,8 +369,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
-      return FIX_FAILED;
+      return FIX_ERROR_FIELD_NOT_FOUND;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -386,8 +390,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
-      return FIX_FAILED;
+      return FIX_ERROR_FIELD_NOT_FOUND;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -409,8 +412,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *error = fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
-      return FIX_FAILED;
+      return FIX_ERROR_FIELD_NOT_FOUND;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -452,13 +454,6 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
       fix_field_del(msg, grp, fdescr->dataLenField->type->tag, error);
    }
    return fix_field_del(msg, grp, tag, error);
-}
-
-/*------------------------------------------------------------------------------------------------------------------------*/
-uint32_t calc_required_space(FIXMsg* msg)
-{
-   // 8= + FIX.4.4 + SOH + 9= LEN + SON + BODY_LEN + 10=XXX|
-   return 2 + strlen(msg->parser->protocol->version) + 1 + 2 + fix_utils_numdigits(msg->body_len) + 1 + msg->body_len + 7;
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
