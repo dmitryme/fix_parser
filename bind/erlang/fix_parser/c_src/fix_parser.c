@@ -708,9 +708,13 @@ static ERL_NIF_TERM get_int32_field(ErlNifEnv* env, int32_t argc, ERL_NIF_TERM c
    int32_t val = 0;
    FIXError* error = NULL;
    pthread_rwlock_rdlock(&parser->lock);
-   FIXErrCode err = fix_msg_get_int32(msg, group, tagNum, &val, &error);
+   FIXErrCode err = fix_msg_get_int32(msg, group, tagNum, &val, 0, &error);
    pthread_rwlock_unlock(&parser->lock);
-   if (err == FIX_FAILED)
+   if (err == FIX_NO_FIELD)
+   {
+       return make_parser_error(env, FIX_NO_FIELD, "Field not found");
+   }
+   else if (err == FIX_FAILED)
    {
        ERL_NIF_TERM ret = make_parser_error(env, fix_error_get_code(error), fix_error_get_text(error));
        fix_error_free(error);
@@ -741,9 +745,13 @@ static ERL_NIF_TERM get_int64_field(ErlNifEnv* env, int32_t argc, ERL_NIF_TERM c
    int64_t val = 0;
    FIXError* error = NULL;
    pthread_rwlock_rdlock(&parser->lock);
-   FIXErrCode err = fix_msg_get_int64(msg, group, tagNum, &val, &error);
+   FIXErrCode err = fix_msg_get_int64(msg, group, tagNum, &val, 0, &error);
    pthread_rwlock_unlock(&parser->lock);
-   if (err == FIX_FAILED)
+   if (err == FIX_NO_FIELD)
+   {
+       return make_parser_error(env, FIX_NO_FIELD, "Field not found");
+   }
+   else if (err == FIX_FAILED)
    {
       ERL_NIF_TERM ret = make_parser_error(env, fix_error_get_code(error), fix_error_get_text(error));
       fix_error_free(error);
@@ -774,9 +782,13 @@ static ERL_NIF_TERM get_double_field(ErlNifEnv* env, int32_t argc, ERL_NIF_TERM 
    double val = 0;
    FIXError* error = NULL;
    pthread_rwlock_rdlock(&parser->lock);
-   FIXErrCode err = fix_msg_get_double(msg, group, tagNum, &val, &error);
+   FIXErrCode err = fix_msg_get_double(msg, group, tagNum, &val, 0.0, &error);
    pthread_rwlock_unlock(&parser->lock);
-   if (err == FIX_FAILED)
+   if (err == FIX_NO_FIELD)
+   {
+       return make_parser_error(env, FIX_NO_FIELD, "Field not found");
+   }
+   else if (err == FIX_FAILED)
    {
       ERL_NIF_TERM ret = make_parser_error(env, fix_error_get_code(error), fix_error_get_text(error));
       fix_error_free(error);
@@ -808,9 +820,13 @@ static ERL_NIF_TERM get_string_field(ErlNifEnv* env, int32_t argc, ERL_NIF_TERM 
    uint32_t len = 0;
    FIXError* error = NULL;
    pthread_rwlock_rdlock(&parser->lock);
-   FIXErrCode err = fix_msg_get_string(msg, group, tagNum, &data, &len, &error);
+   FIXErrCode err = fix_msg_get_string(msg, group, tagNum, &data, &len, NULL, 0, &error);
    pthread_rwlock_unlock(&parser->lock);
-   if (err == FIX_FAILED)
+   if (err == FIX_NO_FIELD)
+   {
+       return make_parser_error(env, FIX_NO_FIELD, "Field not found");
+   }
+   else if (err == FIX_FAILED)
    {
       ERL_NIF_TERM ret = make_parser_error(env, fix_error_get_code(error), fix_error_get_text(error));
       fix_error_free(error);
@@ -841,9 +857,13 @@ static ERL_NIF_TERM get_char_field(ErlNifEnv* env, int32_t argc, ERL_NIF_TERM co
    char val;
    FIXError* error = NULL;
    pthread_rwlock_rdlock(&parser->lock);
-   FIXErrCode err = fix_msg_get_char(msg, group, tagNum, &val, &error);
+   FIXErrCode err = fix_msg_get_char(msg, group, tagNum, &val, 0, &error);
    pthread_rwlock_unlock(&parser->lock);
-   if (err == FIX_FAILED)
+   if (err == FIX_NO_FIELD)
+   {
+       return make_parser_error(env, FIX_NO_FIELD, "Field not found");
+   }
+   else if (err == FIX_FAILED)
    {
       ERL_NIF_TERM ret = make_parser_error(env, fix_error_get_code(error), fix_error_get_text(error));
       fix_error_free(error);

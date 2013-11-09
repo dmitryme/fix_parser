@@ -19,6 +19,8 @@ extern "C"
 #define FIX_SOH                            0x01 ///< default FIX field delimiter
 
 #define FIX_SUCCESS                           0
+#define FIX_NO_FIELD                          1 // this is not an error, because fields can be optional
+
 #define FIX_FAILED                           -1
 #define FIX_ERROR_FIELD_HAS_WRONG_TYPE       -2
 #define FIX_ERROR_FIELD_NOT_FOUND            -3

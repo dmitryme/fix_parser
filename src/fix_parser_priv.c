@@ -171,7 +171,7 @@ static FIXErrCode fix_parser_parse_value(FIXMsg* msg, FIXGroup* group, FIXFieldD
    if (msg && fdescr && fdescr->type->valueType == FIXFieldValueType_Data) // Data field
    {
       int32_t dataLength;
-      int32_t err = fix_msg_get_int32(msg, group, fdescr->dataLenField->type->tag, &dataLength, error);
+      int32_t err = fix_msg_get_int32(msg, group, fdescr->dataLenField->type->tag, &dataLength, 0, error);
       if (err < 0)
       {
          *error = fix_error_create(err, "Unable to get length field '%d'.", fdescr->dataLenField->type->tag);

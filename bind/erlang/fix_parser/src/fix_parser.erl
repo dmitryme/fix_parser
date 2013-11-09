@@ -70,7 +70,7 @@ get_int32_field(MsgRef, TagNum, DefValue) ->
    case get_int32_field(MsgRef, TagNum) of
       V = {ok, _Value} ->
          V;
-      {fix_error, ?FIX_ERROR_FIELD_NOT_FOUND, _} ->
+      {fix_error, ?FIX_NO_FIELD, _} ->
          {ok, DefValue};
       Err ->
          Err
@@ -85,7 +85,7 @@ get_int64_field(MsgRef, TagNum, DefValue) ->
    case get_int64_field(MsgRef, TagNum) of
       V = {ok, _Value} ->
          V;
-      {fix_error, ?FIX_ERROR_FIELD_NOT_FOUND, _} ->
+      {fix_error, ?FIX_NO_FIELD, _} ->
          {ok, DefValue};
       Err ->
          Err
@@ -100,7 +100,7 @@ get_double_field(MsgRef, TagNum, DefValue) ->
    case get_double_field(MsgRef, TagNum) of
       V = {ok, _Value} ->
          V;
-      {fix_error, ?FIX_ERROR_FIELD_NOT_FOUND, _} ->
+      {fix_error, ?FIX_NO_FIELD, _} ->
          {ok, DefValue};
       Err ->
          Err
@@ -115,7 +115,7 @@ get_string_field(MsgRef, TagNum, DefValue) ->
    case get_string_field(MsgRef, TagNum) of
       V = {ok, _Value} ->
          V;
-      {fix_error, ?FIX_ERROR_FIELD_NOT_FOUND, _} ->
+      {fix_error, ?FIX_NO_FIELD, _} ->
          {ok, DefValue};
       Err ->
          Err
@@ -130,7 +130,7 @@ get_char_field(MsgRef, TagNum, DefValue) ->
    case get_char_field(MsgRef, TagNum) of
       V = {ok, _Value} ->
          V;
-      {fix_error, ?FIX_ERROR_FIELD_NOT_FOUND, _} ->
+      {fix_error, ?FIX_NO_FIELD, _} ->
          {ok, DefValue};
       Err ->
          Err
@@ -145,7 +145,7 @@ get_data_field(MsgRef, TagNum, DefValue) ->
    case get_data_field(MsgRef, TagNum) of
       V = {ok, _Value} ->
          V;
-      {fix_error, ?FIX_ERROR_FIELD_NOT_FOUND, _} ->
+      {fix_error, ?FIX_NO_FIELD, _} ->
          {ok, DefValue};
       Err ->
          Err

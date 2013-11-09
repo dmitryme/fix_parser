@@ -315,7 +315,8 @@ FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_int32(
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val, int32_t defVal, FIXError** error)
 {
    if (!msg)
    {
@@ -324,7 +325,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      return FIX_ERROR_FIELD_NOT_FOUND;
+      *val = defVal;
+      return FIX_NO_FIELD;
    }
    if (field->descr->category == FIXFieldCategory_Group)
    {
@@ -339,7 +341,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(FIXMsg* msg, FIXGroup* grp, FIXTagNu
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_int64(
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val, int64_t defVal, FIXError** error)
 {
    if (!msg)
    {
@@ -348,7 +351,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      return FIX_ERROR_FIELD_NOT_FOUND;
+      *val = defVal;
+      return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -360,7 +364,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNu
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_double(
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val, double defVal, FIXError** error)
 {
    if(!msg)
    {
@@ -369,7 +374,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      return FIX_ERROR_FIELD_NOT_FOUND;
+      *val = defVal;
+      return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -381,7 +387,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagN
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_char(
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val, char defVal, FIXError** error)
 {
    if (!msg)
    {
@@ -390,7 +397,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      return FIX_ERROR_FIELD_NOT_FOUND;
+      *val = defVal;
+      return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -402,7 +410,8 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len,
+FIX_PARSER_API FIXErrCode fix_msg_get_string(
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len, char const* defVal, uint32_t defLen,
       FIXError** error)
 {
    if (!msg)
@@ -412,7 +421,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      return FIX_ERROR_FIELD_NOT_FOUND;
+      *val = defVal;
+      *len = defLen;
+      return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
    {
@@ -425,10 +436,11 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(FIXMsg* msg, FIXGroup* grp, FIXTagN
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len,
+FIX_PARSER_API FIXErrCode fix_msg_get_data(
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len, char const* defVal, uint32_t defLen,
       FIXError** error)
 {
-   return fix_msg_get_string(msg, grp, tag, val, len, error);
+   return fix_msg_get_string(msg, grp, tag, val, len, defVal, defLen, error);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -441,8 +453,7 @@ FIX_PARSER_API FIXErrCode fix_msg_del_field(FIXMsg* msg, FIXGroup* grp, FIXTagNu
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      fix_error_create(FIX_ERROR_FIELD_NOT_FOUND, "Field '%d' not found", tag);
-      return FIX_FAILED;
+      return FIX_NO_FIELD;
    }
    FIXFieldDescr const* fdescr = fix_protocol_get_descr(msg, grp, tag, error);
    if (!fdescr)

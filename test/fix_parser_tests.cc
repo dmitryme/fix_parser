@@ -305,25 +305,25 @@ TEST(FixParserTests, GetHeaderTest)
 { \
    char const* buff = NULL; \
    uint32_t len = 0; \
-   ASSERT_EQ(fix_msg_get_string(msg, group, tag, &buff, &len, &error), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_string(msg, group, tag, &buff, &len, NULL, 0, &error), FIX_SUCCESS); \
    ASSERT_TRUE(!strncmp(text, buff, len)); \
 }
 #define CHECK_INT32(msg, group, tag, val) \
 { \
    int32_t tmp = 0; \
-   ASSERT_EQ(fix_msg_get_int32(msg, group, tag, &tmp, &error), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_int32(msg, group, tag, &tmp, 0, &error), FIX_SUCCESS); \
    ASSERT_EQ(val, tmp); \
 }
 #define CHECK_CHAR(msg, group, tag, val) \
 { \
    char tmp = 0; \
-   ASSERT_EQ(fix_msg_get_char(msg, group, tag, &tmp, &error), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_char(msg, group, tag, &tmp, 0, &error), FIX_SUCCESS); \
    ASSERT_EQ(tmp, val); \
 }
 #define CHECK_DOUBLE(msg, group, tag, val) \
 { \
    double tmp = 0; \
-   ASSERT_EQ(fix_msg_get_double(msg, group, tag, &tmp, &error), FIX_SUCCESS); \
+   ASSERT_EQ(fix_msg_get_double(msg, group, tag, &tmp, 0.0, &error), FIX_SUCCESS); \
    ASSERT_EQ(tmp, val); \
 }
 

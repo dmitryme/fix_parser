@@ -4,32 +4,34 @@ lib = cdll.LoadLibrary('./libfix_parser.so')
 
 FIX_SOH = 1
 
-FIX_FAILED                         = -1
 FIX_SUCCESS                        = 0
-FIX_ERROR_FIELD_HAS_WRONG_TYPE     = 1
-FIX_ERROR_FIELD_NOT_FOUND          = 2
-FIX_ERROR_FIELD_TYPE_EXISTS        = 3
-FIX_ERROR_GROUP_WRONG_INDEX        = 4
-FIX_ERROR_XML_ATTR_NOT_FOUND       = 5
-FIX_ERROR_XML_ATTR_WRONG_VALUE     = 6
-FIX_ERROR_PROTOCOL_XML_LOAD_FAILED = 7
-FIX_ERROR_UNKNOWN_FIELD            = 8
-FIX_ERROR_WRONG_PROTOCOL_VER       = 9
-FIX_ERROR_DUPLICATE_FIELD_DESCR    = 10
-FIX_ERROR_UNKNOWN_MSG              = 11
-FIX_ERROR_LIBXML                   = 12
-FIX_ERROR_INVALID_ARGUMENT         = 13
-FIX_ERROR_MALLOC                   = 14
-FIX_ERROR_UNKNOWN_PROTOCOL_DESCR   = 15
-FIX_ERROR_NO_MORE_PAGES            = 16
-FIX_ERROR_NO_MORE_GROUPS           = 17
-FIX_ERROR_TOO_BIG_PAGE             = 18
-FIX_ERROR_NO_MORE_SPACE            = 19
-FIX_ERROR_PARSE_MSG                = 20
-FIX_ERROR_WRONG_FIELD              = 21
-FIX_ERROR_INTEGRITY_CHECK          = 22
-FIX_ERROR_NO_MORE_DATA             = 23
-FIX_ERROR_WRONG_FIELD_VALUE        = 24
+FIX_NO_FIELD                       = 1
+
+FIX_FAILED                         = -1
+FIX_ERROR_FIELD_HAS_WRONG_TYPE     = -2
+FIX_ERROR_FIELD_NOT_FOUND          = -3
+FIX_ERROR_FIELD_TYPE_EXISTS        = -4
+FIX_ERROR_GROUP_WRONG_INDEX        = -5
+FIX_ERROR_XML_ATTR_NOT_FOUND       = -6
+FIX_ERROR_XML_ATTR_WRONG_VALUE     = -7
+FIX_ERROR_PROTOCOL_XML_LOAD_FAILED = -8
+FIX_ERROR_UNKNOWN_FIELD            = -9
+FIX_ERROR_WRONG_PROTOCOL_VER       = -10
+FIX_ERROR_DUPLICATE_FIELD_DESCR    = -11
+FIX_ERROR_UNKNOWN_MSG              = -12
+FIX_ERROR_LIBXML                   = -13
+FIX_ERROR_INVALID_ARGUMENT         = -14
+FIX_ERROR_MALLOC                   = -15
+FIX_ERROR_UNKNOWN_PROTOCOL_DESCR   = -16
+FIX_ERROR_NO_MORE_PAGES            = -17
+FIX_ERROR_NO_MORE_GROUPS           = -18
+FIX_ERROR_TOO_BIG_PAGE             = -19
+FIX_ERROR_NO_MORE_SPACE            = -20
+FIX_ERROR_PARSE_MSG                = -21
+FIX_ERROR_WRONG_FIELD              = -22
+FIX_ERROR_INTEGRITY_CHECK          = -23
+FIX_ERROR_NO_MORE_DATA             = -24
+FIX_ERROR_WRONG_FIELD_VALUE        = -25
 
 PARSER_FLAG_CHECK_CRC             = 0x01       # check FIX message CRC during parsing
 PARSER_FLAG_CHECK_REQUIRED        = 0x02       # check for required FIX fields
@@ -111,24 +113,24 @@ class FixGroup(object):
       if ret:
          raise_error(error)
 
-   def getFieldAsInt32(self, fieldTag):
+   def getFieldAsInt32(self, fieldTag, defVal = 0):
       error = c_long(0)
       val = c_int32(0)
-      ret = lib.fix_msg_get_int32(self.msg, self.group, fieldTag, pointer(val), pointer(error))
+      ret = lib.fix_msg_get_int32(self.msg, self.group, fieldTag, pointer(val), defVal, pointer(error))
       if ret:
          raise_error(error)
       return val.value
 
-   def getFieldAsInt64(self, fieldTag):
+   def getFieldAsInt64(self, fieldTag, defVal = 0):
       error = c_long(0)
       ptr = pointer(error)
       val = c_int64(0)
-      ret = lib.fix_msg_get_int64(self.msg, self.group, fieldTag, pointer(val), pointer(error))
+      ret = lib.fix_msg_get_int64(self.msg, self.group, fieldTag, pointer(val), defVal, pointer(error))
       if ret:
          raise_error(error)
       return val.value
 
-   def getFieldAsDouble(self, fieldTag):
+   def getFieldAsDouble(self, fieldTag, defVal = 0.0):
       error = c_long(0)
       val = c_double(0.0)
       ret = lib.fix_msg_get_double(self.msg, self.group, fieldTag, pointer(val), pointer(error))
@@ -136,7 +138,7 @@ class FixGroup(object):
          raise_error(error)
       return val.value
 
-   def getFieldAsChar(self, fieldTag):
+   def getFieldAsChar(self, fieldTag, defVal = 0):
       error = c_long(0)
       val = c_char()
       ret = lib.fix_msg_get_char(self.msg, self.group, fieldTag, pointer(val), pointer(error))
@@ -144,14 +146,16 @@ class FixGroup(object):
          raise_error(error)
       return val.value
 
-   def getFieldAsString(self, fieldTag):
+   def getFieldAsString(self, fieldTag, defVal = ''):
       error = c_long(0)
       val = c_int(0)
-      len = c_int(0)
-      ret = lib.fix_msg_get_string(self.msg, self.group, fieldTag, pointer(val), pointer(len), pointer(error))
+      length = c_int(0)
+      ret = lib.fix_msg_get_string(
+            self.msg, self.group, fieldTag, pointer(val), pointer(length), defVal,
+            len(defVal), pointer(error))
       if ret:
          raise_error(error)
-      return string_at(val.value, len.value)
+      return string_at(val.value, length.value)
 
    def addGroup(self, fieldTag):
       error = c_long(0)
