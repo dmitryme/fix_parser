@@ -4,7 +4,7 @@ project(test)
 
 ExternalProject_Add(
     googletest
-    GIT_REPOSITORY git://github.com/dmitryme/googletest.git
+    GIT_REPOSITORY git://github.com/dmitryme/gtest.git
     TIMEOUT 10
     # Disable install step
     INSTALL_COMMAND ""
