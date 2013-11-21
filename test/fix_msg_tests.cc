@@ -28,11 +28,11 @@ TEST(FixMsgTests, CreateMsgTest)
 
    char const* buff = NULL;
    uint32_t len = 0;
-   ASSERT_EQ(fix_msg_get_string(msg, NULL, 8, &buff, &len, NULL, 0, &error), FIX_SUCCESS);
+   ASSERT_EQ(fix_msg_get_string(msg, NULL, 8, &buff, &len, &error), FIX_SUCCESS);
    ASSERT_TRUE(!strncmp(buff, "FIX.4.4", len));
 
    char const* msgType = NULL;
-   ASSERT_EQ(fix_msg_get_string(msg, NULL, 35, &msgType, &len, NULL, 0, &error), FIX_SUCCESS);
+   ASSERT_EQ(fix_msg_get_string(msg, NULL, 35, &msgType, &len, &error), FIX_SUCCESS);
    ASSERT_TRUE(!strncmp(msgType, "8", len));
 
    ASSERT_EQ(fix_msg_set_string(msg, NULL, FIXFieldTag_SenderCompID, "QWERTY_12345678", &error), FIX_SUCCESS);
@@ -106,15 +106,15 @@ TEST(FixMsgTests, CreateMsgTest)
 
 
    int32_t val = 0;
-   ASSERT_EQ(fix_msg_get_int32(msg, NULL, FIXFieldTag_MsgSeqNum, &val, 0, &error), FIX_SUCCESS);
+   ASSERT_EQ(fix_msg_get_int32(msg, NULL, FIXFieldTag_MsgSeqNum, &val, &error), FIX_SUCCESS);
    ASSERT_EQ(val, 34);
 
    double price = 0.0;
-   ASSERT_EQ(fix_msg_get_double(msg, NULL, FIXFieldTag_Price, &price, 0.0, &error), FIX_SUCCESS);
+   ASSERT_EQ(fix_msg_get_double(msg, NULL, FIXFieldTag_Price, &price, &error), FIX_SUCCESS);
    ASSERT_EQ(price, 135155.0);
 
    char const* text = NULL;
-   ASSERT_EQ(fix_msg_get_string(msg, NULL, FIXFieldTag_Text, &text, &len, NULL, 0, &error), FIX_SUCCESS);
+   ASSERT_EQ(fix_msg_get_string(msg, NULL, FIXFieldTag_Text, &text, &len, &error), FIX_SUCCESS);
    ASSERT_TRUE(!strncmp(text, "COMMENT12", len));
 
    ASSERT_EQ(fix_msg_del_field(msg, NULL, FIXFieldTag_Symbol, &error), FIX_SUCCESS);

@@ -113,24 +113,24 @@ class FixGroup(object):
       if ret:
          raise_error(error)
 
-   def getFieldAsInt32(self, fieldTag, defVal = 0):
+   def getFieldAsInt32(self, fieldTag):
       error = c_long(0)
       val = c_int32(0)
-      ret = lib.fix_msg_get_int32(self.msg, self.group, fieldTag, pointer(val), defVal, pointer(error))
+      ret = lib.fix_msg_get_int32(self.msg, self.group, fieldTag, pointer(val), pointer(error))
       if ret:
          raise_error(error)
       return val.value
 
-   def getFieldAsInt64(self, fieldTag, defVal = 0):
+   def getFieldAsInt64(self, fieldTag):
       error = c_long(0)
       ptr = pointer(error)
       val = c_int64(0)
-      ret = lib.fix_msg_get_int64(self.msg, self.group, fieldTag, pointer(val), defVal, pointer(error))
+      ret = lib.fix_msg_get_int64(self.msg, self.group, fieldTag, pointer(val), pointer(error))
       if ret:
          raise_error(error)
       return val.value
 
-   def getFieldAsDouble(self, fieldTag, defVal = 0.0):
+   def getFieldAsDouble(self, fieldTag):
       error = c_long(0)
       val = c_double(0.0)
       ret = lib.fix_msg_get_double(self.msg, self.group, fieldTag, pointer(val), pointer(error))
@@ -138,7 +138,7 @@ class FixGroup(object):
          raise_error(error)
       return val.value
 
-   def getFieldAsChar(self, fieldTag, defVal = 0):
+   def getFieldAsChar(self, fieldTag):
       error = c_long(0)
       val = c_char()
       ret = lib.fix_msg_get_char(self.msg, self.group, fieldTag, pointer(val), pointer(error))
@@ -146,13 +146,12 @@ class FixGroup(object):
          raise_error(error)
       return val.value
 
-   def getFieldAsString(self, fieldTag, defVal = ''):
+   def getFieldAsString(self, fieldTag):
       error = c_long(0)
       val = c_int(0)
       length = c_int(0)
       ret = lib.fix_msg_get_string(
-            self.msg, self.group, fieldTag, pointer(val), pointer(length), defVal,
-            len(defVal), pointer(error))
+            self.msg, self.group, fieldTag, pointer(val), pointer(length), pointer(error))
       if ret:
          raise_error(error)
       return string_at(val.value, length.value)

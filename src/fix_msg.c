@@ -21,7 +21,7 @@
 #include <string.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-static uint32_t calc_required_space(FIXMsg* msg)
+static inline uint32_t calc_required_space(FIXMsg* msg)
 {
    // 8= + FIX.4.4 + SOH + 9= LEN + SON + BODY_LEN + 10=XXX|
    return 2 + strlen(msg->parser->protocol->version) + 1 + 2 + fix_utils_numdigits(msg->body_len) + 1 + msg->body_len + 7;
@@ -315,8 +315,7 @@ FIX_PARSER_API FIXErrCode fix_msg_set_data(FIXMsg* msg, FIXGroup* grp, FIXTagNum
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_int32(
-      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val, int32_t defVal, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_int32( FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int32_t* val, FIXError** error)
 {
    if (!msg)
    {
@@ -325,7 +324,6 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *val = defVal;
       return FIX_NO_FIELD;
    }
    if (field->descr->category == FIXFieldCategory_Group)
@@ -341,8 +339,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int32(
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_int64(
-      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val, int64_t defVal, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_int64(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, int64_t* val, FIXError** error)
 {
    if (!msg)
    {
@@ -351,7 +348,6 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *val = defVal;
       return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
@@ -364,8 +360,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_int64(
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_double(
-      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val, double defVal, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_double(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, double* val, FIXError** error)
 {
    if(!msg)
    {
@@ -374,7 +369,6 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *val = defVal;
       return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
@@ -387,8 +381,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_double(
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
-FIX_PARSER_API FIXErrCode fix_msg_get_char(
-      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val, char defVal, FIXError** error)
+FIX_PARSER_API FIXErrCode fix_msg_get_char(FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char* val, FIXError** error)
 {
    if (!msg)
    {
@@ -397,7 +390,6 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *val = defVal;
       return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
@@ -411,8 +403,7 @@ FIX_PARSER_API FIXErrCode fix_msg_get_char(
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_msg_get_string(
-      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len, char const* defVal, uint32_t defLen,
-      FIXError** error)
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len, FIXError** error)
 {
    if (!msg)
    {
@@ -421,8 +412,6 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(
    FIXField* field = fix_field_get(msg, grp, tag);
    if (!field)
    {
-      *val = defVal;
-      *len = defLen;
       return FIX_NO_FIELD;
    }
    if (field->descr->category != FIXFieldCategory_Value)
@@ -437,10 +426,9 @@ FIX_PARSER_API FIXErrCode fix_msg_get_string(
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIX_PARSER_API FIXErrCode fix_msg_get_data(
-      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len, char const* defVal, uint32_t defLen,
-      FIXError** error)
+      FIXMsg* msg, FIXGroup* grp, FIXTagNum tag, char const** val, uint32_t* len, FIXError** error)
 {
-   return fix_msg_get_string(msg, grp, tag, val, len, defVal, defLen, error);
+   return fix_msg_get_string(msg, grp, tag, val, len, error);
 }
 
 /*------------------------------------------------------------------------------------------------------------------------*/
@@ -478,7 +466,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
    *reqBuffLen = calc_required_space(msg);
    if (*reqBuffLen > buffLen)
    {
-      return FIX_FAILED;
+      return FIX_ERROR_NO_MORE_SPACE;
    }
    FIXMsgDescr const* descr = msg->descr;
    int32_t crc = 0;
