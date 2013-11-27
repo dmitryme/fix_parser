@@ -108,7 +108,7 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
       char const** msgType, uint32_t *msgTypeLen,
       char const** senderCompID, uint32_t* senderCompIDLen,
       char const** targetCompID, uint32_t* targetCompIDLen,
-      int64_t* msgSeqNum, FIXError** error)
+      int64_t* msgSeqNum, char* possDupFlag, FIXError** error)
 {
    FIXTagNum tag = 0;
    char const* dbegin = NULL;
@@ -149,11 +149,16 @@ FIX_PARSER_API FIXErrCode fix_parser_get_header(char const* data, uint32_t len, 
             return FIX_FAILED;
          }
       }
+      else if (tag == FIXFieldTag_PossDupFlag && possDupFlag)
+      {
+         *possDupFlag = *dbegin;
+      }
       if ((!beginString  || *beginString  ) &&
           (!msgType      || *msgType      ) &&
           (!senderCompID || *senderCompID ) &&
           (!targetCompID || *targetCompID ) &&
-          (!msgSeqNum    || *msgSeqNum    ))
+          (!msgSeqNum    || *msgSeqNum    ) &&
+          (!possDupFlag  || *possDupFlag  ))
       {
          return FIX_SUCCESS;
       }
