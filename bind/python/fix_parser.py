@@ -1,6 +1,11 @@
+import platform
 from ctypes import *
 from types import *
-lib = cdll.LoadLibrary('./libfix_parser.so')
+
+if platform.system() == 'Windows':
+   lib = cdll.LoadLibrary('./fix_parser.dll')
+else:
+   lib = cdll.LoadLibrary('./libfix_parser.so')
 
 FIX_SOH = 1
 
