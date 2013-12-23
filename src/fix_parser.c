@@ -324,7 +324,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
                *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
                goto  error;
             }
-            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend, delimiter, &dend, error))
+            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend + 1, delimiter, &dend, error))
             {
                goto error;
             }

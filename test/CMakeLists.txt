@@ -4,11 +4,11 @@ project(test)
 
 ExternalProject_Add(
     googletest
-    GIT_REPOSITORY git://github.com/dmitryme/gtest.git
+    GIT_REPOSITORY https://github.com/dmitryme/gtest.git
     TIMEOUT 10
     # Disable install step
     INSTALL_COMMAND ""
-    CMAKE_ARGS -Dgtest_force_shared_crt=ON
+    CMAKE_ARGS -DCMAKE_BUILD_TYPE=Debug -Dgtest_force_shared_crt=ON
     # Wrap download, configure and build steps in a script to log output
     LOG_DOWNLOAD ON
     LOG_CONFIGURE ON

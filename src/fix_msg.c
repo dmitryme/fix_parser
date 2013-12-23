@@ -491,7 +491,7 @@ FIX_PARSER_API FIXErrCode fix_msg_to_str(FIXMsg* msg, char delimiter, char* buff
       }
       else if (field && field->descr->category == FIXFieldCategory_Group)
       {
-         res = fix_groups_to_string(msg, field, fdescr, delimiter, &buff, &buffLen, &crc, error);
+         res = fix_groups_to_string(msg, field, fdescr, delimiter, &buff, &buffLen, error);
       }
       else if(field)
       {

@@ -193,10 +193,9 @@ FIXErrCode field_to_str(FIXField const* field, char delimiter, char** buff, uint
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter,
-      char** buff, uint32_t* buffLen, int32_t* crc, FIXError** error)
+      char** buff, uint32_t* buffLen, FIXError** error)
 {
    FIXErrCode res = int32_to_str(field->descr->type->tag, field->size, delimiter, 0, 0, buff, buffLen, error);
-   (*crc) += (FIX_SOH - delimiter);
    for(uint32_t i = 0; i < field->size && res != FIX_FAILED; ++i)
    {
       FIXGroup* group = ((FIXGroups*)field->data)->group[i];
@@ -216,12 +215,11 @@ FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDesc
          }
          else if (child_field && child_field->descr->category == FIXFieldCategory_Group)
          {
-            res = fix_groups_to_string(msg, child_field, child_fdescr, delimiter, buff, buffLen, crc, error);
+            res = fix_groups_to_string(msg, child_field, child_fdescr, delimiter, buff, buffLen, error);
          }
          else if(child_field)
          {
             res = field_to_str(child_field, delimiter, buff, buffLen, error);
-            (*crc) += (FIX_SOH - delimiter);
          }
       }
    }

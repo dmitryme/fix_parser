@@ -97,11 +97,10 @@ void fix_msg_free_group(FIXMsg* msg, FIXGroup* grp);
  * @param[in] delimiter - FIX field SOH
  * @param[out] buff - space with converted data
  * @param[out] buffLen - size of converted data
- * @param[out] crc - ajustment of crc. Can be differ from 0, if delimiter is not a FIX_SOH
  * @param[out] error - error description
  * @return FIX_SUCCESS - ok, FIX_FAILED - see error description
  */
-FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, int32_t* crc, FIXError** error);
+FIXErrCode fix_groups_to_string(FIXMsg* msg, FIXField const* field, FIXFieldDescr const* fdescr, char delimiter, char** buff, uint32_t* buffLen, FIXError** error);
 
 /**
  * convert numeric value to string
