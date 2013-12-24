@@ -174,6 +174,13 @@ class FixGroup(object):
       if ret:
          raise_error(error)
 
+   def getGroup(self, fieldTag, idx):
+      error = c_long(0)
+      group = lib.fix_msg_get_group(self.msg, self.group, fieldTag, idx, pointer(error))
+      if not group:
+         raise_error(error)
+      return FixGroup(self.msg, group)
+
    def delField(self, fieldTag):
       error = c_long(0)
       ret = lib.fix_msg_del_field(self.msg, self.group, fieldTag, pointer(error))
