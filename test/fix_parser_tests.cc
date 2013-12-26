@@ -10,6 +10,7 @@
 
 #include <gtest/gtest.h>
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseFieldTest)
 {
    FIXError* error = NULL;
@@ -31,6 +32,7 @@ TEST(FixParserTests, ParseFieldTest)
    fix_error_free(error);
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseBeginStringTest)
 {
    FIXError* error = NULL;
@@ -71,6 +73,7 @@ TEST(FixParserTests, ParseBeginStringTest)
    }
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseBodyLengthTest)
 {
    FIXError* error = NULL;
@@ -137,6 +140,7 @@ TEST(FixParserTests, ParseBodyLengthTest)
    }
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseCheckSumTest)
 {
    FIXError* error = NULL;
@@ -191,6 +195,7 @@ TEST(FixParserTests, ParseCheckSumTest)
    }
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, GetHeaderTest)
 {
    FIXError* error = NULL;
@@ -352,6 +357,7 @@ TEST(FixParserTests, GetHeaderTest)
    ASSERT_EQ(tmp, val); \
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseStringTest)
 {
    FIXError* error = NULL;
@@ -399,6 +405,7 @@ TEST(FixParserTests, ParseStringTest)
    ASSERT_STREQ(buff, buff1); // Bingo!
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseMultipleStringTest)
 {
    FIXError* error = NULL;
@@ -487,6 +494,7 @@ TEST(FixParserTests, ParseMultipleStringTest)
    ASSERT_TRUE(!strncmp(begin, buff1, reqBuffLen)); // Bingo!
 }
 
+//-------------------------------------------------------------------------------------------------------------------//
 TEST(FixParserTests, ParseStringGroupTest)
 {
    FIXError* error = NULL;
@@ -531,4 +539,20 @@ TEST(FixParserTests, ParseStringGroupTest)
    ASSERT_EQ(FIX_SUCCESS, fix_msg_to_str(msg, FIX_SOH, buff1, sizeof(buff1), &reqBuffLen, &error));
    buff1[reqBuffLen] = 0;
    ASSERT_STREQ(buff, buff1); // Bingo!
+}
+
+//-------------------------------------------------------------------------------------------------------------------//
+TEST(FixParserTests, ParseStringGroupTest2)
+{
+   FIXError* error = NULL;
+   FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, &error);
+   ASSERT_TRUE(parser != NULL);
+   ASSERT_TRUE(error == NULL);
+   char buff[] = "8=FIX.4.4\0019=166\00135=V\00149=order.DEMOSUCD.80\00156=demo.fxgrid\00134=38\00157=demo.fxgrid\001"
+      "52=20131226-19:38:14.360545\001262=20131226-19:38:14.360545\001263=1\001264=1\001265=0\001267=1\001269=1\001"
+      "146=1\00155=EUR/USD\00110=251\001";
+   char const* stop = NULL;
+   FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), FIX_SOH, &stop, &error);
+   ASSERT_TRUE(msg != NULL);
+   ASSERT_TRUE(error == NULL);
 }
