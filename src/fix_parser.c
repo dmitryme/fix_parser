@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #define CRC_FIELD_LEN 7
 
@@ -235,20 +236,23 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
       return NULL;
    }
+   printf("flags = %d, CRC = '%.*s'\n", parser->flags, *stop - crcbeg, crcbeg);
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
    {
-      int64_t check_sum = 0;
-      if (fix_utils_atoi64(crcbeg, *stop - crcbeg, 0, &check_sum, &cnt) < 0)
+      int32_t check_sum = 0;
+      if (fix_utils_atoi32(crcbeg, *stop - crcbeg, 0, &check_sum, &cnt) < 0)
       {
          *error = fix_error_create(FIX_ERROR_INVALID_ARGUMENT, "CheckSum value not a number.");
          return NULL;
       }
-      int64_t crc = 0;
+      int32_t crc = 0;
       for(char const* it = data; it <= bodyEnd; ++it)
       {
          crc += *it;
       }
+      printf("BODY = %.*s, SUM = %d, CRC = %d\n", bodyEnd - data, data, crc, (crc % 256));
       crc %= 256;
+      printf("CRC = %d, CRC1 = %d\n", crc, check_sum);
       if (crc != check_sum)
       {
          *error = fix_error_create(
