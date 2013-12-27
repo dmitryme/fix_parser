@@ -135,13 +135,13 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegi
  * @param[in] parentGroup - FIX group, which will hold nested group
  * @param[in] gdescr - FIX group description
  * @param[in] data - string to parser
- * @param[in] len - length of data
+ * @param[in] bodyEnd - end of data t parse
  * @param[out] stop - parse stop pointer
  * @param[out] error - error description
  * @return FIX_SUCCESS - ok, FIX_FAILED - error
  */
 FIXErrCode fix_parser_parse_group(FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups,
-      char const* data, uint32_t len, char delimiter, char const** stop, FIXError** error);
+      char const* data, char const* bodyEnd, char delimiter, char const** stop, FIXError** error);
 
 #ifdef __cplusplus
 }

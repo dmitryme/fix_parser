@@ -273,18 +273,18 @@ FIXTagNum fix_parser_parse_field(
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXErrCode fix_parser_parse_group(
       FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups, char const* data,
-      uint32_t len, char delimiter, char const** stop, FIXError** error)
+      char const* bodyEnd, char delimiter, char const** stop, FIXError** error)
 {
    FIXFieldDescr* first_req_field = &gdescr->group[0]; // first required field MUST be present in string
    FIXGroup* group = NULL;
    int32_t groupCount = 0;
    *stop = data;
-   while(numGroups) // if number of groups = 0, nothing to do
+   while(numGroups && bodyEnd != *stop) // if number of groups = 0, nothing to do
    {
       FIXTagNum tag = 0;
       char const* dbegin = NULL;
       FIXFieldDescr const* fdescr = NULL;
-      if(FIX_FAILED == fix_parser_parse_tag(NULL, NULL, *stop + 1, len, &tag, NULL, &dbegin, error))
+      if(FIX_FAILED == fix_parser_parse_tag(NULL, NULL, *stop + 1, bodyEnd - *stop, &tag, NULL, &dbegin, error))
       {
          return FIX_FAILED;
       }
@@ -332,7 +332,7 @@ FIXErrCode fix_parser_parse_group(
             }
          }
       }
-      if (FIX_FAILED == fix_parser_parse_value(msg, group, fdescr, dbegin, len - (dbegin - data), delimiter, stop, error))
+      if (FIX_FAILED == fix_parser_parse_value(msg, group, fdescr, dbegin, bodyEnd - dbegin + 1, delimiter, stop, error))
       {
          return FIX_FAILED;
       }
@@ -360,7 +360,7 @@ FIXErrCode fix_parser_parse_group(
             *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
             return FIX_FAILED;
          }
-         err = fix_parser_parse_group(parser, msg, group, fdescr, numGroups, *stop, data + len - *stop, delimiter, stop, error);
+         err = fix_parser_parse_group(parser, msg, group, fdescr, numGroups, *stop, bodyEnd, delimiter, stop, error);
          if (err == FIX_FAILED)
          {
             return FIX_FAILED;

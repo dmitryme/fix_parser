@@ -548,11 +548,12 @@ TEST(FixParserTests, ParseStringGroupTest2)
    FIXParser* parser = fix_parser_create("fix_descr/fix.4.4.xml", NULL, PARSER_FLAG_CHECK_ALL, &error);
    ASSERT_TRUE(parser != NULL);
    ASSERT_TRUE(error == NULL);
-   char buff[] = "8=FIX.4.4\0019=166\00135=V\00149=order.DEMOSUCD.80\00156=demo.fxgrid\00134=38\00157=demo.fxgrid\001"
-      "52=20131226-19:38:14.360545\001262=20131226-19:38:14.360545\001263=1\001264=1\001265=0\001267=1\001269=1\001"
-      "146=1\00155=EUR/USD\00110=251\001";
+
+   char buff[] = "8=FIX.4.4|9=166|35=V|49=order.DEMOSUCD.80|56=demo.fxgrid|34=38|57=demo.fxgrid|"
+      "52=20131226-19:38:14.360545|262=20131226-19:38:14.360545|263=1|264=1|265=0|267=1|269=1|"
+      "146=1|55=EUR/USD|10=231|";
    char const* stop = NULL;
-   FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), FIX_SOH, &stop, &error);
+   FIXMsg* msg = fix_parser_str_to_msg(parser, buff, strlen(buff), '|', &stop, &error);
    ASSERT_TRUE(msg != NULL);
    ASSERT_TRUE(error == NULL);
 }

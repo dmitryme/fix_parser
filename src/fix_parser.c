@@ -236,7 +236,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       *error = fix_error_create(FIX_ERROR_WRONG_FIELD, "Field is '%d', but must be CrcSum.", tag);
       return NULL;
    }
-   printf("flags = %d, CRC = '%.*s'\n", parser->flags, *stop - crcbeg, crcbeg);
+   //printf("flags = %d, CRC = '%.*s'\n", parser->flags, *stop - crcbeg, crcbeg);
    if (parser->flags & PARSER_FLAG_CHECK_CRC)
    {
       int32_t check_sum = 0;
@@ -250,9 +250,9 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
       {
          crc += *it;
       }
-      printf("BODY = %.*s, SUM = %d, CRC = %d\n", bodyEnd - data, data, crc, (crc % 256));
+      //printf("BODY = %.*s, SUM = %d, CRC = %d\n", bodyEnd - data, data, crc, (crc % 256));
       crc %= 256;
-      printf("CRC = %d, CRC1 = %d\n", crc, check_sum);
+      //printf("CRC = %d, CRC1 = %d\n", crc, check_sum);
       if (crc != check_sum)
       {
          *error = fix_error_create(
@@ -328,7 +328,7 @@ FIX_PARSER_API FIXMsg* fix_parser_str_to_msg(FIXParser* parser, char const* data
                *error = fix_error_create(err, "Unable to get group tag %d value.", tag);
                goto  error;
             }
-            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd - dend + 1, delimiter, &dend, error))
+            if (FIX_FAILED == fix_parser_parse_group(parser, msg, NULL, fdescr, numGroups, dend, bodyEnd, delimiter, &dend, error))
             {
                goto error;
             }
