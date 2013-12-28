@@ -10,6 +10,7 @@
 #include "fix_error_priv.h"
 
 #include <string.h>
+#include <stdio.h>
 
 /*------------------------------------------------------------------------------------------------------------------------*/
 FIXPage* fix_parser_alloc_page(FIXParser* parser, uint32_t pageSize, FIXError** error)
@@ -167,6 +168,7 @@ FIXErrCode fix_parser_check_value(FIXFieldDescr const* fdescr, char const* dbegi
 static FIXErrCode fix_parser_parse_value(FIXMsg* msg, FIXGroup* group, FIXFieldDescr const* fdescr,
       char const* dbegin, uint32_t len, char delimiter, char const** dend, FIXError** error)
 {
+   printf("parse_value '%.*s'\n", len, dbegin);
    *dend = dbegin;
    if (msg && fdescr && fdescr->type->valueType == FIXFieldValueType_Data) // Data field
    {
@@ -206,6 +208,7 @@ static FIXTagNum fix_parser_parse_tag(
       FIXMsg* msg, FIXGroup* group, char const* data, uint32_t len, FIXTagNum* tag, FIXFieldDescr const** fdescr,
       char const** dbegin, FIXError** error)
 {
+   printf("parse_tag '%.*s'\n", len, data);
    int32_t cnt;
    FIXErrCode res = fix_utils_atoi32(data, len, '=', tag, &cnt);
    if (res < 0)
@@ -275,6 +278,7 @@ FIXErrCode fix_parser_parse_group(
       FIXParser* parser, FIXMsg* msg, FIXGroup* parentGroup, FIXFieldDescr const* gdescr, int64_t numGroups, char const* data,
       char const* bodyEnd, char delimiter, char const** stop, FIXError** error)
 {
+   printf("parse_group '%.*s'\n", (int)(bodyEnd - *stop), *stop);
    FIXFieldDescr* first_req_field = &gdescr->group[0]; // first required field MUST be present in string
    FIXGroup* group = NULL;
    int32_t groupCount = 0;
