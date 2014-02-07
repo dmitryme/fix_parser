@@ -203,7 +203,7 @@ class FixMessage(FixGroup):
 
    def toString(self, delimiter):
       error = c_long(0)
-      buf = create_string_buffer(256)
+      buf = create_string_buffer(1024)
       reqLen = c_uint(0)
       ret = lib.fix_msg_to_str(self.msg, c_byte(delimiter), buf, len(buf), pointer(reqLen), pointer(error))
       if ret:
